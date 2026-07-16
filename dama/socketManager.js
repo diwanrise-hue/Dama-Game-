@@ -2,15 +2,8 @@ import { gameState } from './main.js';
 import { ui } from './uiController.js';
 import { gameEngine } from './gameEngine.js';
 
-export const socket = io("https://diwanrise-dama-game-diwan.hf.space/dama", { 
-    path: '/socket.io',
-    autoConnect: false, 
-    transports: ['websocket'], 
-    reconnection: true,             
-    reconnectionAttempts: Infinity, 
-    reconnectionDelay: 1000,        
-    reconnectionDelayMax: 5000,
-    timeout: 60000           
+export const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { 
+    transports: ['websocket', 'polling'] 
 });
 window.socket = socket; 
 
