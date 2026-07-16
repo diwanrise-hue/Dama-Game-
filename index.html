@@ -765,6 +765,14 @@
             if (!nameInput) return showCustomPopup(translations[currentLang].msg_no_name);
             if (!passInput) return showCustomPopup(translations[currentLang].msg_no_pass);
 
+            // 🛡️ حماية الاتصال: فحص حالة السوكيت قبل الإرسال (الإضافة المطلوبة)
+            if (!socket || !socket.connected) {
+                console.warn("⚠️ السوكيت غير متصل حالياً! جاري إعادة الاتصال تلقائياً...");
+                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال، يرجى المحاولة مرة أخرى خلال ثوانٍ." : "Server connection lost! Reconnecting, please try again in a few seconds.");
+                socket.connect(); 
+                return;
+            }
+
             if (isLoginMode) {
                 socket.emit('login_manual', { username: nameInput, password: passInput });
             } else {
@@ -1002,7 +1010,7 @@
             }
         }
 
-        // التعديل الرئيسي: إجبار مكتبة فيسبوك على تسجيل خروج حقيقي لتدمير الكاش القديم ومنع تعليق التوكن
+        // 🛡️ التعديل الرئيسي: إجبار مكتبة فيسبوك على تسجيل خروج حقيقي لتدمير الكاش القديم ومنع تعليق التوكن
         function executeLogout(isSwitching) {
             const profileRaw = localStorage.getItem('hub_user_profile');
             let isFacebookUser = false;
@@ -1014,10 +1022,12 @@
                 } catch(e) {}
             }
 
+            // إزالة بيانات الجلسة من التخزين المحلي
             localStorage.removeItem('hub_user_profile');
             document.getElementById('profile-modal').style.display = 'none';
             checkUserAuthentication();
 
+            // فحص وتنظيف جلسة فيسبوك فعلياً قبل إعادة تحميل الصفحة
             if (isFacebookUser && typeof FB !== 'undefined') {
                 FB.getLoginStatus(function(response) {
                     if (response.status === 'connected') {
