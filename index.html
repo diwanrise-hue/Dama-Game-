@@ -13,8 +13,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-    
     <script src="https://diwanrise-dama-game-diwan.hf.space/socket.io/socket.io.js"></script>
 
     <style>
@@ -435,7 +433,7 @@
                 <button onclick="triggerLogout()" class="btn btn-danger" style="flex:1;" data-i18n="profile_logout">تسجيل الخروج</button>
             </div>
 
-            <button id="link-facebook-guest-btn" onclick="linkGuestWithFacebook()" class="btn" style="background:#1877f2; color:white; display:none; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            <button id="link-facebook-guest-btn" onclick="linkGuestWithFacebook()" class="btn" style="background:#1877f2; color:white; display:none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-top: 15px;">
                 <svg style="width:20px; height:20px; margin-left:8px; fill:currentColor;" viewBox="0 0 24 24">
                     <path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/>
                 </svg>
@@ -446,41 +444,24 @@
     </div>
 
     <script>
-        // === تهيئة Facebook SDK ===
+        // === تهيئة Facebook SDK بالطريقة الرسمية (الآمنة) ===
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : '2054342995162540', // معرف التطبيق الخاص بك
+                appId      : '2054342995162540', 
                 cookie     : true,
                 xfbml      : true,
                 version    : 'v18.0'
             });
         };
 
-        // دالة تسجيل الدخول العادية بفيسبوك (لشاشة الدخول)
-        function loginWithFacebook() {
-            FB.login(function(response) {
-                if (response.authResponse) {
-                    const accessToken = response.authResponse.accessToken;
-                    socket.emit('login_facebook', { accessToken: accessToken });
-                }
-            }, {scope: 'public_profile,email'});
-        }
-
-        // دالة الربط لحفظ الحساب (تنقل الرصيد)
-        function linkGuestWithFacebook() {
-            FB.login(function(response) {
-                if (response.authResponse) {
-                    const accessToken = response.authResponse.accessToken;
-                    const profile = JSON.parse(localStorage.getItem('hub_user_profile'));
-                    // إرسال التوكين مع آيدي اللاعب لدمج الرصيد
-                    socket.emit('link_facebook', { 
-                        accessToken: accessToken, 
-                        guestId: profile.id 
-                    });
-                }
-            }, {scope: 'public_profile,email'});
-        }
-
+        // تحميل مكتبة فيسبوك بشكل آمن بعد تحميل الصفحة
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
 
         // === قاموس اللغات الشامل ===
         const translations = {
@@ -574,7 +555,7 @@
         // 🔌 الاتصال الخارجي بالسيرفر المحرك للعبة (Hugging Face)
         const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { transports: ['websocket', 'polling'] });
 
-        // إضافة التعامل مع انقطاع الاتصال (الحل الأول الذي تحدثنا عنه لتعزيز تجربة المستخدم)
+        // إضافة التعامل مع انقطاع الاتصال 
         socket.on('disconnect', (reason) => {
             console.warn('انقطع الاتصال:', reason);
             const errorMsg = currentLang === 'ar' 
@@ -609,6 +590,38 @@
             const msg = safeParseAuthMessage(data.message);
             showCustomPopup(msg);
         });
+
+        // دالة تسجيل الدخول العادية بفيسبوك
+        function loginWithFacebook() {
+            if (typeof FB === 'undefined') {
+                showCustomPopup(currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
+                return;
+            }
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    const accessToken = response.authResponse.accessToken;
+                    socket.emit('login_facebook', { accessToken: accessToken });
+                }
+            }, {scope: 'public_profile,email'});
+        }
+
+        // دالة الربط لحفظ الحساب
+        function linkGuestWithFacebook() {
+            if (typeof FB === 'undefined') {
+                showCustomPopup(currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
+                return;
+            }
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    const accessToken = response.authResponse.accessToken;
+                    const profile = JSON.parse(localStorage.getItem('hub_user_profile'));
+                    socket.emit('link_facebook', { 
+                        accessToken: accessToken, 
+                        guestId: profile.id 
+                    });
+                }
+            }, {scope: 'public_profile,email'});
+        }
 
         function safeParseAuthMessage(msgStr) {
             if (typeof msgStr === 'string' && msgStr.startsWith('{')) {
