@@ -966,25 +966,43 @@
             }
         });
 
-        function triggerLogout() {
-            showCustomPopup(translations[currentLang].msg_logout_confirm, false, "", true, (res) => {
-                if(res) {
-                    localStorage.removeItem('hub_user_profile');
-                    document.getElementById('profile-modal').style.display = 'none';
-                    checkUserAuthentication();
-                }
-            });
+        // دالة موحدة لمعالجة الخروج أو التبديل بناءً على نوع الحساب
+        function handleAccountExit(isSwitching) {
+            const profileRaw = localStorage.getItem('hub_user_profile');
+            if (!profileRaw) return;
+            
+            const profile = JSON.parse(profileRaw);
+            
+            // نتحقق إذا كان المعرف يبدأ بـ GUEST- (يعني زائر)
+            const isGuest = profile.id && profile.id.startsWith('GUEST-');
+
+            if (!isGuest) {
+                // [حساب فيسبوك أو حساب اسم ورمز]: خروج فوري بدون إشعار وبدون مسح من السيرفر
+                executeLogout(isSwitching);
+            } else {
+                // [حساب زائر]: إظهار إشعار، وإذا وافق نحذف من Redis ثم نمسح بيانات الهاتف
+                showCustomPopup(translations[currentLang].msg_logout_confirm, false, "", true, (res) => {
+                    if (res) {
+                        // إرسال طلب للسيرفر لحذف بيانات الزائر فقط
+                        socket.emit('logout_guest_clean', { id: profile.id });
+                        executeLogout(isSwitching);
+                    }
+                });
+            }
         }
-        
-        function triggerAccountSwitch() {
-            showCustomPopup(translations[currentLang].msg_logout_confirm, false, "", true, (res) => {
-                if(res) {
-                    localStorage.removeItem('hub_user_profile');
-                    document.getElementById('profile-modal').style.display = 'none';
-                    checkUserAuthentication();
-                }
-            });
+
+        // دالة تنفيذ الخروج الفعلي (مشتركة للجميع)
+        function executeLogout(isSwitching) {
+            localStorage.removeItem('hub_user_profile');
+            document.getElementById('profile-modal').style.display = 'none';
+            checkUserAuthentication();
+            // إعادة تحميل الصفحة لضمان تنظيف حالة التطبيق
+            location.reload();
         }
+
+        // الدوال التي تستدعيها الأزرار (لا حاجة لتغييرها)
+        function triggerLogout() { handleAccountExit(false); }
+        function triggerAccountSwitch() { handleAccountExit(true); }
 
         window.syncHubProfile = syncHubProfile;
         window.exitGame = exitGame; 
