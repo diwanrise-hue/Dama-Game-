@@ -7,17 +7,7 @@ export const STORE_ITEMS = {
     // أولاً: الخلفيات واللوحات (Backgrounds & Boards)
     // ===================================
     
-    'bg_wood': { 
-        type: 'bg', 
-        isDefault: true, 
-        nameAr: 'الخشب الفاخر', 
-        nameEn: 'Premium Wood', 
-        light: '#DEB887', 
-        dark: '#8B4513',
-        // تصميم الساحة المجانية بأعلى درجات الفخامة: محاكاة ملمس الخشب المصقول مع ظلال ناعمة وإضاءة تباين واقعية وممتازة كالعناصر المدفوعة
-        cssLight: 'background: #DEB887 linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.05) 100%); box-shadow: inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.15); border: 0.5px solid rgba(139,69,19,0.25); position: relative;',
-        cssDark: 'background: #8B4513 linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%); box-shadow: inset 4px 4px 6px rgba(0,0,0,0.45), inset -2px -2px 4px rgba(255,255,255,0.06); border: 0.5px solid rgba(0,0,0,0.4); position: relative;'
-    },
+    'bg_wood': { type: 'bg', isDefault: true, nameAr: 'الخشب الفاخر', nameEn: 'Premium Wood', light: '#DEB887', dark: '#8B4513' },
 
     'bg_malachite': { 
         type: 'bg', cost: 3000, isLegendary: true, nameAr: 'رخام الملاكيت الأخضر', nameEn: 'Malachite Green Marble',
@@ -119,14 +109,13 @@ export const STORE_ITEMS = {
     
     'fr_classic': { 
         type: 'fr', isDefault: true, nameAr: 'إطار خشبي كلاسيكي', nameEn: 'Classic Wood Frame',
-        // ترقية احترافية للإطار المجاني: إضافة حواف ذهبية غائرة خفيفة، تباين حاد للخطوط، وظلال خارجية عميقة لتعطي اللوحة تأثيراً ملكياً بارزاً
-        cssBoard: 'border: 14px solid #5C3A21; border-radius: 12px; box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 25px rgba(0,0,0,0.9); border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 8px, #4A2E1B 8px, #4A2E1B 16px) 14;',
+        cssBoard: 'border: 12px solid #5C3A21; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.05), inset 0 0 15px rgba(0,0,0,0.9); border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 10px, #4A2E1B 10px, #4A2E1B 20px) 12;',
         customCSS: `
             #board { 
-                border: 14px solid #5C3A21 !important; 
-                border-radius: 12px !important; 
-                box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 25px rgba(0,0,0,0.9) !important; 
-                border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 8px, #4A2E1B 8px, #4A2E1B 16px) 14 !important;
+                border: 12px solid #5C3A21 !important; 
+                border-radius: 8px !important; 
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.05), inset 0 0 15px rgba(0,0,0,0.9) !important; 
+                border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 10px, #4A2E1B 10px, #4A2E1B 20px) 12 !important;
                 box-sizing: border-box !important;
                 width: 100vw !important;
                 max-width: 100vw !important;
