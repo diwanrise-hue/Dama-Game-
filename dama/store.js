@@ -27,20 +27,20 @@ export const STORE_ITEMS = {
         cssDark: 'background-color: #3B2314; background-image: radial-gradient(circle at 50% 50%, #E2D4B7 10%, transparent 13%), radial-gradient(circle at 50% 50%, transparent 40%, #1E110A 45%, #1E110A 50%, transparent 55%), repeating-conic-gradient(from 15deg at 50% 50%, #2A170D 0deg, #2A170D 22.5deg, transparent 22.5deg, transparent 45deg); box-shadow: inset 0 0 15px rgba(0,0,0,0.8); border: 1px solid #1E110A;' 
     },
 
-    'bg_image_royal': { type: 'bg', cost: 4000, isLegendary: true, nameAr: 'الساحة الملكية الفاخرة', nameEn: 'Premium Royal Arena', isImage: true, imagePath: '/assets/bgs/1000133232.webp' },
+    'bg_image_royal': { type: 'bg', cost: 4000, isLegendary: true, nameAr: 'الساحة الملكية الفاخرة', nameEn: 'Premium Royal Arena', isImage: true, imagePath: 'assets/bgs/1000133232.webp' },
 
-    'bg_image_lava': { type: 'bg', cost: 4500, isLegendary: true, nameAr: 'ساحة الحمم البركانية', nameEn: 'Volcanic Lava Arena', isImage: true, imagePath: '/assets/bgs/1000133390.webp' },
+    'bg_image_lava': { type: 'bg', cost: 4500, isLegendary: true, nameAr: 'ساحة الحمم البركانية', nameEn: 'Volcanic Lava Arena', isImage: true, imagePath: 'assets/bgs/1000133390.webp' },
 
-    'bg_custom_warrior': { type: 'bg', cost: 5000, isLegendary: true, nameAr: 'ساحة كتيبة الأبطال', nameEn: 'Hero Battalion Arena', isImage: true, imagePath: '/assets/bgs/1000134166.webp' },
+    'bg_custom_warrior': { type: 'bg', cost: 5000, isLegendary: true, nameAr: 'ساحة كتيبة الأبطال', nameEn: 'Hero Battalion Arena', isImage: true, imagePath: 'assets/bgs/1000134166.webp' },
 
     'bg_ruby_amber': { 
         type: 'bg', cost: 50000, isLegendary: true, nameAr: 'الياقوت والكهرمان الملكي', nameEn: 'Royal Ruby & Amber', 
-        isImage: true, imagePath: '/assets/bgs/10001320889.webp' 
+        isImage: true, imagePath: 'assets/bgs/10001320889.webp' 
     },
 
     'bg_mahogany': { 
         type: 'bg', cost: 2000, nameAr: 'ساحة الماهوجني الكلاسيكية', nameEn: 'Classic Mahogany Arena', 
-        isImage: true, imagePath: '/assets/bgs/1000134903.webp' 
+        isImage: true, imagePath: 'assets/bgs/1000134903.webp' 
     },
 
     'bg_turquoise_geometric': {
