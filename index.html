@@ -556,6 +556,12 @@
         // 🔌 الاتصال الخارجي بالسيرفر المحرك للعبة (Hugging Face)
         const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { transports: ['websocket', 'polling'] });
 
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SYNC_PROFILE') {
+                syncHubProfile();
+            }
+        });
+
         socket.on('disconnect', (reason) => {
             console.warn('انقطع الاتصال:', reason);
             const errorMsg = currentLang === 'ar' 
@@ -572,7 +578,6 @@
             }
         });
 
-        // 🛡️ دالة مساعدة لقراءة ومعالجة وتحليل بيانات الـ LocalStorage لتجنب تعطل التطبيق بالكامل
         function getSafeProfile() {
             const defaultProfile = {
                 id: "GUEST-DEFAULT",
@@ -869,12 +874,12 @@
             }
         }
 
+        // 🚀 المنظومة العبقرية الجديدة والمحصنة لإرسال الرابط الخام (النقي) وتخطي جدران حماية المتصفحات
         function syncHubProfile() {
             let globalProfile = localStorage.getItem('hub_user_profile');
             if (!globalProfile) return;
             
             const profile = getSafeProfile();
-            
             const tokenVal = profile.tokens || 0;
             const tokenText = tokenVal + translations[currentLang].token_word;
 
@@ -883,49 +888,38 @@
             if (document.getElementById('profile-display-name')) document.getElementById('profile-display-name').innerText = profile.name;
             if (document.getElementById('profile-display-id')) document.getElementById('profile-display-id').innerText = profile.id;
             
-            const renderAvatar = (elementId) => {
-                const el = document.getElementById(elementId);
-                if (!el) return;
-                let avatarSrc = profile.avatar || '1000132081.webp';
-                const isFullUrl = avatarSrc.startsWith('http://') || avatarSrc.startsWith('https://') || avatarSrc.startsWith('data:image');
-                
-                // 🚀 تحويل المسار النسبي إلى رابط مباشر للسيرفر فوراً
-                if (!isFullUrl) {
-                    avatarSrc = "https://diwanrise-dama-game-diwan.hf.space/" + avatarSrc;
-                }
-                el.innerHTML = `<img src="${avatarSrc}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
-            };
-            
-            renderAvatar('hub-profile-avatar');
-            renderAvatar('profile-display-avatar');
-
-            const linkFbBtn = document.getElementById('link-facebook-guest-btn');
-            if (linkFbBtn) {
-                if (profile.id && !profile.id.startsWith('FB-')) {
-                    linkFbBtn.style.display = 'flex';
-                } else {
-                    linkFbBtn.style.display = 'none';
-                }
+            // 1. تجهيز وصناعة رابط الصورة الكامل والنقي بدقة هنا في السيرفر الرئيسي للـ Hub
+            let finalAvatarSrc = profile.avatar || '1000132081.webp';
+            const isFullUrl = finalAvatarSrc.startsWith('http://') || finalAvatarSrc.startsWith('https://') || finalAvatarSrc.startsWith('data:image');
+            if (!isFullUrl) {
+                finalAvatarSrc = "https://diwanrise-dama-game-diwan.hf.space/" + finalAvatarSrc;
             }
 
+            // 2. تحديث الحقول المحلية في الـ Hub نفسه
+            const renderAvatarLocal = (elementId) => {
+                const el = document.getElementById(elementId);
+                if (el) el.innerHTML = `<img src="${finalAvatarSrc}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
+            };
+            renderAvatarLocal('hub-profile-avatar');
+            renderAvatarLocal('profile-display-avatar');
+
+            // 3. إرسال الرابط الخام النقي (بدون وسوم HTML المرفوضة حمايتها) إلى داخل الـ Iframe ليقوم ببناء صورته ذاتياً بامتياز
             const gameIframe = document.getElementById('game-frame');
             if (gameIframe && gameIframe.contentWindow) {
-                // 1. تجهيز رابط الصورة الكامل أولاً هنا في الـ Hub
-                let finalAvatarSrc = profile.avatar || '1000132081.webp';
-                if (!finalAvatarSrc.startsWith('http://') && !finalAvatarSrc.startsWith('https://') && !finalAvatarSrc.startsWith('data:image')) {
-                    finalAvatarSrc = "https://diwanrise-dama-game-diwan.hf.space/" + finalAvatarSrc;
-                }
-
-                // 2. إرسال أمر حقن مباشر بكود الـ HTML الجاهز للصورة
                 gameIframe.contentWindow.postMessage({ 
                     type: 'INJECT_AVATAR_DIRECT', 
-                    avatarHtml: `<img src="${finalAvatarSrc}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`
+                    avatarHtml: finalAvatarSrc // 👈 إرسال الرابط الخام فقط لتأمين وسهولة الاختراق الأمني
                 }, '*');
 
                 gameIframe.contentWindow.postMessage({ 
                     type: 'PROFILE_UPDATED', 
                     profile: profile 
                 }, '*');
+            }
+
+            const linkFbBtn = document.getElementById('link-facebook-guest-btn');
+            if (linkFbBtn) {
+                linkFbBtn.style.display = (profile.id && !profile.id.startsWith('FB-')) ? 'flex' : 'none';
             }
         }
 
@@ -939,9 +933,7 @@
                     try {
                         localStorage.setItem('hub_user_profile', JSON.stringify(profile));
                         syncHubProfile();
-                    } catch (err) {
-                        console.error("⚠️ فشل تحديث الاسم وحفظه بالـ Storage:", err);
-                    }
+                    } catch (err) { }
                 }
             });
         }
@@ -956,9 +948,7 @@
                 syncHubProfile();
                 document.getElementById('edit-avatar-select').selectedIndex = 0; 
                 showCustomPopup(translations[currentLang].msg_avatar_success);
-            } catch (err) {
-                console.error("⚠️ فشل تغيير الأفتار محلياً:", err);
-            }
+            } catch (err) { }
         }
 
         function uploadImageFromPhone(event) {
@@ -970,27 +960,18 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        
                         const maxDim = 180;
                         let width = img.width;
                         let height = img.height;
                         
                         if (width > height) {
-                            if (width > maxDim) {
-                                height = Math.round((height * maxDim) / width);
-                                width = maxDim;
-                            }
+                            if (width > maxDim) { height = Math.round((height * maxDim) / width); width = maxDim; }
                         } else {
-                            if (height > maxDim) {
-                                width = Math.round((width * maxDim) / height);
-                                height = maxDim;
-                            }
+                            if (height > maxDim) { height = Math.round((width * maxDim) / height); height = maxDim; }
                         }
                         
-                        canvas.width = width;
-                        canvas.height = height;
+                        canvas.width = width; canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
-                        
                         const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
                         
                         let profile = getSafeProfile();
@@ -1001,10 +982,7 @@
                             localStorage.setItem('hub_user_profile', JSON.stringify(profile));
                             syncHubProfile();
                             showCustomPopup(translations[currentLang].msg_img_success);
-                        } catch (error) {
-                            console.error("⚠️ فشل تخزين الصورة بالمتصفح:", error);
-                            showCustomPopup(currentLang === 'ar' ? "فشل حفظ الصورة، سعة التخزين ممتلئة بالمتصفح!" : "Failed to save image, local storage is full!");
-                        }
+                        } catch (error) { }
                     };
                     img.src = e.target.result;
                 };
@@ -1017,27 +995,18 @@
             if(navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(idText).then(() => {
                     showCustomPopup(translations[currentLang].msg_copy_success + idText);
-                }).catch((err) => {
-                    console.warn("⚠️ تم رفض صلاحية النسخ عبر الـ Clipboard API، التحويل للطريقة التقليدية الاحتياطية:", err);
-                    fallbackCopyText(idText);
-                });
-            } else {
-                fallbackCopyText(idText);
-            }
+                }).catch((err) => { fallbackCopyText(idText); });
+            } else { fallbackCopyText(idText); }
         }
 
         function fallbackCopyText(text) {
             let textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+            textArea.value = text; document.body.appendChild(textArea);
+            textArea.focus(); textArea.select();
             try {
                 document.execCommand('copy');
                 showCustomPopup(translations[currentLang].msg_copy_success + text);
-            } catch (err) {
-                showCustomPopup(translations[currentLang].msg_copy_fail);
-            }
+            } catch (err) { showCustomPopup(translations[currentLang].msg_copy_fail); }
             document.body.removeChild(textArea);
         }
 
@@ -1048,11 +1017,8 @@
         }
         
         function closeProfileModal() { 
-            if (history.state && history.state.view === 'profile') {
-                history.back(); 
-            } else {
-                document.getElementById('profile-modal').style.display = 'none';
-            }
+            if (history.state && history.state.view === 'profile') { history.back(); } 
+            else { document.getElementById('profile-modal').style.display = 'none'; }
         }
 
         function startGame() {
@@ -1062,7 +1028,7 @@
             gameFrame.src = 'dama/dama.html';
             history.pushState({ view: 'game' }, '');
             
-            // 🚀 ضمان الحقن المباشر للصور فور اكتمال تحميل اللعبة
+            // 🚀 حقن آمن وفوري للرابط بمجرد الإقلاع المباشر للـ iframe
             gameFrame.onload = function() {
                 syncHubProfile();
             };
@@ -1070,28 +1036,20 @@
         
         function exitGame() {
             document.getElementById('game-interface').style.display = 'none';
-            if(localStorage.getItem('hub_user_profile')) {
-                document.getElementById('game-selector').style.display = 'flex';
-            }
+            if(localStorage.getItem('hub_user_profile')) { document.getElementById('game-selector').style.display = 'flex'; }
             setTimeout(() => { document.getElementById('game-frame').src = ''; }, 300);
             history.pushState({ view: 'hub' }, '');
             syncHubProfile();
         }
 
         window.addEventListener('popstate', function(e) {
-            if (document.getElementById('custom-popup-modal').style.display === 'flex') {
-                document.getElementById('custom-popup-modal').style.display = 'none';
-            }
-            if (document.getElementById('profile-modal').style.display === 'flex') {
-                document.getElementById('profile-modal').style.display = 'none';
-            }
+            if (document.getElementById('custom-popup-modal').style.display === 'flex') document.getElementById('custom-popup-modal').style.display = 'none';
+            if (document.getElementById('profile-modal').style.display === 'flex') document.getElementById('profile-modal').style.display = 'none';
             
             if (document.getElementById('game-interface').style.display === 'block') {
                 if (e.state && e.state.view === 'hub') {
                     document.getElementById('game-interface').style.display = 'none';
-                    if(localStorage.getItem('hub_user_profile')) {
-                        document.getElementById('game-selector').style.display = 'flex';
-                    }
+                    if(localStorage.getItem('hub_user_profile')) document.getElementById('game-selector').style.display = 'flex';
                     setTimeout(() => { document.getElementById('game-frame').src = ''; }, 300);
                     syncHubProfile();
                 }
@@ -1101,24 +1059,14 @@
         function handleAccountExit(isSwitching) {
             const profileRaw = localStorage.getItem('hub_user_profile');
             if (!profileRaw) return;
-            
             let profile;
-            try {
-                profile = JSON.parse(profileRaw);
-            } catch (e) {
-                profile = getSafeProfile();
-            }
-            
+            try { profile = JSON.parse(profileRaw); } catch (e) { profile = getSafeProfile(); }
             const isGuest = profile.id && profile.id.startsWith('GUEST-');
 
-            if (!isGuest) {
-                executeLogout(isSwitching);
-            } else {
+            if (!isGuest) { executeLogout(isSwitching); } 
+            else {
                 showCustomPopup(translations[currentLang].msg_logout_confirm, false, "", true, (res) => {
-                    if (res) {
-                        socket.emit('logout_guest_clean', { id: profile.id });
-                        executeLogout(isSwitching);
-                    }
+                    if (res) { socket.emit('logout_guest_clean', { id: profile.id }); executeLogout(isSwitching); }
                 });
             }
         }
@@ -1126,12 +1074,8 @@
         function executeLogout(isSwitching) {
             const profileRaw = localStorage.getItem('hub_user_profile');
             let isFacebookUser = false;
-            
             if (profileRaw) {
-                try {
-                    const profile = JSON.parse(profileRaw);
-                    isFacebookUser = profile.id && profile.id.startsWith('FB-');
-                } catch(e) {}
+                try { isFacebookUser = JSON.parse(profileRaw).id?.startsWith('FB-'); } catch(e) {}
             }
 
             localStorage.removeItem('hub_user_profile');
@@ -1140,29 +1084,14 @@
 
             if (isFacebookUser && typeof FB !== 'undefined') {
                 FB.getLoginStatus(function(response) {
-                    if (response.status === 'connected') {
-                        FB.logout(function() {
-                            console.log("✅ تم تنظيف كاش وجلسة فيسبوك بنجاح.");
-                            location.reload();
-                        });
-                    } else {
-                        location.reload();
-                    }
+                    if (response.status === 'connected') { FB.logout(function() { location.reload(); }); } 
+                    else { location.reload(); }
                 });
-            } else {
-                location.reload();
-            }
+            } else { location.reload(); }
         }
 
         function triggerLogout() { handleAccountExit(false); }
         function triggerAccountSwitch() { handleAccountExit(true); }
-
-        // 🔄 مستمع الرسائل القادمة من الألعاب لتحديث الصورة عند تغييرها من الداخل
-        window.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'SYNC_PROFILE') {
-                syncHubProfile();
-            }
-        });
 
         window.syncHubProfile = syncHubProfile;
         window.exitGame = exitGame; 
