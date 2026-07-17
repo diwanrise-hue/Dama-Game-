@@ -172,7 +172,7 @@
         .side-menu-close:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
         
         .side-menu-item { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 12px; border-radius: 14px; background: rgba(255,255,255,0.04); color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); }
-        .side-menu-item:hover { background: rgba(255,255,255,0.1); border-color: rgba(135,206,235,0.4); transform: translateX(-5px); }
+        .side-menu-item:hover { background: rgba(255,255,255,0.1); border-color: rgba(135, 206, 235, 0.4); transform: translateX(-5px); }
         .side-menu-item span:first-child { font-size: 20px; }
 
         /* ========================================== */
@@ -449,7 +449,6 @@
     
     <input type="hidden" id="game-mode" value="ai">
 
-    <!-- 🌟 حقول الأفاتار فارغة كلياً عند التشغيل وتنتظر كود الحقن القادم من index.html البطل -->
     <div class="profile-badge-container" id="profile-badge" onclick="openAppModal('in-game-profile-modal')">
         <div class="profile-avatar-capsule" id="badge-avatar"></div>
         <div class="profile-badge-info">
@@ -476,7 +475,7 @@
             </div>
             <span class="match-vs-text">VS</span>
             <div class="match-players-flex">
-                <div id="card-opp-avatar" class="match-players-avatar-opp">❓</div>
+                <div id="card-opp-avatar" class="match-players-avatar-opp"></div>
                 <span id="card-opp-name" class="match-players-name">الخصم</span>
             </div>
         </div>
@@ -782,20 +781,23 @@
 
         window.modalStack = [];
 
-        // 📥 الحقن النظيف والمدرع لكل أنواع الصور (محمية وثابتة)
-        let cachedAvatarHtml = '';
-        function forceLockedGlobalAvatar(injectedHtml) {
-            if (injectedHtml) cachedAvatarHtml = injectedHtml;
-            if (!cachedAvatarHtml) return;
+        // 📥 دالة بناء وحقن الصورة محلياً داخل اللعبة لتفادي وتخطي قيود حماية المتصفحات
+        function forceLockedGlobalAvatar(rawUrl) {
+            if (!rawUrl) return;
 
+            // بناء كود الـ HTML الجاهز للصورة محلياً لتجاوز الحظر الأمني للمتصفحات بنجاح مذهل
+            const finalImageHtml = `<img src="${rawUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
+
+            // تحديد جميع حقول الأفاتار في صفحة اللعبة كلياً
             const targetAvatars = ['badge-avatar', 'card-my-avatar', 'mm-my-avatar', 'igp-avatar'];
 
             targetAvatars.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
                 
+                // إسقاط الصورة الجاهزة مباشرة داخل الحقل
                 el.style.backgroundImage = 'none';
-                el.innerHTML = cachedAvatarHtml;
+                el.innerHTML = finalImageHtml;
             });
         }
 
@@ -1024,33 +1026,6 @@
             }
         }
 
-        window.applyProfileDataToUI = function(profile) {
-            const currentTokens = profile.tokens !== undefined ? profile.tokens : 0;
-            
-            const textElements = {
-                'badge-username-display-game': profile.name,
-                'card-my-name': profile.name,
-                'mm-my-name': profile.name,
-                'profile-stat-tokens-badge': currentTokens,
-                'profile-stat-tokens-store': currentTokens,
-                'igp-name': profile.name,
-                'igp-games': profile.games !== undefined ? profile.games : 0,
-                'igp-wins': profile.wins !== undefined ? profile.wins : 0,
-                'igp-losses': profile.losses !== undefined ? profile.losses : 0
-            };
-
-            for (let id in textElements) {
-                const el = document.getElementById(id);
-                if (el) { el.innerText = textElements[id]; }
-            }
-
-            // نقوم بالاستدعاء فقط لإبقاء التجهيز ولكن الحقن الفعلي يأتي من رسالة postMessage لمنع تشوه روابط الـ url
-            forceLockedGlobalAvatar(); 
-            if(window.updateInventoryUI) window.updateInventoryUI();
-
-            window.parent.postMessage({ type: 'SYNC_PROFILE' }, '*');
-        }
-
         window.currentLang = 'ar';
 
         const originalAudioPlay = HTMLAudioElement.prototype.play;
@@ -1065,7 +1040,7 @@
             window.addEventListener('message', (event) => {
                 if (!event.data) return;
                 
-                // 🚀 استقبال الحقن المباشر والقاطع للصورة القادمة من الـ Hub الرئيسي
+                // 🚀 استقبال أمر الرابط النقي وتمريره لدالة الحقن الذكية
                 if (event.data.type === 'INJECT_AVATAR_DIRECT' && event.data.avatarHtml) {
                     forceLockedGlobalAvatar(event.data.avatarHtml);
                 }
@@ -1081,24 +1056,25 @@
                 }
                 
                 if (event.data.type === 'PROFILE_UPDATED' && event.data.profile) {
-                    window.applyProfileDataToUI(event.data.profile);
+                    // مصفوفة تعبئة النصوص المباشرة في واجهة dama.html
+                    const textElements = {
+                        'badge-username-display-game': event.data.profile.name,
+                        'card-my-name': event.data.profile.name,
+                        'profile-stat-tokens-badge': event.data.profile.tokens !== undefined ? event.data.profile.tokens : 0,
+                        'profile-stat-tokens-store': event.data.profile.tokens !== undefined ? event.data.profile.tokens : 0,
+                        'igp-name': event.data.profile.name,
+                        'igp-games': event.data.profile.games !== undefined ? event.data.profile.games : 0,
+                        'igp-wins': event.data.profile.wins !== undefined ? event.data.profile.wins : 0,
+                        'igp-losses': event.data.profile.losses !== undefined ? event.data.profile.losses : 0
+                    };
+
+                    for (let id in textElements) {
+                        const el = document.getElementById(id);
+                        if (el) { el.innerText = textElements[id]; }
+                    }
+                    if(window.updateInventoryUI) window.updateInventoryUI();
                 }
             });
-
-            let globalProfile = localStorage.getItem('hub_user_profile');
-            if (globalProfile) window.applyProfileDataToUI(JSON.parse(globalProfile));
-
-            const sfxSlider = document.getElementById('sfx-volume');
-            if(sfxSlider) {
-                const savedVol = localStorage.getItem('sfx_volume') || localStorage.getItem('dama_sfx_volume') || '0.7';
-                sfxSlider.value = savedVol;
-                
-                sfxSlider.addEventListener('input', (e) => {
-                    const vol = parseFloat(e.target.value);
-                    localStorage.setItem('sfx_volume', vol);
-                    localStorage.setItem('dama_sfx_volume', vol);
-                });
-            }
 
             const btnSaveSettings = document.getElementById('save-settings-btn');
             if(btnSaveSettings) {
