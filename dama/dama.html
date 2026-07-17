@@ -1,3 +1,4 @@
+<-- dama.html -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -142,7 +143,6 @@
         .stat-item { color: #bdc3c7; font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; direction: ltr; }
         .stat-item span { color: #f5a623; font-weight: 700; font-size: 12px; }
 
-        /* ستايل لضمان احتواء الصور الشخصية لجميع كبسولات الأفتار بالكامل ودائرياً */
         .profile-avatar-capsule img, .match-players-avatar-me img, .match-players-avatar-opp img, .profile-display-avatar img {
             width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;
         }
@@ -1027,13 +1027,6 @@
         }
 
         window.currentLang = 'ar';
-
-        const originalAudioPlay = HTMLAudioElement.prototype.play;
-        HTMLAudioElement.prototype.play = function() {
-            const savedVol = localStorage.getItem('sfx_volume') || localStorage.getItem('dama_sfx_volume') || '0.7';
-            this.volume = parseFloat(savedVol);
-            return originalAudioPlay.call(this);
-        };
 
         document.addEventListener('DOMContentLoaded', () => {
             
