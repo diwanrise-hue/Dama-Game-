@@ -7,7 +7,17 @@ export const STORE_ITEMS = {
     // أولاً: الخلفيات واللوحات (Backgrounds & Boards)
     // ===================================
     
-    'bg_wood': { type: 'bg', isDefault: true, nameAr: 'الخشب الفاخر', nameEn: 'Premium Wood', light: '#DEB887', dark: '#8B4513' },
+    'bg_wood': { 
+        type: 'bg', 
+        isDefault: true, 
+        nameAr: 'الخشب الفاخر', 
+        nameEn: 'Premium Wood', 
+        light: '#DEB887', 
+        dark: '#8B4513',
+        // تحسين مربعات اللوحة الافتراضية بمظهر خشب طبيعي مع تباين وظلال ثلاثية الأبعاد احترافية دون تغيير الألوان الأساسية
+        cssLight: 'background: #DEB887 linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.05) 100%); box-shadow: inset 2px 2px 5px rgba(255,255,255,0.3), inset -2px -2px 5px rgba(0,0,0,0.15); border: 0.5px solid rgba(139,69,19,0.15);',
+        cssDark: 'background: #8B4513 linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.25) 100%); box-shadow: inset 3px 3px 6px rgba(0,0,0,0.4), inset -2px -2px 4px rgba(255,255,255,0.05); border: 0.5px solid rgba(0,0,0,0.3);'
+    },
 
     'bg_malachite': { 
         type: 'bg', cost: 3000, isLegendary: true, nameAr: 'رخام الملاكيت الأخضر', nameEn: 'Malachite Green Marble',
@@ -109,13 +119,14 @@ export const STORE_ITEMS = {
     
     'fr_classic': { 
         type: 'fr', isDefault: true, nameAr: 'إطار خشبي كلاسيكي', nameEn: 'Classic Wood Frame',
-        cssBoard: 'border: 12px solid #5C3A21; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.05), inset 0 0 15px rgba(0,0,0,0.9); border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 10px, #4A2E1B 10px, #4A2E1B 20px) 12;',
+        // تحسين عمق وتفاصيل الإطار الخشبي الافتراضي وإضافة عروق خشبية خفيفة وتأثير مجسم احترافي دون لمس الألوان الأصلية
+        cssBoard: 'border: 14px solid #5C3A21; border-radius: 12px; box-shadow: 0 25px 50px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.1), inset 0 0 20px rgba(0,0,0,0.85); border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 8px, #4A2E1B 8px, #4A2E1B 16px) 14;',
         customCSS: `
             #board { 
-                border: 12px solid #5C3A21 !important; 
-                border-radius: 8px !important; 
-                box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.05), inset 0 0 15px rgba(0,0,0,0.9) !important; 
-                border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 10px, #4A2E1B 10px, #4A2E1B 20px) 12 !important;
+                border: 14px solid #5C3A21 !important; 
+                border-radius: 12px !important; 
+                box-shadow: 0 25px 50px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.1), inset 0 0 20px rgba(0,0,0,0.85) !important; 
+                border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 8px, #4A2E1B 8px, #4A2E1B 16px) 14 !important;
                 box-sizing: border-box !important;
                 width: 100vw !important;
                 max-width: 100vw !important;
@@ -340,7 +351,7 @@ export const STORE_ITEMS = {
     },
 
     'pc_ebony_gold': { 
-        type: 'pc', cost: 1000, nameAr: 'الأبنوس الذهبي', nameEn: 'Royal Ebony Gold',
+        type: 'pc', cost: 1000, nameAr: 'الأذنوس الذهبي', nameEn: 'Royal Ebony Gold',
         icon: '<div style="position: absolute; top: 32.5%; left: 32.5%; width: 35%; height: 35%; border-radius: 50%; border: 1.5px solid #D4AF37; background: rgba(0,0,0,0.1); pointer-events: none;"></div>',
         wCss: `background: #FDFBF7; border: 2px solid #D4AF37; box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.2), 0 4px 8px rgba(0,0,0,0.3);`,
         bCss: `background: #1A1A1A; border: 2px solid #D4AF37; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.5);`,
