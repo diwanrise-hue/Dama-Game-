@@ -189,14 +189,14 @@ function injectRadioUI() {
                 <!-- إطار النبض مع الحفاظ على الأماكن المبدلة للأسهم الجانبية تماماً -->
                 <div class="visualizer-container">
                     <!-- سهم العودة للخلف متموضع على اليمين برمجياً -->
-                    <button class="nav-arrow-btn" onclick="prevChannel()">❯</button>
+                    <button class="nav-arrow-btn" onclick="prevChannel()">❮</button>
                     
                     <div id="visualizer" class="visualizer-box">
                         ` + barsHTML + `
                     </div>
                     
                     <!-- سهم التقدم للأمام متموضع على اليسار برمجياً -->
-                    <button class="nav-arrow-btn" onclick="nextChannel()">❮</button>
+                    <button class="nav-arrow-btn" onclick="nextChannel()">❯</button>
                 </div>
 
                 <!-- اسم القناة المختارة أسفل النبض مباشرة -->
