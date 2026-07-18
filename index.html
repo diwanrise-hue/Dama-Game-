@@ -117,29 +117,13 @@
         }
         .lang-btn:hover { background: rgba(255,255,255,0.08); }
 
-        /* تأثيرات الراديو */
-        .music-playing {
-            border-color: var(--accent) !important;
-            color: var(--accent) !important;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(245, 166, 35, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0); }
-        }
-        .radio-active {
-            background: var(--accent) !important;
-            color: #000 !important;
-            border-color: var(--accent) !important;
-        }
 
         /* ========================================== */
         /* كروت الألعاب                */
         /* ========================================== */
         .cards-container { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
 
-        /* كرت الدامة - تم تقليل الارتفاع إلى 130px */
+        /* كرت الدامة */
         .dama-card { 
             width: 85%; max-width: 320px; height: 130px; 
             border-radius: var(--radius-card); cursor: pointer; 
@@ -219,7 +203,6 @@
         }
         .settings-card::-webkit-scrollbar { display: none; }
 
-        /* زر الإغلاق الأنيق */
         .modal-close-btn {
             position: absolute; top: 20px; left: 20px; background: transparent; 
             border: none; color: var(--text-secondary); width: 30px; height: 30px; 
@@ -231,7 +214,6 @@
         .settings-card h3 { color: var(--text-primary); font-size: 22px; font-weight: 700; margin: 0 0 5px 0; }
         .settings-card p.desc { color: var(--text-secondary); font-size: 13px; margin-bottom: 15px; line-height: 1.5; }
 
-        /* حقول الإدخال */
         .input-group { text-align: start; margin-bottom: 15px; }
         .settings-label { display: block; color: var(--text-secondary); font-size: 13px; font-weight: 500; margin-bottom: 6px; padding: 0 5px; }
         
@@ -253,7 +235,6 @@
         html[dir="ltr"] select.clean-input { background-position: right 1.2rem center; }
         select.clean-input option { background: #111; color: white; }
 
-        /* الأزرار الانسيابية */
         .btn { 
             width: 100%; height: 46px; border: none; border-radius: var(--radius-pill); 
             font-weight: 600; font-size: 15px; cursor: pointer; 
@@ -272,7 +253,7 @@
         .btn-danger:hover { background: rgba(255, 69, 58, 0.2); }
 
         /* ========================================== */
-        /* تنسيقات نافذة الملف الشخصي            */
+        /* تنسيقات الملف الشخصي             */
         /* ========================================== */
         .profile-display-avatar {
             width: 85px; height: 85px; margin: 0 auto 15px auto; 
@@ -283,9 +264,7 @@
         
         #profile-display-name { color: var(--text-primary); margin: 0 0 5px 0; font-size: 24px; font-weight: 700; }
         
-        .profile-id-box { 
-            font-size: 14px; margin-bottom: 30px; color: var(--text-secondary);
-        }
+        .profile-id-box { font-size: 14px; margin-bottom: 30px; color: var(--text-secondary); }
         #profile-display-id { color: var(--text-primary); font-weight: 500; cursor: pointer; transition: var(--transition); padding: 5px; }
         #profile-display-id:hover { color: var(--accent); }
 
@@ -305,125 +284,16 @@
         .bottom-actions { display: flex; gap: 10px; }
         .bottom-actions .btn { height: 48px; margin: 0; font-size: 14px; }
 
-        /* نافذة التنبيهات المخصصة */
         #custom-popup-modal .settings-card { padding: 35px 25px; border: 1px solid rgba(255,255,255,0.1); }
         #custom-popup-msg { font-size: 15px; font-weight: 500; color: var(--text-primary); line-height: 1.6; margin-bottom: 25px; }
 
-        /* نمط رابط التبديل المطور لنموذج التسجيل */
         .auth-toggle-link {
             display: inline-block; margin-top: 5px; font-size: 13px; font-weight: 600;
             color: var(--accent); cursor: pointer; transition: var(--transition); text-decoration: none;
         }
         .auth-toggle-link:hover { opacity: 0.8; transform: translateY(-1px); }
 
-        /* ========================================== */
-        /* التنسيقات المطورة لنافذة الراديو (جديد)   */
-        /* ========================================== */
-        .radio-channels-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .radio-channel-btn {
-            flex: 1;
-            background: #222227;
-            border: none;
-            color: #e4e4e7;
-            padding: 14px 8px;
-            border-radius: 16px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-        }
-        .radio-channel-btn.active {
-            background: #3f3f46;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .radio-controls-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .radio-btn-play {
-            flex: 1;
-            background: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            height: 52px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: var(--transition);
-        }
-        .radio-btn-play:hover { opacity: 0.9; }
-        .radio-btn-stop {
-            flex: 1;
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 20px;
-            height: 52px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: var(--transition);
-        }
-        .radio-btn-stop:hover { background: rgba(239, 68, 68, 0.15); }
-
-        .radio-visualizer {
-            background: #0d0d11;
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            height: 75px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            margin-top: 5px;
-        }
-        .visualizer-bars {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            height: 40px;
-        }
-        .visualizer-bar {
-            width: 3px;
-            height: 6px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 50px;
-            transition: transform 0.2s ease, background 0.3s ease;
-        }
-        .music-playing-visualizer .visualizer-bar {
-            background: var(--accent);
-            animation: bounceVisualizer 0.6s ease-in-out infinite alternate;
-        }
-        .music-playing-visualizer .visualizer-bar:nth-child(2n) { animation-delay: 0.1s; animation-duration: 0.4s; }
-        .music-playing-visualizer .visualizer-bar:nth-child(3n) { animation-delay: 0.2s; animation-duration: 0.7s; }
-        .music-playing-visualizer .visualizer-bar:nth-child(4n) { animation-delay: 0.3s; animation-duration: 0.5s; }
-        .music-playing-visualizer .visualizer-bar:nth-child(5n) { animation-delay: 0.15s; animation-duration: 0.6s; }
-
-        @keyframes bounceVisualizer {
-            0% { transform: scaleY(1); }
-            100% { transform: scaleY(6); }
-        }
-
-    </style>
-</head>
-<body>
+      
 
     <div id="splash-screen">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -441,7 +311,7 @@
                 </div>
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
-                <div class="lang-btn" onclick="openRadioModal()" id="music-toggle-btn" title="الإذاعة والموسيقى">🔇</div>
+                
                 <div class="lang-btn" onclick="toggleLanguage()" id="lang-toggle-btn">EN</div>
             </div>
         </div>
@@ -458,8 +328,6 @@
         </div>
     </div>
 
-    <!-- تم الإبقاء على العنصر واستخدامه برمجياً للراديو -->
-    <audio id="bg-music"></audio>
 
     <div id="game-interface">
         <iframe id="game-frame" src="" allowfullscreen allow="fullscreen" style="width: 100%; height: 100%; border: none; border-radius: 0;"></iframe>
@@ -477,52 +345,7 @@
             </div>
         </div>
     </div>
-
-    <!-- نافذة الراديو المنبثقة المحدثة بالكامل طبقاً للصورة -->
-    <div id="radio-modal" class="modal-overlay">
-        <div class="settings-card" dir="auto">
-            <button class="modal-close-btn" onclick="closeRadioModal()">✕</button>
-            <h3 data-i18n="radio_title" style="margin-bottom: 25px;">الراديو والموسيقى</h3>
-            
-            <!-- صف اختيار قنوات الإذاعة الثلاثة -->
-            <div class="radio-channels-row">
-                <button onclick="selectRadioStation('english')" class="radio-channel-btn" id="btn-station-english" data-i18n="radio_english_tab">الإنجليزية</button>
-                <button onclick="selectRadioStation('arabic')" class="radio-channel-btn" id="btn-station-arabic" data-i18n="radio_arabic_tab">العربية</button>
-                <button onclick="selectRadioStation('kurdish')" class="radio-channel-btn" id="btn-station-kurdish" data-i18n="radio_kurdish_tab">الكردية</button>
-            </div>
-
-            <!-- صف أزرار التحكم بالتشغيل والإيقاف -->
-            <div class="radio-controls-row">
-                <button onclick="triggerStopRadio()" class="radio-btn-stop">
-                     <span data-i18n="radio_stop_text">إيقاف الراديو</span> 🛑
-                </button>
-                <button onclick="triggerPlayRadio()" class="radio-btn-play">
-                     <span data-i18n="radio_play_text">تشغيل</span> ▶️
-                </button>
-            </div>
-
-            <!-- مظهر تموجات الصوت البصري (Visualizer) -->
-            <div class="radio-visualizer" id="radio-visualizer-container">
-                <div class="visualizer-bars">
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                    <div class="visualizer-bar"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+      
 
     <div id="login-modal" class="modal-overlay">
         <div class="settings-card" dir="auto">
@@ -613,12 +436,11 @@
                 </svg>
                 <span data-i18n="link_facebook_btn">حفظ الحساب عبر فيسبوك</span>
             </button>
-
         </div>
     </div>
 
     <script>
-        // === تهيئة Facebook SDK بالطريقة الرسمية (الآمنة) ===
+        // === تهيئة Facebook SDK ===
         window.fbAsyncInit = function() {
             FB.init({
                 appId      : '2054342995162540', 
@@ -628,7 +450,6 @@
             });
         };
 
-        // تحميل مكتبة فيسبوك بشكل آمن بعد تحميل الصفحة
         (function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
@@ -665,7 +486,6 @@
                 profile_phone_img: "المعرض",
                 profile_balance: "🪙 الرصيد الكلي:",
                 profile_logout: "تسجيل الخروج",
-                radio_title: "الراديو والموسيقى",
                 btn_ok: "حسناً",
                 btn_cancel: "إلغاء",
                 token_word: " توكن",
@@ -679,11 +499,7 @@
                 msg_img_success: "تم تعيين الصورة بنجاح.",
                 msg_logout_confirm: "هل أنت متأكد من تسجيل الخروج ومسح بيانات الحساب؟",
                 guest_name: "زائر_",
-                radio_kurdish_tab: "الكردية",
-                radio_arabic_tab: "العربية",
-                radio_english_tab: "الإنجليزية",
-                radio_play_text: "تشغيل",
-                radio_stop_text: "إيقاف الراديو"
+                
             },
             en: {
                 app_title: "DAMA CHALLENGE",
@@ -711,7 +527,6 @@
                 profile_phone_img: "Gallery",
                 profile_balance: "🪙 Total Balance:",
                 profile_logout: "Logout",
-                radio_title: "Radio & Music",
                 btn_ok: "OK",
                 btn_cancel: "Cancel",
                 token_word: " Tokens",
@@ -725,18 +540,14 @@
                 msg_img_success: "Image set successfully.",
                 msg_logout_confirm: "Are you sure you want to log out and clear account data?",
                 guest_name: "Guest_",
-                radio_kurdish_tab: "Kurdish",
-                radio_arabic_tab: "Arabic",
-                radio_english_tab: "English",
-                radio_play_text: "Play",
-                radio_stop_text: "Stop Radio"
+              
             }
         };
 
         let currentLang = 'ar';
         let isLoginMode = false; 
 
-        // 🔌 الاتصال الخارجي بالسيرفر المحرك للعبة (Hugging Face)
+        // 🔌 الاتصال بالسيرفر المحرك
         const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { transports: ['websocket', 'polling'] });
 
         window.addEventListener('message', (event) => {
@@ -750,14 +561,12 @@
             const errorMsg = currentLang === 'ar' 
                 ? "⚠️ عذراً، انقطع الاتصال بالخادم أو الإنترنت ضعيف. يرجى الانتظار، جاري محاولة إعادة الاتصال..." 
                 : "⚠️ Connection lost. Server is down or internet is weak. Reconnecting...";
-            
             showCustomPopup(errorMsg, false, "", false);
         });
 
         socket.on('connect', () => {
             console.log('تم الاتصال بالسيرفر بنجاح!');
-            if (document.getElementById('custom-popup-modal').style.display === 'flex') {
-                closeCustomPopup(true);
+          
             }
         });
 
@@ -781,13 +590,10 @@
             try {
                 const profileRaw = localStorage.getItem('hub_user_profile');
                 if (!profileRaw) return defaultProfile;
-                
                 const parsed = JSON.parse(profileRaw);
-                if (parsed && typeof parsed === 'object') {
-                    return parsed;
-                }
+                if (parsed && typeof parsed === 'object') return parsed;
             } catch (e) {
-                console.error("🔒 خطأ في معالجة بيانات الملف الشخصي المحفوظة:", e);
+                console.error("🔒 خطأ في معالجة بيانات الملف الشخصي:", e);
             }
             return defaultProfile;
         }
@@ -795,9 +601,7 @@
         socket.on('auth_success', (data) => {
             const msg = safeParseAuthMessage(data.message);
             showCustomPopup(msg);
-            
             localStorage.setItem('hub_user_profile', JSON.stringify(data.profile));
-            
             if(document.getElementById('profile-modal').style.display === 'flex') {
                 syncHubProfile();
             } else {
@@ -815,14 +619,11 @@
                 showCustomPopup(currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
                 return;
             }
-
             if (!socket || !socket.connected) {
-                console.warn("⚠️ السوكيت غير متصل حالياً! جاري إعادة الاتصال تلقائياً...");
-                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال، يرجى المحاولة مرة أخرى خلال ثوانٍ." : "Server connection lost! Reconnecting, please try again in a few seconds.");
+                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال بالسيرفر! جاري المحاولة..." : "Server connection lost!");
                 socket.connect(); 
                 return;
             }
-
             FB.login(function(response) {
                 if (response.authResponse) {
                     const accessToken = response.authResponse.accessToken;
@@ -836,22 +637,16 @@
                 showCustomPopup(currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
                 return;
             }
-
             if (!socket || !socket.connected) {
-                console.warn("⚠️ السوكيت غير متصل حالياً! جاري إعادة الاتصال تلقائياً...");
-                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال، يرجى المحاولة مرة أخرى خلال ثوانٍ." : "Server connection lost! Reconnecting, please try again in a few seconds.");
+                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال بالسيرفر!" : "Server connection lost!");
                 socket.connect(); 
                 return;
             }
-
             FB.login(function(response) {
                 if (response.authResponse) {
                     const accessToken = response.authResponse.accessToken;
                     const profile = getSafeProfile();
-                    socket.emit('link_facebook', { 
-                        accessToken: accessToken, 
-                        guestId: profile.id 
-                    });
+                    socket.emit('link_facebook', { accessToken: accessToken, guestId: profile.id });
                 }
             }); 
         }
@@ -920,129 +715,13 @@
 
             const gameIframe = document.getElementById('game-frame');
             if (gameIframe && gameIframe.contentWindow) {
-                gameIframe.contentWindow.postMessage({ 
-                    type: 'LANGUAGE_CHANGED', 
-                    lang: currentLang 
-                }, '*');
+                gameIframe.contentWindow.postMessage({ type: 'LANGUAGE_CHANGED', lang: currentLang }, '*');
             }
         }
 
-        // ========================================== 
-        // === وظائف الراديو والموسيقى المطورة 100% ===
-        // ========================================== 
-        
-        // تم إضافة الروابط الصحيحة (URLs) بدلاً من الكلمات النصية
-        const RADIO_STATIONS = {
-            english: "https://stream.zeno.fm/f3wvbbqmdg8uv", // إذاعة أجنبية (Lofi)
-            arabic: "https://stream.zeno.fm/vkm4wwawqzquv",  // إذاعة عربية (طرب)
-            kurdish: "https://n0a.radiojar.com/8w3d3tx37qruv" // إذاعة كردية
-        };
-
-        let isMusicPlaying = false;
-        let currentRadioId = localStorage.getItem('hub_radio_id') || 'kurdish';
-        let selectedRadioStation = localStorage.getItem('hub_radio_id') || 'kurdish';
-
-        function openRadioModal() {
-            document.getElementById('radio-modal').style.display = 'flex';
-            updateRadioButtonsUI();
-        }
-
-        function closeRadioModal() {
-            document.getElementById('radio-modal').style.display = 'none';
-        }
-
-        function selectRadioStation(id) {
-            selectedRadioStation = id;
-            updateRadioButtonsUI();
-        }
-
-        function triggerPlayRadio() {
-            // جلب الرابط الحقيقي للبث بناءً على المحطة المختارة
-            const streamUrl = RADIO_STATIONS[selectedRadioStation];
-            if (streamUrl) {
-                playRadio(streamUrl, selectedRadioStation);
-            }
-        }
-
-        function triggerStopRadio() {
-            stopRadio();
-        }
-
-        function playRadio(url, id) {
-            const audioEl = document.getElementById('bg-music');
-            const musicBtn = document.getElementById('music-toggle-btn');
-            
-            audioEl.src = url;
-            audioEl.play().then(() => {
-                isMusicPlaying = true;
-                musicBtn.classList.add('music-playing');
-                musicBtn.innerText = '🎵';
-                
-                localStorage.setItem('hub_radio_id', id);
-                localStorage.setItem('hub_music_enabled', 'true');
-                
-                currentRadioId = id;
-                selectedRadioStation = id;
-                updateRadioButtonsUI();
-            }).catch(e => {
-                console.error("Radio Playback failed", e);
-                showCustomPopup(currentLang === 'ar' ? "عذراً، فشل الاتصال بالإذاعة. تأكد من اتصالك بالإنترنت." : "Failed to connect to the radio stream. Check your connection.");
-            });
-        }
-
-        function stopRadio() {
-            const audioEl = document.getElementById('bg-music');
-            const musicBtn = document.getElementById('music-toggle-btn');
-            
-            audioEl.pause();
-            audioEl.src = ''; 
-            isMusicPlaying = false;
-            
-            musicBtn.classList.remove('music-playing');
-            musicBtn.innerText = '🔇';
-            
-            localStorage.setItem('hub_music_enabled', 'false');
-            updateRadioButtonsUI();
-        }
-
-        function updateRadioButtonsUI() {
-            ['kurdish', 'arabic', 'english'].forEach(id => {
-                const btn = document.getElementById('btn-station-' + id);
-                if (btn) {
-                    if (id === selectedRadioStation) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                }
-            });
-
-            const visualizerContainer = document.getElementById('radio-visualizer-container');
-            if (visualizerContainer) {
-                if (isMusicPlaying) {
-                    visualizerContainer.classList.add('music-playing-visualizer');
-                } else {
-                    visualizerContainer.classList.remove('music-playing-visualizer');
-                }
-            }
-        }
-
-        // التشغيل التلقائي الآمن (معدل لضمان توافق الروابط)
-        window.addEventListener('click', () => {
-            const savedMusicState = localStorage.getItem('hub_music_enabled');
-            const savedRadioId = localStorage.getItem('hub_radio_id') || 'kurdish';
-            
-            if (savedMusicState === 'true' && !isMusicPlaying) {
-                const streamUrl = RADIO_STATIONS[savedRadioId];
-                if (streamUrl) {
-                    playRadio(streamUrl, savedRadioId);
-                }
-            }
-        }, { once: true });
-
-
-        // === باقي الأكواد والنوافذ تعمل بشكل طبيعي ===
-
+        // ==========================================
+        // === النوافذ المنبثقة التنبيهية والتحكم ===
+        // ==========================================
         let customPopupCallback = null;
 
         function showCustomPopup(msg, isPrompt = false, defaultValue = "", showCancel = false, callback = null) {
@@ -1065,7 +744,6 @@
             
             document.getElementById('custom-popup-ok').innerHTML = translations[currentLang].btn_ok;
             cancelBtn.innerHTML = translations[currentLang].btn_cancel;
-
             customPopupCallback = callback;
         }
 
@@ -1074,12 +752,8 @@
             if (customPopupCallback) {
                 const isPrompt = document.getElementById('custom-popup-input-group').style.display === 'block';
                 const inputVal = document.getElementById('custom-popup-input').value;
-                
-                if (isPrompt) {
-                    customPopupCallback(isOk ? inputVal : null);
-                } else {
-                    customPopupCallback(isOk);
-                }
+                if (isPrompt) customPopupCallback(isOk ? inputVal : null);
+                else customPopupCallback(isOk);
             }
         }
 
@@ -1097,8 +771,7 @@
             if (!passInput) return showCustomPopup(translations[currentLang].msg_no_pass);
 
             if (!socket || !socket.connected) {
-                console.warn("⚠️ السوكيت غير متصل حالياً! جاري إعادة الاتصال تلقائياً...");
-                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال، يرجى المحاولة مرة أخرى خلال ثوانٍ." : "Server connection lost! Reconnecting, please try again in a few seconds.");
+                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري المحاولة..." : "Server connection lost!");
                 socket.connect(); 
                 return;
             }
@@ -1134,7 +807,6 @@
                     document.getElementById('game-selector').style.display = 'flex';
                     syncHubProfile();
                 } catch (e) {
-                    console.error("⚠️ ملف التعريف مشوه ومخزن بشكل خاطئ، جاري إعادة الضبط:", e);
                     localStorage.removeItem('hub_user_profile');
                     document.getElementById('game-selector').style.display = 'none';
                     document.getElementById('login-modal').style.display = 'flex';
@@ -1150,27 +822,15 @@
             const randomName = translations[currentLang].guest_name + Math.floor(1000 + Math.random() * 9000);
             
             const guestProfile = {
-                id: randomId,
-                name: randomName,
-                avatar: '1000132081.webp',
-                isCustomAvatar: false,
-                tokens: 999999999, 
-                gamesPlayed: 0, 
-                wins: 0, 
-                losses: 0, 
-                friends: [],
-                purchasedItems: [], 
-                equippedBg: 'bg_wood', 
-                equippedFr: 'fr_classic',
-                equippedPc: 'pc_original'
+                id: randomId, name: randomName, avatar: '1000132081.webp', isCustomAvatar: false,
+                tokens: 999999999, gamesPlayed: 0, wins: 0, losses: 0, friends: [],
+                purchasedItems: [], equippedBg: 'bg_wood', equippedFr: 'fr_classic', equippedPc: 'pc_original'
             };
 
             try {
                 localStorage.setItem('hub_user_profile', JSON.stringify(guestProfile));
                 checkUserAuthentication();
-            } catch (err) {
-                console.error("⚠️ فشل في حفظ جلسة الزائر مؤقتاً:", err);
-            }
+            } catch (err) {}
         }
 
         function syncHubProfile() {
@@ -1201,15 +861,8 @@
 
             const gameIframe = document.getElementById('game-frame');
             if (gameIframe && gameIframe.contentWindow) {
-                gameIframe.contentWindow.postMessage({ 
-                    type: 'INJECT_AVATAR_DIRECT', 
-                    avatarHtml: finalAvatarSrc 
-                }, '*');
-
-                gameIframe.contentWindow.postMessage({ 
-                    type: 'PROFILE_UPDATED', 
-                    profile: profile 
-                }, '*');
+                gameIframe.contentWindow.postMessage({ type: 'INJECT_AVATAR_DIRECT', avatarHtml: finalAvatarSrc }, '*');
+                gameIframe.contentWindow.postMessage({ type: 'PROFILE_UPDATED', profile: profile }, '*');
             }
 
             const linkFbBtn = document.getElementById('link-facebook-guest-btn');
@@ -1228,7 +881,7 @@
                     try {
                         localStorage.setItem('hub_user_profile', JSON.stringify(profile));
                         syncHubProfile();
-                    } catch (err) { }
+                    } catch (err) {}
                 }
             });
         }
@@ -1243,7 +896,7 @@
                 syncHubProfile();
                 document.getElementById('edit-avatar-select').selectedIndex = 0; 
                 showCustomPopup(translations[currentLang].msg_avatar_success);
-            } catch (err) { }
+            } catch (err) {}
         }
 
         function uploadImageFromPhone(event) {
@@ -1277,7 +930,7 @@
                             localStorage.setItem('hub_user_profile', JSON.stringify(profile));
                             syncHubProfile();
                             showCustomPopup(translations[currentLang].msg_img_success);
-                        } catch (error) { }
+                        } catch (error) {}
                     };
                     img.src = e.target.result;
                 };
@@ -1290,7 +943,7 @@
             if(navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(idText).then(() => {
                     showCustomPopup(translations[currentLang].msg_copy_success + idText);
-                }).catch((err) => { fallbackCopyText(idText); });
+                }).catch(() => { fallbackCopyText(idText); });
             } else { fallbackCopyText(idText); }
         }
 
@@ -1312,9 +965,16 @@
         }
         
         function closeProfileModal() { 
-            if (history.state && history.state.view === 'profile') { history.back(); } 
-            else { document.getElementById('profile-modal').style.display = 'none'; }
+            if (history.state && history.state.view === 'profile') history.back(); 
+            else document.getElementById('profile-modal').style.display = 'none';
         }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('profile-modal').style.display === 'flex') closeProfileModal();
+                
+            }
+        });
 
         function startGame() {
             document.getElementById('game-selector').style.display = 'none';
@@ -1330,7 +990,7 @@
         
         function exitGame() {
             document.getElementById('game-interface').style.display = 'none';
-            if(localStorage.getItem('hub_user_profile')) { document.getElementById('game-selector').style.display = 'flex'; }
+            if(localStorage.getItem('hub_user_profile')) document.getElementById('game-selector').style.display = 'flex';
             setTimeout(() => { document.getElementById('game-frame').src = ''; }, 300);
             history.pushState({ view: 'hub' }, '');
             syncHubProfile();
@@ -1339,7 +999,6 @@
         window.addEventListener('popstate', function(e) {
             if (document.getElementById('custom-popup-modal').style.display === 'flex') document.getElementById('custom-popup-modal').style.display = 'none';
             if (document.getElementById('profile-modal').style.display === 'flex') document.getElementById('profile-modal').style.display = 'none';
-            if (document.getElementById('radio-modal').style.display === 'flex') document.getElementById('radio-modal').style.display = 'none';
             
             if (document.getElementById('game-interface').style.display === 'block') {
                 if (e.state && e.state.view === 'hub') {
@@ -1358,7 +1017,7 @@
             try { profile = JSON.parse(profileRaw); } catch (e) { profile = getSafeProfile(); }
             const isGuest = profile.id && profile.id.startsWith('GUEST-');
 
-            if (!isGuest) { executeLogout(isSwitching); } 
+            if (!isGuest) executeLogout(isSwitching);
             else {
                 showCustomPopup(translations[currentLang].msg_logout_confirm, false, "", true, (res) => {
                     if (res) { socket.emit('logout_guest_clean', { id: profile.id }); executeLogout(isSwitching); }
@@ -1379,8 +1038,8 @@
 
             if (isFacebookUser && typeof FB !== 'undefined') {
                 FB.getLoginStatus(function(response) {
-                    if (response.status === 'connected') { FB.logout(function() { location.reload(); }); } 
-                    else { location.reload(); }
+                    if (response.status === 'connected') FB.logout(function() { location.reload(); });
+                    else location.reload();
                 });
             } else { location.reload(); }
         }
