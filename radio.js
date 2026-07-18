@@ -160,10 +160,10 @@ function updateRadioButtonsUI() {
         if(visualizer) visualizer.classList.add('playing');
         if(toggleBtn) toggleBtn.classList.add('playing');
         
-        // توزيع حركات عشوائية للمؤشر البصري ليبدو طبيعياً
+        // توزيع حركات عشوائية للمؤشر البصري ليبدو طبيعياً (تم تصحيح الخطأ هنا)
         document.querySelectorAll('.visualizer-box .bar').forEach(bar => {
-            bar.style.animationDelay = `${Math.random() * 0.5}s\`;
-            bar.style.animationDuration = `${0.5 + Math.random() * 0.5}s\`;
+            bar.style.animationDelay = `${Math.random() * 0.5}s`;
+            bar.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
         });
     } else {
         if(visualizer) visualizer.classList.remove('playing');
