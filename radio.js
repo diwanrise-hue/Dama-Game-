@@ -1,5 +1,5 @@
 // ========================================== //
-//  radio.js - النسخة المطورة بالتصميم والترتيب الجديد
+//  radio.js - النسخة المطورة بالأسهم والزر الموحد وحفظ حالة الخروج
 // ========================================== //
 
 // 1. روابط البث وأسماء القنوات
@@ -63,8 +63,6 @@ function injectRadioUI() {
             border: 2px solid transparent; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600;
             transition: all 0.3s ease; font-family: inherit;
         }
-        
-        /* تباين وإضاءة إطار القناة المختارة (Glowing Neon Effect) */
         .station-btn.active { 
             background: #1c1c1e; 
             color: #fff; 
@@ -73,10 +71,39 @@ function injectRadioUI() {
             font-weight: 700;
         }
 
+        /* حاوية المؤشر النبضي والأسهم */
+        .visualizer-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* أزرار الأسهم الجانبية */
+        .nav-arrow-btn {
+            background: #2c2c2e;
+            border: 1px solid #3a3a3c;
+            color: #30d158;
+            font-size: 18px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.2s ease;
+        }
+        .nav-arrow-btn:hover {
+            background: #3a3a3c;
+            box-shadow: 0 0 8px rgba(48, 209, 88, 0.4);
+        }
+
         /* المؤشر النبضي البصري */
         .visualizer-box {
-            background: #111112; border-radius: 12px; height: 70px; display: flex;
-            justify-content: center; align-items: center; gap: 3px; overflow: hidden; margin-bottom: 15px;
+            flex: 1; background: #111112; border-radius: 12px; height: 70px; display: flex;
+            justify-content: center; align-items: center; gap: 3px; overflow: hidden;
         }
         .visualizer-box .bar {
             width: 3px; height: 10px; background: #3a3a3c; border-radius: 2px; transition: height 0.1s ease;
@@ -88,7 +115,7 @@ function injectRadioUI() {
             100% { height: 45px; }
         }
 
-        /* صندوق اسم القناة أسفل المؤشر النبضي */
+        /* صندوق اسم القناة */
         .channel-info-box {
             margin-bottom: 25px;
             min-height: 50px;
@@ -107,14 +134,15 @@ function injectRadioUI() {
             transition: 0.3s;
         }
 
-        /* أزرار التحكم في الأسفل تماماً */
-        .radio-actions { display: flex; gap: 15px; }
+        /* زر التحكم الموحد الجديد */
+        .radio-actions { display: flex; }
         .action-btn {
             flex: 1; padding: 14px 10px; border: none; border-radius: 12px;
             cursor: pointer; font-size: 16px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit;
+            transition: background 0.3s, color 0.3s, box-shadow 0.3s;
         }
         .play-btn { background: #30d158; color: white; box-shadow: 0 4px 10px rgba(48, 209, 88, 0.3); }
-        .stop-btn { background: #3a1c1e; color: #ff453a; }
+        .stop-btn { background: #3a1c1e; color: #ff453a; box-shadow: 0 4px 10px rgba(255, 69, 58, 0.15); }
     `;
     document.head.appendChild(style);
 
@@ -123,7 +151,6 @@ function injectRadioUI() {
         barsHTML += '<div class="bar"></div>';
     }
 
-    // --- بناء الهيكل بالترتيب المطلوب الجديد ---
     const uiHTML = `
         <!-- الزر العائم -->
         <button id="music-toggle-btn" class="radio-floating-btn" onclick="openRadioModal()">📻</button>
@@ -140,24 +167,27 @@ function injectRadioUI() {
                 <div class="stations-list">
                     <button id="btn-station-english" class="station-btn" onclick="selectRadioStation('english')">الإنجليزية</button>
                     <button id="btn-station-arabic" class="station-btn" onclick="selectRadioStation('arabic')">العربية</button>
-                    <button id="btn-station-kurdish" class="station-btn" onclick="selectRadioStation('kurdish')">الكردية</button>
+                    <button id="btn-station-kurdish" class="station-btn active" onclick="selectRadioStation('kurdish')">الكردية</button>
                 </div>
 
-                <!-- 2. المؤشر النبضي في المنتصف -->
-                <div id="visualizer" class="visualizer-box">
-                    ` + barsHTML + `
+                <!-- 2. المؤشر النبضي في المنتصف محاطاً بأسهم يمين ويسار -->
+                <div class="visualizer-container">
+                    <button class="nav-arrow-btn" onclick="prevStation()">❯</button>
+                    <div id="visualizer" class="visualizer-box">
+                        ` + barsHTML + `
+                    </div>
+                    <button class="nav-arrow-btn" onclick="nextStation()">❮</button>
                 </div>
 
-                <!-- 3. اسم القناة والحالة يظهر هنا (تحت المؤشر النبضي مباشرة) -->
+                <!-- 3. اسم القناة والحالة -->
                 <div class="channel-info-box">
                     <span id="channel-display-name" class="channel-name-text">---</span>
                     <div id="radio-status" class="radio-status-text"></div>
                 </div>
 
-                <!-- 4. أزرار التشغيل والإيقاف في الأسفل تماماً -->
+                <!-- 4. زر التحكم الموحد والذكي في الأسفل تماماً -->
                 <div class="radio-actions">
-                    <button class="action-btn stop-btn" onclick="triggerStopRadio()">إيقاف الراديو 🔴</button>
-                    <button class="action-btn play-btn" onclick="triggerPlayRadio()">تشغيل ▶</button>
+                    <button id="radio-toggle-action-btn" class="action-btn play-btn" onclick="toggleRadioPlayState()">تشغيل ▶</button>
                 </div>
             </div>
         </div>
@@ -166,7 +196,7 @@ function injectRadioUI() {
     updateRadioButtonsUI();
 }
 
-// 3. دوال التحكم بالواجهة
+// 3. دوال التحكم بالواجهة والتنقل بالأسهم
 function openRadioModal() {
     document.getElementById('radio-modal').style.display = 'flex';
 }
@@ -180,15 +210,38 @@ function selectRadioStation(stationId) {
         selectedRadioStation = stationId;
         updateRadioButtonsUI();
         
-        // إذا كان الراديو يعمل بالفعل، قم بتشغيل القناة الجديدة فوراً عند النقر عليها
         if (isMusicPlaying) {
             triggerPlayRadio();
         }
     }
 }
 
+// دالة السهم للانتقال للمحطة التالية
+function nextStation() {
+    const keys = Object.keys(RADIO_STATIONS);
+    let index = keys.indexOf(selectedRadioStation);
+    index = (index + 1) % keys.length;
+    selectRadioStation(keys[index]);
+}
+
+// دالة السهم للانتقال للمحطة السابقة
+function prevStation() {
+    const keys = Object.keys(RADIO_STATIONS);
+    let index = keys.indexOf(selectedRadioStation);
+    index = (index - 1 + keys.length) % keys.length;
+    selectRadioStation(keys[index]);
+}
+
+// دالة التحكم الموحدة (تشغيل / إيقاف) تبعاً للحالة الحالية
+function toggleRadioPlayState() {
+    if (isMusicPlaying) {
+        stopRadio();
+    } else {
+        triggerPlayRadio();
+    }
+}
+
 function updateRadioButtonsUI() {
-    // تحديث إضاءة أزرار المحطات والمطابقة
     ['kurdish', 'arabic', 'english'].forEach(id => {
         const btn = document.getElementById('btn-station-' + id);
         if (btn) {
@@ -196,7 +249,6 @@ function updateRadioButtonsUI() {
         }
     });
 
-    // تحديث اسم القناة تحت المؤشر
     const nameDisplay = document.getElementById('channel-display-name');
     if (nameDisplay) {
         nameDisplay.innerText = STATION_NAMES[selectedRadioStation];
@@ -205,6 +257,7 @@ function updateRadioButtonsUI() {
     const visualizer = document.getElementById('visualizer');
     const toggleBtn = document.getElementById('music-toggle-btn');
     const statusText = document.getElementById('radio-status');
+    const toggleActionBtn = document.getElementById('radio-toggle-action-btn');
     
     if (isMusicPlaying) {
         if(visualizer) visualizer.classList.add('playing');
@@ -212,6 +265,11 @@ function updateRadioButtonsUI() {
         if(statusText) {
             statusText.innerText = "( تعمل الآن 🟢 )";
             statusText.style.color = "#30d158";
+        }
+        // تحويل الزر الموحد إلى وضع الإيقاف الأحمر
+        if (toggleActionBtn) {
+            toggleActionBtn.innerText = "إيقاف الراديو 🔴";
+            toggleActionBtn.className = "action-btn stop-btn";
         }
         
         document.querySelectorAll('.visualizer-box .bar').forEach(bar => {
@@ -221,6 +279,11 @@ function updateRadioButtonsUI() {
     } else {
         if(visualizer) visualizer.classList.remove('playing');
         if(toggleBtn) toggleBtn.classList.remove('playing');
+        // تحويل الزر الموحد إلى وضع التشغيل الأخضر
+        if (toggleActionBtn) {
+            toggleActionBtn.innerText = "تشغيل ▶";
+            toggleActionBtn.className = "action-btn play-btn";
+        }
     }
 }
 
@@ -230,16 +293,12 @@ function triggerPlayRadio() {
     if (url) playRadio(url, selectedRadioStation);
 }
 
-function triggerStopRadio() {
-    stopRadio();
-}
-
 function playRadio(url, id) {
     const statusText = document.getElementById('radio-status');
 
     if (statusText) {
         statusText.innerText = "( جاري تشغيل )";
-        statusText.style.color = "#ff9500"; // لون برتقالي أثناء التحميل الانتظار
+        statusText.style.color = "#ff9500"; 
     }
 
     if (audioInstance) {
@@ -290,7 +349,7 @@ function stopRadio() {
     updateRadioButtonsUI();
 }
 
-// 5. تهيئة السكربت عند تحميل الصفحة
+// 5. تهيئة السكربت والتعامل مع الخروج من اللعبة
 document.addEventListener('DOMContentLoaded', () => {
     injectRadioUI(); 
 
@@ -309,9 +368,20 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', handleFirstClick);
 });
 
+// التعامل الذكي مع الخروج من اللعبة (إيقاف دائم لمنع التشغيل التلقائي عند العودة)
+const handleGameExitState = () => {
+    localStorage.setItem('hub_music_enabled', 'false');
+    if (audioInstance) {
+        audioInstance.pause();
+    }
+};
+window.addEventListener('beforeunload', handleGameExitState);
+window.addEventListener('pagehide', handleGameExitState);
+
 // تصدير الدوال للنطاق العالمي
 window.openRadioModal = openRadioModal;
 window.closeRadioModal = closeRadioModal;
 window.selectRadioStation = selectRadioStation;
-window.triggerPlayRadio = triggerPlayRadio;
-window.triggerStopRadio = triggerStopRadio;
+window.nextStation = nextStation;
+window.prevStation = prevStation;
+window.toggleRadioPlayState = toggleRadioPlayState;
