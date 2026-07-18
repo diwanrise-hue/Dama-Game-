@@ -373,16 +373,16 @@
         </div>
     </div>
 
-    <!-- نافذة الراديو المنبثقة (تم تحديث استدعاء الأزرار لترسل المعرف فقط) -->
+    <!-- نافذة الراديو المنبثقة -->
     <div id="radio-modal" class="modal-overlay">
         <div class="settings-card" dir="auto">
             <button class="modal-close-btn" onclick="closeRadioModal()">✕</button>
             <h3 data-i18n="radio_title" style="margin-bottom: 25px;">الراديو والموسيقى</h3>
             
             <div class="action-grid" style="grid-template-columns: 1fr;">
-                <button onclick="playRadio('kurdish')" class="btn btn-secondary" id="btn-radio-kurdish" data-i18n="radio_kurdish">📻 إذاعة كردية (كلاسيك)</button>
-                <button onclick="playRadio('arabic')" class="btn btn-secondary" id="btn-radio-arabic" data-i18n="radio_arabic">📻 إذاعة عربية (طرب)</button>
-                <button onclick="playRadio('english')" class="btn btn-secondary" id="btn-radio-english" data-i18n="radio_english">📻 إذاعة أجنبية (Lofi)</button>
+                <button onclick="playRadio('https://yayin6.radyohizmeti.com:7050/;stream', 'kurdish')" class="btn btn-secondary" id="btn-radio-kurdish" data-i18n="radio_kurdish">📻 إذاعة كردية (كلاسيك)</button>
+                <button onclick="playRadio('https://stream.zeno.fm/67v6u6cc10etv', 'arabic')" class="btn btn-secondary" id="btn-radio-arabic" data-i18n="radio_arabic">📻 إذاعة عربية (طرب)</button>
+                <button onclick="playRadio('https://stream.zeno.fm/f3wvbbv8ca0uv', 'english')" class="btn btn-secondary" id="btn-radio-english" data-i18n="radio_english">📻 إذاعة أجنبية (Lofi)</button>
                 <button onclick="stopRadio()" class="btn btn-danger" data-i18n="radio_stop" style="margin-top:10px;">🛑 إيقاف الراديو</button>
             </div>
         </div>
@@ -481,7 +481,6 @@
         </div>
     </div>
 
-    <!-- الكود الرئيسي للمنصة المستقر والخالي من الراديو -->
     <script>
         // === تهيئة Facebook SDK بالطريقة الرسمية (الآمنة) ===
         window.fbAsyncInit = function() {
@@ -493,6 +492,7 @@
             });
         };
 
+        // تحميل مكتبة فيسبوك بشكل آمن بعد تحميل الصفحة
         (function(d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
@@ -596,10 +596,13 @@
         };
 
         let currentLang = 'ar';
-        window.currentLang = currentLang; // مشاركة المتغير لملف الراديو الخارجي
         let isLoginMode = false; 
 
-        // 🔌 الاتصال الخارجي بالسيرفر المحرك للعبة
+        // === متغيرات وإعدادات الراديو ===
+        let isMusicPlaying = false;
+        let currentRadioId = localStorage.getItem('hub_radio_id') || '';
+
+        // 🔌 الاتصال الخارجي بالسيرفر المحرك للعبة (Hugging Face)
         const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { transports: ['websocket', 'polling'] });
 
         window.addEventListener('message', (event) => {
@@ -610,7 +613,7 @@
 
         socket.on('disconnect', (reason) => {
             console.warn('انقطع الاتصال:', reason);
-            const errorMsg = window.currentLang === 'ar' 
+            const errorMsg = currentLang === 'ar' 
                 ? "⚠️ عذراً، انقطع الاتصال بالخادم أو الإنترنت ضعيف. يرجى الانتظار، جاري محاولة إعادة الاتصال..." 
                 : "⚠️ Connection lost. Server is down or internet is weak. Reconnecting...";
             
@@ -627,7 +630,7 @@
         function getSafeProfile() {
             const defaultProfile = {
                 id: "GUEST-DEFAULT",
-                name: window.currentLang === 'ar' ? "زائر" : "Guest",
+                name: currentLang === 'ar' ? "زائر" : "Guest",
                 avatar: '1000132081.webp',
                 isCustomAvatar: false,
                 tokens: 0,
@@ -646,7 +649,9 @@
                 if (!profileRaw) return defaultProfile;
                 
                 const parsed = JSON.parse(profileRaw);
-                if (parsed && typeof parsed === 'object') return parsed;
+                if (parsed && typeof parsed === 'object') {
+                    return parsed;
+                }
             } catch (e) {
                 console.error("🔒 خطأ في معالجة بيانات الملف الشخصي المحفوظة:", e);
             }
@@ -656,6 +661,7 @@
         socket.on('auth_success', (data) => {
             const msg = safeParseAuthMessage(data.message);
             showCustomPopup(msg);
+            
             localStorage.setItem('hub_user_profile', JSON.stringify(data.profile));
             
             if(document.getElementById('profile-modal').style.display === 'flex') {
@@ -672,35 +678,46 @@
 
         function loginWithFacebook() {
             if (typeof FB === 'undefined') {
-                showCustomPopup(window.currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
+                showCustomPopup(currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
                 return;
             }
+
             if (!socket || !socket.connected) {
-                showCustomPopup(window.currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال..." : "Server connection lost! Reconnecting...");
+                console.warn("⚠️ السوكيت غير متصل حالياً! جاري إعادة الاتصال تلقائياً...");
+                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال، يرجى المحاولة مرة أخرى خلال ثوانٍ." : "Server connection lost! Reconnecting, please try again in a few seconds.");
                 socket.connect(); 
                 return;
             }
+
+            // تم إزالة كائن الـ scope تماماً لمنع تعارض المتصفحات وتوليد توكن بصلاحية نظيفة ومقبولة سيرفرات
             FB.login(function(response) {
                 if (response.authResponse) {
-                    socket.emit('login_facebook', { accessToken: response.authResponse.accessToken });
+                    const accessToken = response.authResponse.accessToken;
+                    socket.emit('login_facebook', { accessToken: accessToken });
                 }
             }); 
         }
 
         function linkGuestWithFacebook() {
             if (typeof FB === 'undefined') {
-                showCustomPopup(window.currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
+                showCustomPopup(currentLang === 'ar' ? "جاري الاتصال بخوادم فيسبوك، جرب مرة أخرى." : "Connecting to Facebook, try again.");
                 return;
             }
+
             if (!socket || !socket.connected) {
+                console.warn("⚠️ السوكيت غير متصل حالياً! جاري إعادة الاتصال تلقائياً...");
+                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال، يرجى المحاولة مرة أخرى خلال ثوانٍ." : "Server connection lost! Reconnecting, please try again in a few seconds.");
                 socket.connect(); 
                 return;
             }
+
+            // تم إزالة كائن الـ scope تماماً هنا أيضاً لضمان مطابقة التوكن للربط الآمن المستقر
             FB.login(function(response) {
                 if (response.authResponse) {
+                    const accessToken = response.authResponse.accessToken;
                     const profile = getSafeProfile();
                     socket.emit('link_facebook', { 
-                        accessToken: response.authResponse.accessToken, 
+                        accessToken: accessToken, 
                         guestId: profile.id 
                     });
                 }
@@ -711,7 +728,7 @@
             if (typeof msgStr === 'string' && msgStr.startsWith('{')) {
                 try {
                     const parsed = JSON.parse(msgStr);
-                    return window.currentLang === 'ar' ? parsed.ar : parsed.en;
+                    return currentLang === 'ar' ? parsed.ar : parsed.en;
                 } catch(e) { return msgStr; }
             }
             return msgStr;
@@ -726,22 +743,22 @@
             const avatarGroup = document.getElementById('avatar-select-group');
 
             if (isLoginMode) {
-                titleEl.innerText = window.currentLang === 'ar' ? "تسجيل الدخول" : "Sign In";
-                descEl.innerText = window.currentLang === 'ar' ? "أدخل اسم المستخدم وكلمة المرور للعودة لرصيدك المزامَن." : "Enter your username and password to log back into your profile.";
-                submitBtn.innerText = window.currentLang === 'ar' ? "تسجيل الدخول" : "Sign In";
-                toggleLink.innerText = window.currentLang === 'ar' ? "لا تملك حساباً؟ إنشاء حساب جديد" : "Don't have an account? Create one";
+                titleEl.innerText = currentLang === 'ar' ? "تسجيل الدخول" : "Sign In";
+                descEl.innerText = currentLang === 'ar' ? "أدخل اسم المستخدم وكلمة المرور للعودة لرصيدك المزامَن." : "Enter your username and password to log back into your profile.";
+                submitBtn.innerText = currentLang === 'ar' ? "تسجيل الدخول" : "Sign In";
+                toggleLink.innerText = currentLang === 'ar' ? "لا تملك حساباً؟ إنشاء حساب جديد" : "Don't have an account? Create one";
                 avatarGroup.style.display = 'none'; 
             } else {
-                titleEl.innerText = window.currentLang === 'ar' ? "إنشاء حساب" : "Create Account";
-                descEl.innerText = translations[window.currentLang].login_desc;
-                submitBtn.innerText = translations[window.currentLang].login_save;
-                toggleLink.innerText = window.currentLang === 'ar' ? "امتلك حساباً بالفعل؟ تسجيل الدخول" : "Already have an account? Sign In";
+                titleEl.innerText = currentLang === 'ar' ? "إنشاء حساب" : "Create Account";
+                descEl.innerText = translations[currentLang].login_desc;
+                submitBtn.innerText = translations[currentLang].login_save;
+                toggleLink.innerText = currentLang === 'ar' ? "امتلك حساباً بالفعل؟ تسجيل الدخول" : "Already have an account? Sign In";
                 avatarGroup.style.display = 'block';
             }
         }
 
         function updateTranslations() {
-            const t = translations[window.currentLang];
+            const t = translations[currentLang];
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) el.innerHTML = t[key];
@@ -754,30 +771,110 @@
             const toggleLink = document.getElementById('auth-toggle-mode-link');
             if(toggleLink) {
                 if(isLoginMode) {
-                    toggleLink.innerText = window.currentLang === 'ar' ? "لا تملك حساباً؟ إنشاء حساب جديد" : "Don't have an account? Create one";
+                    toggleLink.innerText = currentLang === 'ar' ? "لا تملك حساباً؟ إنشاء حساب جديد" : "Don't have an account? Create one";
                 } else {
-                    toggleLink.innerText = window.currentLang === 'ar' ? "امتلك حساباً بالفعل؟ تسجيل الدخول" : "Already have an account? Sign In";
+                    toggleLink.innerText = currentLang === 'ar' ? "امتلك حساباً بالفعل؟ تسجيل الدخول" : "Already have an account? Sign In";
                 }
             }
             syncHubProfile(); 
         }
 
         function toggleLanguage() {
-            currentLang = window.currentLang === 'ar' ? 'en' : 'ar';
-            window.currentLang = currentLang;
-            document.documentElement.lang = window.currentLang;
-            document.documentElement.dir = window.currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('lang-toggle-btn').innerText = window.currentLang === 'ar' ? 'EN' : 'العربية';
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('lang-toggle-btn').innerText = currentLang === 'ar' ? 'EN' : 'العربية';
             updateTranslations();
 
             const gameIframe = document.getElementById('game-frame');
             if (gameIframe && gameIframe.contentWindow) {
                 gameIframe.contentWindow.postMessage({ 
                     type: 'LANGUAGE_CHANGED', 
-                    lang: window.currentLang 
+                    lang: currentLang 
                 }, '*');
             }
         }
+
+        // === وظائف الراديو المتطورة ===
+        function openRadioModal() {
+            document.getElementById('radio-modal').style.display = 'flex';
+            updateRadioButtonsUI();
+        }
+
+        function closeRadioModal() {
+            document.getElementById('radio-modal').style.display = 'none';
+        }
+
+        function playRadio(url, id) {
+            const audioEl = document.getElementById('bg-music');
+            const musicBtn = document.getElementById('music-toggle-btn');
+            
+            audioEl.src = url;
+            audioEl.play().then(() => {
+                isMusicPlaying = true;
+                musicBtn.classList.add('music-playing');
+                musicBtn.innerText = '🎵';
+                
+                localStorage.setItem('hub_radio_url', url);
+                localStorage.setItem('hub_radio_id', id);
+                localStorage.setItem('hub_music_enabled', 'true');
+                
+                currentRadioId = id;
+                updateRadioButtonsUI();
+            }).catch(e => {
+                console.error("Radio Playback failed", e);
+                showCustomPopup(currentLang === 'ar' ? "عذراً، فشل الاتصال بالإذاعة. تأكد من اتصالك بالإنترنت." : "Failed to connect to the radio stream. Check your connection.");
+            });
+        }
+
+        function stopRadio() {
+            const audioEl = document.getElementById('bg-music');
+            const musicBtn = document.getElementById('music-toggle-btn');
+            
+            audioEl.pause();
+            audioEl.src = ''; // مسح المصدر لإيقاف التحميل في الخلفية
+            isMusicPlaying = false;
+            
+            musicBtn.classList.remove('music-playing');
+            musicBtn.innerText = '🔇';
+            
+            localStorage.setItem('hub_music_enabled', 'false');
+            currentRadioId = '';
+            updateRadioButtonsUI();
+        }
+
+        function updateRadioButtonsUI() {
+            // إعادة تعيين جميع أزرار الراديو
+            ['kurdish', 'arabic', 'english'].forEach(id => {
+                const btn = document.getElementById('btn-radio-' + id);
+                if (btn) {
+                    btn.classList.remove('radio-active', 'btn-primary');
+                    btn.classList.add('btn-secondary');
+                }
+            });
+
+            // تفعيل الزر الحالي إذا كان يعمل
+            if (currentRadioId && isMusicPlaying) {
+                const activeBtn = document.getElementById('btn-radio-' + currentRadioId);
+                if (activeBtn) {
+                    activeBtn.classList.remove('btn-secondary');
+                    activeBtn.classList.add('btn-primary', 'radio-active');
+                }
+            }
+        }
+
+        // تشغيل تلقائي للراديو بعد أول ضغطة للمستخدم لتخطي حظر المتصفح
+        window.addEventListener('click', () => {
+            const savedMusicState = localStorage.getItem('hub_music_enabled');
+            const savedRadioUrl = localStorage.getItem('hub_radio_url');
+            const savedRadioId = localStorage.getItem('hub_radio_id');
+            
+            if (savedMusicState === 'true' && savedRadioUrl && !isMusicPlaying) {
+                currentRadioId = savedRadioId;
+                playRadio(savedRadioUrl, savedRadioId);
+            }
+        }, { once: true });
+
 
         let customPopupCallback = null;
 
@@ -799,17 +896,18 @@
                 cancelBtn.style.display = showCancel ? 'block' : 'none';
             }
             
-            document.getElementById('custom-popup-ok').innerHTML = translations[window.currentLang].btn_ok;
-            cancelBtn.innerHTML = translations[window.currentLang].btn_cancel;
+            document.getElementById('custom-popup-ok').innerHTML = translations[currentLang].btn_ok;
+            cancelBtn.innerHTML = translations[currentLang].btn_cancel;
+
             customPopupCallback = callback;
         }
-        window.showCustomPopup = showCustomPopup; // إتاحته للملف الخارجي
 
         function closeCustomPopup(isOk) {
             document.getElementById('custom-popup-modal').style.display = 'none';
             if (customPopupCallback) {
                 const isPrompt = document.getElementById('custom-popup-input-group').style.display === 'block';
                 const inputVal = document.getElementById('custom-popup-input').value;
+                
                 if (isPrompt) {
                     customPopupCallback(isOk ? inputVal : null);
                 } else {
@@ -821,17 +919,19 @@
         document.getElementById('custom-popup-ok').addEventListener('click', () => closeCustomPopup(true));
         document.getElementById('custom-popup-cancel').addEventListener('click', () => closeCustomPopup(false));
 
-        function triggerAlertSoon() { showCustomPopup(translations[window.currentLang].msg_soon); }
+        function triggerAlertSoon() { showCustomPopup(translations[currentLang].msg_soon); }
 
         function submitManualAuthForm() {
             const nameInput = document.getElementById('login-name-input').value.trim();
             const passInput = document.getElementById('login-password-input').value;
             const avatarSelect = document.getElementById('login-avatar-select').value;
 
-            if (!nameInput) return showCustomPopup(translations[window.currentLang].msg_no_name);
-            if (!passInput) return showCustomPopup(translations[window.currentLang].msg_no_pass);
+            if (!nameInput) return showCustomPopup(translations[currentLang].msg_no_name);
+            if (!passInput) return showCustomPopup(translations[currentLang].msg_no_pass);
 
             if (!socket || !socket.connected) {
+                console.warn("⚠️ السوكيت غير متصل حالياً! جاري إعادة الاتصال تلقائياً...");
+                showCustomPopup(currentLang === 'ar' ? "فشل الاتصال المؤقت بالسيرفر! جاري إعادة الاتصال، يرجى المحاولة مرة أخرى خلال ثوانٍ." : "Server connection lost! Reconnecting, please try again in a few seconds.");
                 socket.connect(); 
                 return;
             }
@@ -867,6 +967,7 @@
                     document.getElementById('game-selector').style.display = 'flex';
                     syncHubProfile();
                 } catch (e) {
+                    console.error("⚠️ ملف التعريف مشوه ومخزن بشكل خاطئ، جاري إعادة الضبط:", e);
                     localStorage.removeItem('hub_user_profile');
                     document.getElementById('game-selector').style.display = 'none';
                     document.getElementById('login-modal').style.display = 'flex';
@@ -879,7 +980,7 @@
 
         function loginAsGuest() {
             const randomId = "GUEST-" + Math.floor(100000 + Math.random() * 900000);
-            const randomName = translations[window.currentLang].guest_name + Math.floor(1000 + Math.random() * 9000);
+            const randomName = translations[currentLang].guest_name + Math.floor(1000 + Math.random() * 9000);
             
             const guestProfile = {
                 id: randomId,
@@ -905,25 +1006,29 @@
             }
         }
 
+        // 🚀 المنظومة العبقرية الجديدة والمحصنة لإرسال الرابط الخام (النقي) وتخطي جدران حماية المتصفحات
         function syncHubProfile() {
             let globalProfile = localStorage.getItem('hub_user_profile');
             if (!globalProfile) return;
             
             const profile = getSafeProfile();
             const tokenVal = profile.tokens || 0;
-            const tokenText = tokenVal + translations[window.currentLang].token_word;
+            const tokenText = tokenVal + translations[currentLang].token_word;
 
             if (document.getElementById('hub-token-count')) document.getElementById('hub-token-count').innerText = tokenVal;
             if (document.getElementById('profile-stat-tokens')) document.getElementById('profile-stat-tokens').innerText = tokenText;
             if (document.getElementById('profile-display-name')) document.getElementById('profile-display-name').innerText = profile.name;
             if (document.getElementById('profile-display-id')) document.getElementById('profile-display-id').innerText = profile.id;
             
+            // 1. تجهيز وصناعة رابط الصورة الكامل والنقي بدقة هنا في السيرفر الرئيسي للـ Hub
             let finalAvatarSrc = profile.avatar || '1000132081.webp';
             const isFullUrl = finalAvatarSrc.startsWith('http://') || finalAvatarSrc.startsWith('https://') || finalAvatarSrc.startsWith('data:image');
             if (!isFullUrl) {
+                // تم تعديل المسار هنا فقط ليكون من المستودع المباشر في GitHub
                 finalAvatarSrc = "https://raw.githubusercontent.com/diwanrise-hue/Kings-Challenge/main/" + finalAvatarSrc;
             }
 
+            // 2. تحديث الحقول المحلية في الـ Hub نفسه
             const renderAvatarLocal = (elementId) => {
                 const el = document.getElementById(elementId);
                 if (el) el.innerHTML = `<img src="${finalAvatarSrc}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
@@ -931,10 +1036,18 @@
             renderAvatarLocal('hub-profile-avatar');
             renderAvatarLocal('profile-display-avatar');
 
+            // 3. إرسال الرابط الخام النقي (بدون وسوم HTML المرفوضة حمايتها) إلى داخل الـ Iframe ليقوم ببناء صورته ذاتياً بامتياز
             const gameIframe = document.getElementById('game-frame');
             if (gameIframe && gameIframe.contentWindow) {
-                gameIframe.contentWindow.postMessage({ type: 'INJECT_AVATAR_DIRECT', avatarHtml: finalAvatarSrc }, '*');
-                gameIframe.contentWindow.postMessage({ type: 'PROFILE_UPDATED', profile: profile }, '*');
+                gameIframe.contentWindow.postMessage({ 
+                    type: 'INJECT_AVATAR_DIRECT', 
+                    avatarHtml: finalAvatarSrc // 👈 إرسال الرابط الخام فقط لتأمين وسهولة الاختراق الأمني
+                }, '*');
+
+                gameIframe.contentWindow.postMessage({ 
+                    type: 'PROFILE_UPDATED', 
+                    profile: profile 
+                }, '*');
             }
 
             const linkFbBtn = document.getElementById('link-facebook-guest-btn');
@@ -947,7 +1060,7 @@
             let profile = getSafeProfile();
             if(!profile) return;
             
-            showCustomPopup(translations[window.currentLang].msg_prompt_name, true, profile.name, true, (newName) => {
+            showCustomPopup(translations[currentLang].msg_prompt_name, true, profile.name, true, (newName) => {
                 if (newName && newName.trim() !== "") {
                     profile.name = newName.trim();
                     try {
@@ -967,7 +1080,7 @@
                 localStorage.setItem('hub_user_profile', JSON.stringify(profile));
                 syncHubProfile();
                 document.getElementById('edit-avatar-select').selectedIndex = 0; 
-                showCustomPopup(translations[window.currentLang].msg_avatar_success);
+                showCustomPopup(translations[currentLang].msg_avatar_success);
             } catch (err) { }
         }
 
@@ -1001,7 +1114,7 @@
                         try {
                             localStorage.setItem('hub_user_profile', JSON.stringify(profile));
                             syncHubProfile();
-                            showCustomPopup(translations[window.currentLang].msg_img_success);
+                            showCustomPopup(translations[currentLang].msg_img_success);
                         } catch (error) { }
                     };
                     img.src = e.target.result;
@@ -1014,7 +1127,7 @@
             const idText = document.getElementById('profile-display-id').innerText;
             if(navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(idText).then(() => {
-                    showCustomPopup(translations[window.currentLang].msg_copy_success + idText);
+                    showCustomPopup(translations[currentLang].msg_copy_success + idText);
                 }).catch((err) => { fallbackCopyText(idText); });
             } else { fallbackCopyText(idText); }
         }
@@ -1025,8 +1138,8 @@
             textArea.focus(); textArea.select();
             try {
                 document.execCommand('copy');
-                showCustomPopup(translations[window.currentLang].msg_copy_success + text);
-            } catch (err) { showCustomPopup(translations[window.currentLang].msg_copy_fail); }
+                showCustomPopup(translations[currentLang].msg_copy_success + text);
+            } catch (err) { showCustomPopup(translations[currentLang].msg_copy_fail); }
             document.body.removeChild(textArea);
         }
 
@@ -1048,6 +1161,7 @@
             gameFrame.src = 'dama/dama.html';
             history.pushState({ view: 'game' }, '');
             
+            // 🚀 حقن آمن وفوري للرابط بمجرد الإقلاع المباشر للـ iframe
             gameFrame.onload = function() {
                 syncHubProfile();
             };
@@ -1085,7 +1199,7 @@
 
             if (!isGuest) { executeLogout(isSwitching); } 
             else {
-                showCustomPopup(translations[window.currentLang].msg_logout_confirm, false, "", true, (res) => {
+                showCustomPopup(translations[currentLang].msg_logout_confirm, false, "", true, (res) => {
                     if (res) { socket.emit('logout_guest_clean', { id: profile.id }); executeLogout(isSwitching); }
                 });
             }
@@ -1115,8 +1229,5 @@
         window.syncHubProfile = syncHubProfile;
         window.exitGame = exitGame; 
     </script>
-
-    <!-- 📻 هنا يتم استدعاء كود التحكم بالراديو الخارجي المستقل -->
-    <script src="radio.js"></script>
 </body>
-</html>
+    </html>
