@@ -4,15 +4,15 @@
 const RADIO_STATIONS = {
     kurdish: {
         name: "فۆلکلۆری کوردی",
-        url: "https://yayin6.radyohizmeti.com:7050/;stream"
+        url: "https://dengeqamishlo.stream.laut.fm/dengeqamishlo"
     },
     arabic: {
         name: "إذاعة عربية (طرب)",
-        url: "https://stream.zeno.fm/67v6u6cc10etv"
+        url: ""
     },
     english: {
         name: "إذاعة أجنبية (Lofi)",
-        url: "https://stream.zeno.fm/f3wvbbv8ca0uv"
+        url: ""
     }
 };
 
@@ -43,6 +43,10 @@ function playRadio(url, id) {
     const musicBtn = document.getElementById('music-toggle-btn');
     
     if (!audioEl) return;
+    if (!url) {
+        console.warn("⚠️ لم يتم تحديد رابط لهذه الإذاعة بعد.");
+        return;
+    }
 
     // تصفير المصدر الحالي قبل شحن الرابط الجديد لضمان سلاسة التبديل
     audioEl.pause();
