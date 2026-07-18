@@ -316,6 +316,111 @@
         }
         .auth-toggle-link:hover { opacity: 0.8; transform: translateY(-1px); }
 
+        /* ========================================== */
+        /* التنسيقات المطورة لنافذة الراديو (جديد)   */
+        /* ========================================== */
+        .radio-channels-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .radio-channel-btn {
+            flex: 1;
+            background: #222227;
+            border: none;
+            color: #e4e4e7;
+            padding: 14px 8px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .radio-channel-btn.active {
+            background: #3f3f46;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .radio-controls-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .radio-btn-play {
+            flex: 1;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            height: 52px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        .radio-btn-play:hover { opacity: 0.9; }
+        .radio-btn-stop {
+            flex: 1;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 20px;
+            height: 52px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        .radio-btn-stop:hover { background: rgba(239, 68, 68, 0.15); }
+
+        .radio-visualizer {
+            background: #0d0d11;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .visualizer-bars {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 40px;
+        }
+        .visualizer-bar {
+            width: 3px;
+            height: 6px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 50px;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+        .music-playing-visualizer .visualizer-bar {
+            background: var(--accent);
+            animation: bounceVisualizer 0.6s ease-in-out infinite alternate;
+        }
+        .music-playing-visualizer .visualizer-bar:nth-child(2n) { animation-delay: 0.1s; animation-duration: 0.4s; }
+        .music-playing-visualizer .visualizer-bar:nth-child(3n) { animation-delay: 0.2s; animation-duration: 0.7s; }
+        .music-playing-visualizer .visualizer-bar:nth-child(4n) { animation-delay: 0.3s; animation-duration: 0.5s; }
+        .music-playing-visualizer .visualizer-bar:nth-child(5n) { animation-delay: 0.15s; animation-duration: 0.6s; }
+
+        @keyframes bounceVisualizer {
+            0% { transform: scaleY(1); }
+            100% { transform: scaleY(6); }
+        }
+
     </style>
 </head>
 <body>
@@ -373,17 +478,48 @@
         </div>
     </div>
 
-    <!-- نافذة الراديو المنبثقة -->
+    <!-- نافذة الراديو المنبثقة المحدثة بالكامل طبقاً للصورة -->
     <div id="radio-modal" class="modal-overlay">
-        < class="settings-card" dir="auto">
+        <div class="settings-card" dir="auto">
             <button class="modal-close-btn" onclick="closeRadioModal()">✕</button>
             <h3 data-i18n="radio_title" style="margin-bottom: 25px;">الراديو والموسيقى</h3>
             
-            <div class="action-grid" style="grid-template-columns: 1fr;">
-    <button onclick="playRadio('kurdish')" class="btn btn-secondary" id="btn-radio-kurdish" data-i18n="radio_kurdish">📻 إذاعة كردية (كلاسيك)</button>
-    <button onclick="playRadio('arabic')" class="btn btn-secondary" id="btn-radio-arabic" data-i18n="radio_arabic">📻 إذاعة عربية (طرب)</button>
-    <button onclick="playRadio('english')" class="btn btn-secondary" id="btn-radio-english" data-i18n="radio_english">📻 إذاعة أجنبية (Lofi)</button>
-    <button onclick="stopRadio()" class="btn btn-danger" data-i18n="radio_stop" style="margin-top:10px;">🛑 إيقاف الراديو</button>
+            <!-- صف اختيار قنوات الإذاعة الثلاثة -->
+            <div class="radio-channels-row">
+                <button onclick="selectRadioStation('english')" class="radio-channel-btn" id="btn-station-english" data-i18n="radio_english_tab">الإنجليزية</button>
+                <button onclick="selectRadioStation('arabic')" class="radio-channel-btn" id="btn-station-arabic" data-i18n="radio_arabic_tab">العربية</button>
+                <button onclick="selectRadioStation('kurdish')" class="radio-channel-btn" id="btn-station-kurdish" data-i18n="radio_kurdish_tab">الكردية</button>
+            </div>
+
+            <!-- صف أزرار التحكم بالتشغيل والإيقاف -->
+            <div class="radio-controls-row">
+                <button onclick="triggerStopRadio()" class="radio-btn-stop">
+                     <span data-i18n="radio_stop_text">إيقاف الراديو</span> 🛑
+                </button>
+                <button onclick="triggerPlayRadio()" class="radio-btn-play">
+                     <span data-i18n="radio_play_text">تشغيل</span> ▶️
+                </button>
+            </div>
+
+            <!-- مظهر تموجات الصوت البصري (Visualizer) -->
+            <div class="radio-visualizer" id="radio-visualizer-container">
+                <div class="visualizer-bars">
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                    <div class="visualizer-bar"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -546,7 +682,12 @@
                 msg_avatar_success: "تم تحديث الشخصية بنجاح.",
                 msg_img_success: "تم تعيين الصورة بنجاح.",
                 msg_logout_confirm: "هل أنت متأكد من تسجيل الخروج ومسح بيانات الحساب؟",
-                guest_name: "زائر_"
+                guest_name: "زائر_",
+                radio_kurdish_tab: "الكردية",
+                radio_arabic_tab: "العربية",
+                radio_english_tab: "الإنجليزية",
+                radio_play_text: "تشغيل",
+                radio_stop_text: "إيقاف الراديو"
             },
             en: {
                 app_title: "DAMA CHALLENGE",
@@ -591,16 +732,22 @@
                 msg_avatar_success: "Avatar updated successfully.",
                 msg_img_success: "Image set successfully.",
                 msg_logout_confirm: "Are you sure you want to log out and clear account data?",
-                guest_name: "Guest_"
+                guest_name: "Guest_",
+                radio_kurdish_tab: "Kurdish",
+                radio_arabic_tab: "Arabic",
+                radio_english_tab: "English",
+                radio_play_text: "Play",
+                radio_stop_text: "Stop Radio"
             }
         };
 
         let currentLang = 'ar';
         let isLoginMode = false; 
 
-        // === متغيرات وإعدادات الراديو ===
+        // === متغيرات وإعدادات الراديو والموسيقى المحدثة ===
         let isMusicPlaying = false;
-        let currentRadioId = localStorage.getItem('hub_radio_id') || '';
+        let currentRadioId = localStorage.getItem('hub_radio_id') || 'kurdish';
+        let selectedRadioStation = localStorage.getItem('hub_radio_id') || 'kurdish';
 
         // 🔌 الاتصال الخارجي بالسيرفر المحرك للعبة (Hugging Face)
         const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { transports: ['websocket', 'polling'] });
@@ -689,7 +836,6 @@
                 return;
             }
 
-            // تم إزالة كائن الـ scope تماماً لمنع تعارض المتصفحات وتوليد توكن بصلاحية نظيفة ومقبولة سيرفرات
             FB.login(function(response) {
                 if (response.authResponse) {
                     const accessToken = response.authResponse.accessToken;
@@ -711,7 +857,6 @@
                 return;
             }
 
-            // تم إزالة كائن الـ scope تماماً هنا أيضاً لضمان مطابقة التوكن للربط الآمن المستقر
             FB.login(function(response) {
                 if (response.authResponse) {
                     const accessToken = response.authResponse.accessToken;
@@ -795,7 +940,7 @@
             }
         }
 
-        // === وظائف الراديو المتطورة ===
+        // === وظائف الراديو المتطورة والتصميم الجديد ===
         function openRadioModal() {
             document.getElementById('radio-modal').style.display = 'flex';
             updateRadioButtonsUI();
@@ -803,6 +948,20 @@
 
         function closeRadioModal() {
             document.getElementById('radio-modal').style.display = 'none';
+        }
+
+        function selectRadioStation(id) {
+            selectedRadioStation = id;
+            updateRadioButtonsUI();
+        }
+
+        function triggerPlayRadio() {
+            // يتم تمرير المعرف كرابط وهوية بناءً على البنية الأصلية للكود الخاص بك لضمان العمل
+            playRadio(selectedRadioStation, selectedRadioStation);
+        }
+
+        function triggerStopRadio() {
+            stopRadio();
         }
 
         function playRadio(url, id) {
@@ -820,6 +979,7 @@
                 localStorage.setItem('hub_music_enabled', 'true');
                 
                 currentRadioId = id;
+                selectedRadioStation = id;
                 updateRadioButtonsUI();
             }).catch(e => {
                 console.error("Radio Playback failed", e);
@@ -832,33 +992,36 @@
             const musicBtn = document.getElementById('music-toggle-btn');
             
             audioEl.pause();
-            audioEl.src = ''; // مسح المصدر لإيقاف التحميل في الخلفية
+            audioEl.src = ''; 
             isMusicPlaying = false;
             
             musicBtn.classList.remove('music-playing');
             musicBtn.innerText = '🔇';
             
             localStorage.setItem('hub_music_enabled', 'false');
-            currentRadioId = '';
             updateRadioButtonsUI();
         }
 
         function updateRadioButtonsUI() {
-            // إعادة تعيين جميع أزرار الراديو
+            // تحديث أزرار القنوات العلوية الـ 3 النشطة والغير نشطة
             ['kurdish', 'arabic', 'english'].forEach(id => {
-                const btn = document.getElementById('btn-radio-' + id);
+                const btn = document.getElementById('btn-station-' + id);
                 if (btn) {
-                    btn.classList.remove('radio-active', 'btn-primary');
-                    btn.classList.add('btn-secondary');
+                    if (id === selectedRadioStation) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
                 }
             });
 
-            // تفعيل الزر الحالي إذا كان يعمل
-            if (currentRadioId && isMusicPlaying) {
-                const activeBtn = document.getElementById('btn-radio-' + currentRadioId);
-                if (activeBtn) {
-                    activeBtn.classList.remove('btn-secondary');
-                    activeBtn.classList.add('btn-primary', 'radio-active');
+            // التحكم بحركة الـ Visualizer لتنطلق مع تشغيل الراديو وتتوقف عند إيقافه
+            const visualizerContainer = document.getElementById('radio-visualizer-container');
+            if (visualizerContainer) {
+                if (isMusicPlaying) {
+                    visualizerContainer.classList.add('music-playing-visualizer');
+                } else {
+                    visualizerContainer.classList.remove('music-playing-visualizer');
                 }
             }
         }
@@ -871,6 +1034,7 @@
             
             if (savedMusicState === 'true' && savedRadioUrl && !isMusicPlaying) {
                 currentRadioId = savedRadioId;
+                selectedRadioStation = savedRadioId || 'kurdish';
                 playRadio(savedRadioUrl, savedRadioId);
             }
         }, { once: true });
@@ -1006,7 +1170,6 @@
             }
         }
 
-        // 🚀 المنظومة العبقرية الجديدة والمحصنة لإرسال الرابط الخام (النقي) وتخطي جدران حماية المتصفحات
         function syncHubProfile() {
             let globalProfile = localStorage.getItem('hub_user_profile');
             if (!globalProfile) return;
@@ -1020,15 +1183,12 @@
             if (document.getElementById('profile-display-name')) document.getElementById('profile-display-name').innerText = profile.name;
             if (document.getElementById('profile-display-id')) document.getElementById('profile-display-id').innerText = profile.id;
             
-            // 1. تجهيز وصناعة رابط الصورة الكامل والنقي بدقة هنا في السيرفر الرئيسي للـ Hub
             let finalAvatarSrc = profile.avatar || '1000132081.webp';
             const isFullUrl = finalAvatarSrc.startsWith('http://') || finalAvatarSrc.startsWith('https://') || finalAvatarSrc.startsWith('data:image');
             if (!isFullUrl) {
-                // تم تعديل المسار هنا فقط ليكون من المستودع المباشر في GitHub
                 finalAvatarSrc = "https://raw.githubusercontent.com/diwanrise-hue/Kings-Challenge/main/" + finalAvatarSrc;
             }
 
-            // 2. تحديث الحقول المحلية في الـ Hub نفسه
             const renderAvatarLocal = (elementId) => {
                 const el = document.getElementById(elementId);
                 if (el) el.innerHTML = `<img src="${finalAvatarSrc}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">`;
@@ -1036,12 +1196,11 @@
             renderAvatarLocal('hub-profile-avatar');
             renderAvatarLocal('profile-display-avatar');
 
-            // 3. إرسال الرابط الخام النقي (بدون وسوم HTML المرفوضة حمايتها) إلى داخل الـ Iframe ليقوم ببناء صورته ذاتياً بامتياز
             const gameIframe = document.getElementById('game-frame');
             if (gameIframe && gameIframe.contentWindow) {
                 gameIframe.contentWindow.postMessage({ 
                     type: 'INJECT_AVATAR_DIRECT', 
-                    avatarHtml: finalAvatarSrc // 👈 إرسال الرابط الخام فقط لتأمين وسهولة الاختراق الأمني
+                    avatarHtml: finalAvatarSrc 
                 }, '*');
 
                 gameIframe.contentWindow.postMessage({ 
@@ -1161,7 +1320,6 @@
             gameFrame.src = 'dama/dama.html';
             history.pushState({ view: 'game' }, '');
             
-            // 🚀 حقن آمن وفوري للرابط بمجرد الإقلاع المباشر للـ iframe
             gameFrame.onload = function() {
                 syncHubProfile();
             };
@@ -1230,4 +1388,4 @@
         window.exitGame = exitGame; 
     </script>
 </body>
-    </html>
+</html>
