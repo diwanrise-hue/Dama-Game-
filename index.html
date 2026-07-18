@@ -1376,23 +1376,3 @@
     </script>
 </body>
 </html>
-
-
-هذا كود العميل اعد كتابته بالكامل بدون حذف او نقصان بعد  ابحث في كود العميل الخاص بك (ملف الـ HTML) عن دالة resumeRadio() وقم باستبدالها بالنسخة الذكية والمحدثة التالية:         // دالة تشغيل / استئناف الراديو بناءً على آخر إذاعة تم اختيارها بشكل سليم
-        function resumeRadio() {
-            const savedRadioId = localStorage.getItem('hub_radio_id') || 'kurdish'; // الكردية كخيار افتراضي إذا كان فارغاً
-            
-            // التحقق من أن ملف radio.js محمل والمصفوفة موجودة
-            if (typeof RADIO_STATIONS !== 'undefined' && RADIO_STATIONS[savedRadioId]) {
-                const targetRadio = RADIO_STATIONS[savedRadioId];
-                if (targetRadio.url) {
-                    playRadio(targetRadio.url, savedRadioId);
-                } else {
-                    // حل طوارئ في حال كانت بقية الأزرار فارغة
-                    playRadio('https://dengeqamishlo.stream.laut.fm/dengeqamishlo', 'kurdish');
-                }
-            } else {
-                // استدعاء مباشر كحل احتياطي صارم
-                playRadio('https://dengeqamishlo.stream.laut.fm/dengeqamishlo', 'kurdish');
-            }
-        }
