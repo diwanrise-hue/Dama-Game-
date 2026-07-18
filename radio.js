@@ -1,5 +1,5 @@
 // ========================================== //
-//  radio.js - النسخة المطابقة للتصميم المطلوب //
+//  radio.js - النسخة المطابقة والمحسنة (بدون أخطاء)
 // ========================================== //
 
 // 1. روابط البث
@@ -13,15 +13,12 @@ let audioInstance = null;
 let isMusicPlaying = false;
 let selectedRadioStation = localStorage.getItem('hub_radio_id') || 'kurdish';
 
-// 2. حقن التصميم (CSS) والواجهة (HTML) في الصفحة برمجياً
+// 2. حقن التصميم والواجهة
 function injectRadioUI() {
-    // التحقق من عدم وجود الواجهة مسبقاً لمنع التكرار
     if (document.getElementById('radio-modal')) return;
 
-    // --- التصميم المطابق للصورة ---
     const style = document.createElement('style');
     style.innerHTML = `
-        /* زر الراديو العائم */
         .radio-floating-btn {
             position: fixed; bottom: 20px; left: 20px;
             background: #1c1c1e; border: 2px solid #333; color: white;
@@ -31,21 +28,18 @@ function injectRadioUI() {
         }
         .radio-floating-btn.playing { border-color: #34c759; box-shadow: 0 0 15px rgba(52, 199, 89, 0.4); }
 
-        /* خلفية النافذة المنبثقة */
         .radio-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center;
             z-index: 10000; dir: rtl; font-family: 'Tajawal', sans-serif;
         }
 
-        /* صندوق النافذة */
         .radio-modal-content {
             background: #1c1c1e; padding: 25px; border-radius: 20px; text-align: center;
             color: white; width: 90%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             position: relative;
         }
 
-        /* الهيدر وزر الإغلاق */
         .radio-header { display: flex; justify-content: center; align-items: center; margin-bottom: 25px; position: relative; }
         .radio-header h3 { margin: 0; font-size: 20px; font-weight: 700; color: #fff; }
         .close-btn { 
@@ -53,7 +47,6 @@ function injectRadioUI() {
             background: none; border: none; color: #888; font-size: 20px; cursor: pointer; padding: 5px;
         }
 
-        /* أزرار المحطات */
         .stations-list { display: flex; gap: 10px; margin-bottom: 20px; }
         .station-btn {
             flex: 1; padding: 12px 5px; background: #2c2c2e; color: #ccc;
@@ -62,7 +55,6 @@ function injectRadioUI() {
         }
         .station-btn.active { background: #3c3c3e; color: #fff; box-shadow: inset 0 0 0 1px #555; }
 
-        /* أزرار التحكم (تشغيل / إيقاف) */
         .radio-actions { display: flex; gap: 15px; margin-bottom: 20px; }
         .action-btn {
             flex: 1; padding: 15px 10px; border: none; border-radius: 12px;
@@ -71,7 +63,6 @@ function injectRadioUI() {
         .play-btn { background: #34c759; color: white; }
         .stop-btn { background: #3a1c1e; color: #ff453a; }
 
-        /* المؤشر البصري */
         .visualizer-box {
             background: #111112; border-radius: 12px; height: 70px; display: flex;
             justify-content: center; align-items: center; gap: 3px; overflow: hidden;
@@ -81,7 +72,6 @@ function injectRadioUI() {
         }
         .visualizer-box.playing .bar { background: #555; animation: equalizer 0.8s infinite alternate ease-in-out; }
         
-        /* حركة المؤشر البصري */
         @keyframes equalizer {
             0% { height: 10px; }
             100% { height: 40px; }
@@ -89,18 +79,14 @@ function injectRadioUI() {
     `;
     document.head.appendChild(style);
 
-    // تجهيز أعمدة المؤشر البصري بدون استخدام علامة $
     let barsHTML = '';
     for(let i = 0; i < 30; i++) {
         barsHTML += '<div class="bar"></div>';
     }
 
-    // --- بناء الواجهة (HTML) ---
     const uiHTML = `
-        <!-- الزر العائم -->
         <button id="music-toggle-btn" class="radio-floating-btn" onclick="openRadioModal()">📻</button>
 
-        <!-- النافذة المنبثقة -->
         <div id="radio-modal" class="radio-modal-overlay" dir="rtl">
             <div class="radio-modal-content">
                 <div class="radio-header">
@@ -126,8 +112,6 @@ function injectRadioUI() {
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', uiHTML);
-
-    // تحديث الواجهة بناءً على البيانات المحفوظة
     updateRadioButtonsUI();
 }
 
@@ -148,7 +132,6 @@ function selectRadioStation(stationId) {
 }
 
 function updateRadioButtonsUI() {
-    // تحديث أزرار المحطات
     ['kurdish', 'arabic', 'english'].forEach(id => {
         const btn = document.getElementById('btn-station-' + id);
         if (btn) {
@@ -156,7 +139,6 @@ function updateRadioButtonsUI() {
         }
     });
 
-    // تحديث المؤشر البصري والزر العائم
     const visualizer = document.getElementById('visualizer');
     const toggleBtn = document.getElementById('music-toggle-btn');
     
@@ -164,7 +146,6 @@ function updateRadioButtonsUI() {
         if(visualizer) visualizer.classList.add('playing');
         if(toggleBtn) toggleBtn.classList.add('playing');
         
-        // استخدام الطريقة التقليدية (بدون $) لضمان عدم ظهور أخطاء في المتصفح
         document.querySelectorAll('.visualizer-box .bar').forEach(bar => {
             bar.style.animationDelay = (Math.random() * 0.5) + "s";
             bar.style.animationDuration = (0.5 + Math.random() * 0.5) + "s";
@@ -175,7 +156,7 @@ function updateRadioButtonsUI() {
     }
 }
 
-// 4. دوال التحكم بالصوت
+// 4. دوال التحكم بالصوت (إصلاح خطأ DOMException هنا)
 function triggerPlayRadio() {
     const url = RADIO_STATIONS[selectedRadioStation];
     if (url) playRadio(url, selectedRadioStation);
@@ -186,35 +167,44 @@ function triggerStopRadio() {
 }
 
 function playRadio(url, id) {
+    // إيقاف وتنظيف أي صوت يعمل حالياً بأمان
     if (audioInstance) {
         audioInstance.pause();
-        audioInstance.src = "";
+        audioInstance.removeAttribute('src'); 
         audioInstance = null;
     }
 
-    audioInstance = new Audio();
-    audioInstance.src = url;
+    audioInstance = new Audio(url);
     audioInstance.crossOrigin = "anonymous";
     audioInstance.preload = "auto";
 
-    audioInstance.play().then(() => {
-        isMusicPlaying = true;
-        localStorage.setItem('hub_radio_url', url);
-        localStorage.setItem('hub_radio_id', id);
-        localStorage.setItem('hub_music_enabled', 'true');
-        updateRadioButtonsUI();
-    }).catch(e => {
-        console.error("خطأ في التشغيل:", e);
-        isMusicPlaying = false;
-        updateRadioButtonsUI();
-        alert("فشل الاتصال بالمحطة. يرجى المحاولة مرة أخرى.");
-    });
+    // تتبع حالة التشغيل لمنع أخطاء التداخل
+    const playPromise = audioInstance.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isMusicPlaying = true;
+            localStorage.setItem('hub_radio_url', url);
+            localStorage.setItem('hub_radio_id', id);
+            localStorage.setItem('hub_music_enabled', 'true');
+            updateRadioButtonsUI();
+        }).catch(e => {
+            // تجاهل خطأ المقاطعة الناتج عن النقر السريع (DOMException)
+            if (e.name === 'AbortError' || e.message.includes('interrupted')) {
+                console.log("تمت مقاطعة التشغيل لبدء أمر جديد (أمر طبيعي).");
+            } else {
+                console.error("خطأ فعلي في الاتصال:", e);
+                isMusicPlaying = false;
+                updateRadioButtonsUI();
+            }
+        });
+    }
 }
 
 function stopRadio() {
     if (audioInstance) {
         audioInstance.pause();
-        audioInstance.src = ""; 
+        audioInstance.removeAttribute('src'); 
         audioInstance = null;
     }
     isMusicPlaying = false;
@@ -224,10 +214,10 @@ function stopRadio() {
 
 // 5. تهيئة السكربت عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
-    injectRadioUI(); // بناء الواجهة فوراً
+    injectRadioUI(); 
 
-    // التشغيل التلقائي إذا كان محفوظاً مسبقاً (عند أول نقرة)
-    window.addEventListener('click', () => {
+    // التشغيل التلقائي الآمن
+    const handleFirstClick = () => {
         const savedMusicState = localStorage.getItem('hub_music_enabled');
         const savedRadioId = localStorage.getItem('hub_radio_id') || 'kurdish';
         const savedRadioUrl = RADIO_STATIONS[savedRadioId];
@@ -236,10 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedRadioStation = savedRadioId;
             playRadio(savedRadioUrl, savedRadioId);
         }
-    }, { once: true });
+        window.removeEventListener('click', handleFirstClick);
+    };
+
+    window.addEventListener('click', handleFirstClick);
 });
 
-// تصدير الدوال للنطاق العالمي لتعمل مع onClick في HTML
+// تصدير الدوال
 window.openRadioModal = openRadioModal;
 window.closeRadioModal = closeRadioModal;
 window.selectRadioStation = selectRadioStation;
