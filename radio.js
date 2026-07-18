@@ -1,25 +1,38 @@
 // ========================================== //
-//  radio.js - النسخة المحدثة بالأسهم المعكوسة والمسميات الجديدة والرسائل التفاعلية
+//  radio.js - نسخة القنوات الضمنية المتعددة داخل الأصناف
 // ========================================== //
 
-// 1. روابط البث وأسماء القنوات المحددة
+// 1. هيكل البيانات الجديد: يمكنك إضافة أي عدد من القنوات والروابط داخل كل صنف هنا بسهولة
 const RADIO_STATIONS = {
-    kurdish: "https://stream-156.zeno.fm/x0xhw6c6g2zuv?zs=AfL9IRdsQ_qHIebZBo-9GA",  
-    arabic: "https://tatar.net.ua/radio/8000/radio.mp3",
-    english: "https://icecast.walmradio.com:8443/classical"
-};
-
-const STATION_NAMES = {
-    kurdish: "كوردي 1",
-    arabic: "عربي 1",
-    english: "إنجليزي 1"
+    kurdish: [
+        { name: "كوردي 1", url: "https://stream-156.zeno.fm/x0xhw6c6g2zuv?zs=AfL9IRdsQ_qHIebZBo-9GA" },
+        { name: "كوردي 2", url: "https://تغيير_الرابط_هنا_مستقبلاً.mp3" }, // يمكنك تغيير الرابط أو إضافة المزيد
+        { name: "كوردي 3", url: "https://تغيير_الرابط_هنا_مستقبلاً.mp3" }
+    ],
+    arabic: [
+        { name: "عربي 1", url: "https://tatar.net.ua/radio/8000/radio.mp3" },
+        { name: "عربي 2", url: "https://تغيير_الرابط_هنا_مستقبلاً.mp3" }
+    ],
+    english: [
+        { name: "إنجليزي 1", url: "https://icecast.walmradio.com:8443/classical" },
+        { name: "إنجليزي 2", url: "https://تغيير_الرابط_هنا_مستقبلاً.mp3" }
+    ]
 };
 
 let audioInstance = null;
 let isMusicPlaying = false;
-let selectedRadioStation = localStorage.getItem('hub_radio_id') || 'kurdish';
 
-// 2. حقن التصميم والواجهة برمجياً
+// إدارة الحالة: الصنف الحالي ورقم القناة الحالية داخل الصنف
+let selectedCategory = localStorage.getItem('hub_radio_category') || 'kurdish';
+let currentChannelIndex = parseInt(localStorage.getItem('hub_radio_channel_index')) || 0;
+
+// التحقق من صحة الفهارس (حتى لا يحدث خطأ إذا قمت بتعديل المصفوفات)
+if (!RADIO_STATIONS[selectedCategory] || !RADIO_STATIONS[selectedCategory][currentChannelIndex]) {
+    selectedCategory = 'kurdish';
+    currentChannelIndex = 0;
+}
+
+// 2. حقن التصميم والواجهة
 function injectRadioUI() {
     if (document.getElementById('radio-modal')) return;
 
@@ -56,7 +69,7 @@ function injectRadioUI() {
             background: none; border: none; color: #888; font-size: 20px; cursor: pointer; padding: 5px;
         }
 
-        /* قائمة المحطات في الأعلى */
+        /* قائمة الأصناف في الأعلى */
         .stations-list { display: flex; gap: 10px; margin-bottom: 25px; }
         .station-btn {
             flex: 1; padding: 12px 5px; background: #2c2c2e; color: #8e8e93;
@@ -80,7 +93,7 @@ function injectRadioUI() {
             margin-bottom: 15px;
         }
 
-        /* أزرار الأسهم الجانبية للتنقل */
+        /* أزرار الأسهم الجانبية للتنقل بين القنوات الضمنية */
         .nav-arrow-btn {
             background: #2c2c2e;
             border: 1px solid #3a3a3c;
@@ -116,7 +129,7 @@ function injectRadioUI() {
             100% { height: 45px; }
         }
 
-        /* صندوق اسم القناة والحالة أسفل النبض مباشرة */
+        /* صندوق اسم القناة المختارة والحالة أسفل النبض */
         .channel-info-box {
             margin-bottom: 25px;
             min-height: 55px;
@@ -136,7 +149,7 @@ function injectRadioUI() {
             transition: 0.3s;
         }
 
-        /* زر التحكم الموحد والذكي في الأسفل */
+        /* زر التشغيل والإيقاف الموحد */
         .radio-actions { display: flex; }
         .action-btn {
             flex: 1; padding: 14px 10px; border: none; border-radius: 12px;
@@ -165,29 +178,29 @@ function injectRadioUI() {
                     <h3>الراديو والموسيقى</h3>
                 </div>
                 
-                <!-- 1. أزرار الفئات/القنوات في الأعلى -->
+                <!-- 1. أزرار الأصناف الرئيسية في الأعلى -->
                 <div class="stations-list">
-                    <button id="btn-station-english" class="station-btn" onclick="selectRadioStation('english')">الإنجليزية</button>
-                    <button id="btn-station-arabic" class="station-btn" onclick="selectRadioStation('arabic')">العربية</button>
-                    <button id="btn-station-kurdish" class="station-btn active" onclick="selectRadioStation('kurdish')">الكردية</button>
+                    <button id="btn-station-english" class="station-btn" onclick="selectRadioCategory('english')">الإنجليزية</button>
+                    <button id="btn-station-arabic" class="station-btn" onclick="selectRadioCategory('arabic')">العربية</button>
+                    <button id="btn-station-kurdish" class="station-btn" onclick="selectRadioCategory('kurdish')">الكردية</button>
                 </div>
 
-                <!-- 2. المؤشر النبضي مع الأسهم (تم عكس اتجاه وظائف الأسهم هنا) -->
+                <!-- 2. المؤشر النبضي مع الأسهم المعكوسة للتنقل بين قنوات الصنف الداخلي -->
                 <div class="visualizer-container">
-                    <button class="nav-arrow-btn" onclick="nextStation()">❯</button>
+                    <button class="nav-arrow-btn" onclick="prevChannel()">❯</button>
                     <div id="visualizer" class="visualizer-box">
                         ` + barsHTML + `
                     </div>
-                    <button class="nav-arrow-btn" onclick="prevStation()">❮</button>
+                    <button class="nav-arrow-btn" onclick="nextChannel()">❮</button>
                 </div>
 
-                <!-- 3. المسمى الجديد (كوردي 1، عربي 1...) يظهر هنا أسفل النبض مباشرة -->
+                <!-- 3. اسم القناة الفرعية المختارة (مثال: كوردي 1) أسفل النبض مباشرة -->
                 <div class="channel-info-box">
                     <span id="channel-display-name" class="channel-name-text">---</span>
                     <div id="radio-status" class="radio-status-text"></div>
                 </div>
 
-                <!-- 4. زر التشغيل والإيقاف الموحد -->
+                <!-- 4. زر التحكم الموحد الذكي -->
                 <div class="radio-actions">
                     <button id="radio-toggle-action-btn" class="action-btn play-btn" onclick="toggleRadioPlayState()">تشغيل ▶</button>
                 </div>
@@ -198,7 +211,7 @@ function injectRadioUI() {
     updateRadioButtonsUI();
 }
 
-// 3. دوال التحكم بالواجهة والتنقل بالأسهم
+// 3. دوال التحكم بالواجهة والتنقل
 function openRadioModal() {
     document.getElementById('radio-modal').style.display = 'flex';
 }
@@ -207,35 +220,35 @@ function closeRadioModal() {
     document.getElementById('radio-modal').style.display = 'none';
 }
 
-function selectRadioStation(stationId) {
-    if (RADIO_STATIONS[stationId]) {
-        selectedRadioStation = stationId;
+// عند اختيار صنف رئيسي (عربي، كردي، إنجليزي)
+function selectRadioCategory(category) {
+    if (RADIO_STATIONS[category]) {
+        selectedCategory = category;
+        currentChannelIndex = 0; // إعادة التعيين لأول قناة في الصنف الجديد
         updateRadioButtonsUI();
         
-        // تغيير القناة فوراً عند التغيير إن كان الراديو يعمل
         if (isMusicPlaying) {
             triggerPlayRadio();
         }
     }
 }
 
-// دالة السهم للانتقال للمحطة التالية
-function nextStation() {
-    const keys = Object.keys(RADIO_STATIONS);
-    let index = keys.indexOf(selectedRadioStation);
-    index = (index + 1) % keys.length;
-    selectRadioStation(keys[index]);
+// الأسهم الآن تبدل القنوات الضمنية الموجودة داخل الصنف
+function nextChannel() {
+    const channels = RADIO_STATIONS[selectedCategory];
+    currentChannelIndex = (currentChannelIndex + 1) % channels.length;
+    updateRadioButtonsUI();
+    if (isMusicPlaying) triggerPlayRadio();
 }
 
-// دالة السهم للانتقال للمحطة السابقة
-function prevStation() {
-    const keys = Object.keys(RADIO_STATIONS);
-    let index = keys.indexOf(selectedRadioStation);
-    index = (index - 1 + keys.length) % keys.length;
-    selectRadioStation(keys[index]);
+function prevChannel() {
+    const channels = RADIO_STATIONS[selectedCategory];
+    currentChannelIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
+    updateRadioButtonsUI();
+    if (isMusicPlaying) triggerPlayRadio();
 }
 
-// تشغيل/إيقاف مؤقت تبعاً للحالة الحالية
+// زر التحكم الموحد
 function toggleRadioPlayState() {
     if (isMusicPlaying) {
         stopRadio();
@@ -245,17 +258,19 @@ function toggleRadioPlayState() {
 }
 
 function updateRadioButtonsUI() {
+    // تحديث الصنف النشط في الأعلى
     ['kurdish', 'arabic', 'english'].forEach(id => {
         const btn = document.getElementById('btn-station-' + id);
         if (btn) {
-            id === selectedRadioStation ? btn.classList.add('active') : btn.classList.remove('active');
+            id === selectedCategory ? btn.classList.add('active') : btn.classList.remove('active');
         }
     });
 
-    // إظهار الاسم الدقيق مثل (كوردي 1) أسفل النبض
+    // إظهار اسم القناة الضمنية المختارة أسفل النبض (مثل: كوردي 1)
+    const currentChannel = RADIO_STATIONS[selectedCategory][currentChannelIndex];
     const nameDisplay = document.getElementById('channel-display-name');
-    if (nameDisplay) {
-        nameDisplay.innerText = STATION_NAMES[selectedRadioStation];
+    if (nameDisplay && currentChannel) {
+        nameDisplay.innerText = currentChannel.name;
     }
 
     const visualizer = document.getElementById('visualizer');
@@ -289,13 +304,15 @@ function updateRadioButtonsUI() {
     }
 }
 
-// 4. دوال التحكم بالصوت والاتصال بالبث
+// 4. دوال التحكم بالصوت
 function triggerPlayRadio() {
-    const url = RADIO_STATIONS[selectedRadioStation];
-    if (url) playRadio(url, selectedRadioStation);
+    const currentChannel = RADIO_STATIONS[selectedCategory][currentChannelIndex];
+    if (currentChannel && currentChannel.url) {
+        playRadio(currentChannel.url, selectedCategory, currentChannelIndex);
+    }
 }
 
-function playRadio(url, id) {
+function playRadio(url, category, index) {
     const statusText = document.getElementById('radio-status');
 
     if (statusText) {
@@ -319,17 +336,18 @@ function playRadio(url, id) {
         playPromise.then(() => {
             isMusicPlaying = true;
             localStorage.setItem('hub_radio_url', url);
-            localStorage.setItem('hub_radio_id', id);
+            localStorage.setItem('hub_radio_category', category);
+            localStorage.setItem('hub_radio_channel_index', index.toString());
             localStorage.setItem('hub_music_enabled', 'true');
             updateRadioButtonsUI();
         }).catch(e => {
             if (e.name === 'AbortError' || e.message.includes('interrupted')) {
-                console.log("تغيير سريع بين القنوات.");
+                console.log("تغيير سريع بين المحطات الفضائية.");
             } else {
-                // الاقتراح الجديد والتفاعلي عند فشل الاتصال بالبث
+                // استبدال نص الفشل بالطلب الجديد والمحفز للمستخدم
                 if (statusText) {
                     statusText.innerText = "( اضغط لإعادة التشغيل ↻ )";
-                    statusText.style.color = "#ff9500"; // لون دافئ مريح للعين بدلاً من الأحمر الصادم
+                    statusText.style.color = "#ff9500";
                 }
                 isMusicPlaying = false;
                 updateRadioButtonsUI();
@@ -358,12 +376,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleFirstClick = () => {
         const savedMusicState = localStorage.getItem('hub_music_enabled');
-        const savedRadioId = localStorage.getItem('hub_radio_id') || 'kurdish';
-        const savedRadioUrl = RADIO_STATIONS[savedRadioId];
+        const savedCategory = localStorage.getItem('hub_radio_category') || 'kurdish';
+        const savedIndex = parseInt(localStorage.getItem('hub_radio_channel_index')) || 0;
         
-        if (savedMusicState === 'true' && savedRadioUrl && !isMusicPlaying) {
-            selectedRadioStation = savedRadioId;
-            playRadio(savedRadioUrl, savedRadioId);
+        if (savedMusicState === 'true' && RADIO_STATIONS[savedCategory] && RADIO_STATIONS[savedCategory][savedIndex] && !isMusicPlaying) {
+            selectedCategory = savedCategory;
+            currentChannelIndex = savedIndex;
+            triggerPlayRadio();
         }
         window.removeEventListener('click', handleFirstClick);
     };
@@ -371,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', handleFirstClick);
 });
 
-// إيقاف دائم عند الخروج من اللعبة لضمان التشغيل اليدوي في المرة القادمة
+// عند الخروج من اللعبة: يتوقف الراديو تماماً ويتحول للتشغيل اليدوي في المرة القادمة
 const handleGameExitState = () => {
     localStorage.setItem('hub_music_enabled', 'false');
     if (audioInstance) {
@@ -381,10 +400,10 @@ const handleGameExitState = () => {
 window.addEventListener('beforeunload', handleGameExitState);
 window.addEventListener('pagehide', handleGameExitState);
 
-// تصدير الدوال للنطاق العالمي لتسهيل استدعائها من الـ HTML
+// تصدير الدوال للنطاق العالمي
 window.openRadioModal = openRadioModal;
 window.closeRadioModal = closeRadioModal;
-window.selectRadioStation = selectRadioStation;
-window.nextStation = nextStation;
-window.prevStation = prevStation;
+window.selectRadioCategory = selectRadioCategory;
+window.nextChannel = nextChannel;
+window.prevChannel = prevChannel;
 window.toggleRadioPlayState = toggleRadioPlayState;
