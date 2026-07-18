@@ -122,9 +122,9 @@
         /* ========================================== */
         .cards-container { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
 
-        /* كرت الدامة */
+        /* كرت الدامة - تم تقليل الارتفاع إلى 130px */
         .dama-card { 
-            width: 85%; max-width: 320px; height: 200px; 
+            width: 85%; max-width: 320px; height: 130px; 
             border-radius: var(--radius-card); cursor: pointer; 
             position: relative; overflow: hidden; 
             border: 1px solid rgba(255,255,255,0.1); background: #111;
@@ -146,7 +146,7 @@
         }
 
         .dama-card-content {
-            position: relative; z-index: 3; padding-bottom: 30px; text-align: center; width: 100%;
+            position: relative; z-index: 3; padding-bottom: 20px; text-align: center; width: 100%;
         }
         .dama-card span {
             color: #fff; font-size: 32px; font-weight: 800; 
@@ -430,7 +430,6 @@
             </div>
 
             <div class="bottom-actions">
-                <button onclick="triggerAccountSwitch()" class="btn btn-secondary" style="flex:1;" data-i18n="profile_switch">تبديل الحساب</button>
                 <button onclick="triggerLogout()" class="btn btn-danger" style="flex:1;" data-i18n="profile_logout">تسجيل الخروج</button>
             </div>
 
@@ -491,7 +490,6 @@
                 profile_change_avatar: "الشخصية",
                 profile_phone_img: "المعرض",
                 profile_balance: "🪙 الرصيد الكلي:",
-                profile_switch: "تبديل الحساب",
                 profile_logout: "تسجيل الخروج",
                 btn_ok: "حسناً",
                 btn_cancel: "إلغاء",
@@ -532,7 +530,6 @@
                 profile_change_avatar: "Avatar",
                 profile_phone_img: "Gallery",
                 profile_balance: "🪙 Total Balance:",
-                profile_switch: "Switch",
                 profile_logout: "Logout",
                 btn_ok: "OK",
                 btn_cancel: "Cancel",
@@ -1092,7 +1089,6 @@
         }
 
         function triggerLogout() { handleAccountExit(false); }
-        function triggerAccountSwitch() { handleAccountExit(true); }
 
         window.syncHubProfile = syncHubProfile;
         window.exitGame = exitGame; 
