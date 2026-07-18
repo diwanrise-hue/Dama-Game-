@@ -116,14 +116,15 @@
             font-weight: 500; font-size: 14px; cursor: pointer; transition: var(--transition);
         }
         .lang-btn:hover { background: rgba(255,255,255,0.08); }
+        .lang-btn svg { width: 20px; height: 20px; fill: currentColor; transition: var(--transition); }
 
-        /* تأثيرات الراديو */
+        /* تأثير التوهج الملوكي عند عمل الإذاعة */
         .music-playing {
             border-color: var(--accent) !important;
             color: var(--accent) !important;
-            animation: pulse 2s infinite;
+            animation: radioGlow 2s infinite;
         }
-        @keyframes pulse {
+        @keyframes radioGlow {
             0% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.4); }
             70% { box-shadow: 0 0 0 10px rgba(245, 166, 35, 0); }
             100% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0); }
@@ -336,7 +337,12 @@
                 </div>
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
-                <div class="lang-btn" onclick="openRadioModal()" id="music-toggle-btn" title="الإذاعة والموسيقى">🔇</div>
+                <!-- زر راديو SVG أنيق ومتناسق -->
+                <div class="lang-btn" onclick="openRadioModal()" id="music-toggle-btn" title="الراديو والموسيقى">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 6H6.83l1.59-1.59L7 3 3 7l4 4 1.41-1.41L6.83 8H20v10H4V13H2v5c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM7 12c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm11 1h-4v2h4v-2zm0 3h-4v2h4v-2z"/>
+                    </svg>
+                </div>
                 <div class="lang-btn" onclick="toggleLanguage()" id="lang-toggle-btn">EN</div>
             </div>
         </div>
@@ -353,7 +359,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الراديو المخفي -->
+    <!-- عنصر الراديو الصوتي المخفي لتبسيط إدارة التدفق -->
     <audio id="bg-music"></audio>
 
     <div id="game-interface">
@@ -373,7 +379,7 @@
         </div>
     </div>
 
-    <!-- نافذة الراديو المنبثقة -->
+    <!-- نافذة تحكم الراديو المنبثقة الجمالية المتناسقة -->
     <div id="radio-modal" class="modal-overlay">
         <div class="settings-card" dir="auto">
             <button class="modal-close-btn" onclick="closeRadioModal()">✕</button>
@@ -480,6 +486,9 @@
 
         </div>
     </div>
+
+    <!-- ربط السكريبت البرمجي الخارجي المنفصل للراديو هنا -->
+    <script src="radio.js"></script>
 
     <script>
         // === تهيئة Facebook SDK بالطريقة الرسمية (الآمنة) ===
@@ -598,7 +607,7 @@
         let currentLang = 'ar';
         let isLoginMode = false; 
 
-        // === متغيرات وإعدادات الراديو ===
+        // === متغيرات وإعدادات الراديو الأساسية ===
         let isMusicPlaying = false;
         let currentRadioId = localStorage.getItem('hub_radio_id') || '';
 
@@ -734,6 +743,87 @@
             return msgStr;
         }
 
+        // === وظائف إدارة الراديو المضافة ===
+        function openRadioModal() {
+            document.getElementById('radio-modal').style.display = 'flex';
+            updateRadioButtonsUI();
+            history.pushState({ view: 'radio' }, '');
+        }
+
+        document.getElementById('radio-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeRadioModal();
+        });
+
+        function closeRadioModal() {
+            if (history.state && history.state.view === 'radio') { history.back(); }
+            else { document.getElementById('radio-modal').style.display = 'none'; }
+        }
+
+        function playRadio(url, id) {
+            const audioEl = document.getElementById('bg-music');
+            const musicBtn = document.getElementById('music-toggle-btn');
+            
+            audioEl.src = url;
+            audioEl.play().then(() => {
+                isMusicPlaying = true;
+                musicBtn.classList.add('music-playing');
+                
+                localStorage.setItem('hub_radio_url', url);
+                localStorage.setItem('hub_radio_id', id);
+                localStorage.setItem('hub_music_enabled', 'true');
+                
+                currentRadioId = id;
+                updateRadioButtonsUI();
+            }).catch(e => {
+                console.error("Radio Playback failed", e);
+                showCustomPopup(currentLang === 'ar' ? "عذراً، فشل الاتصال بالإذاعة. تأكد من اتصالك بالإنترنت." : "Failed to connect to the radio stream. Check your connection.");
+            });
+        }
+
+        function stopRadio() {
+            const audioEl = document.getElementById('bg-music');
+            const musicBtn = document.getElementById('music-toggle-btn');
+            
+            audioEl.pause();
+            audioEl.src = '';
+            isMusicPlaying = false;
+            
+            musicBtn.classList.remove('music-playing');
+            
+            localStorage.setItem('hub_music_enabled', 'false');
+            currentRadioId = '';
+            updateRadioButtonsUI();
+        }
+
+        function updateRadioButtonsUI() {
+            ['kurdish', 'arabic', 'english'].forEach(id => {
+                const btn = document.getElementById('btn-radio-' + id);
+                if (btn) {
+                    btn.classList.remove('radio-active', 'btn-primary');
+                    btn.classList.add('btn-secondary');
+                }
+            });
+
+            if (currentRadioId && isMusicPlaying) {
+                const activeBtn = document.getElementById('btn-radio-' + currentRadioId);
+                if (activeBtn) {
+                    activeBtn.classList.remove('btn-secondary');
+                    activeBtn.classList.add('btn-primary', 'radio-active');
+                }
+            }
+        }
+
+        window.addEventListener('click', () => {
+            const savedMusicState = localStorage.getItem('hub_music_enabled');
+            const savedRadioUrl = localStorage.getItem('hub_radio_url');
+            const savedRadioId = localStorage.getItem('hub_radio_id');
+            
+            if (savedMusicState === 'true' && savedRadioUrl && !isMusicPlaying) {
+                currentRadioId = savedRadioId;
+                playRadio(savedRadioUrl, savedRadioId);
+            }
+        }, { once: true });
+
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
             const titleEl = document.getElementById('auth-modal-title');
@@ -794,87 +884,6 @@
                 }, '*');
             }
         }
-
-        // === وظائف الراديو المتطورة ===
-        function openRadioModal() {
-            document.getElementById('radio-modal').style.display = 'flex';
-            updateRadioButtonsUI();
-        }
-
-        function closeRadioModal() {
-            document.getElementById('radio-modal').style.display = 'none';
-        }
-
-        function playRadio(url, id) {
-            const audioEl = document.getElementById('bg-music');
-            const musicBtn = document.getElementById('music-toggle-btn');
-            
-            audioEl.src = url;
-            audioEl.play().then(() => {
-                isMusicPlaying = true;
-                musicBtn.classList.add('music-playing');
-                musicBtn.innerText = '🎵';
-                
-                localStorage.setItem('hub_radio_url', url);
-                localStorage.setItem('hub_radio_id', id);
-                localStorage.setItem('hub_music_enabled', 'true');
-                
-                currentRadioId = id;
-                updateRadioButtonsUI();
-            }).catch(e => {
-                console.error("Radio Playback failed", e);
-                showCustomPopup(currentLang === 'ar' ? "عذراً، فشل الاتصال بالإذاعة. تأكد من اتصالك بالإنترنت." : "Failed to connect to the radio stream. Check your connection.");
-            });
-        }
-
-        function stopRadio() {
-            const audioEl = document.getElementById('bg-music');
-            const musicBtn = document.getElementById('music-toggle-btn');
-            
-            audioEl.pause();
-            audioEl.src = ''; // مسح المصدر لإيقاف التحميل في الخلفية
-            isMusicPlaying = false;
-            
-            musicBtn.classList.remove('music-playing');
-            musicBtn.innerText = '🔇';
-            
-            localStorage.setItem('hub_music_enabled', 'false');
-            currentRadioId = '';
-            updateRadioButtonsUI();
-        }
-
-        function updateRadioButtonsUI() {
-            // إعادة تعيين جميع أزرار الراديو
-            ['kurdish', 'arabic', 'english'].forEach(id => {
-                const btn = document.getElementById('btn-radio-' + id);
-                if (btn) {
-                    btn.classList.remove('radio-active', 'btn-primary');
-                    btn.classList.add('btn-secondary');
-                }
-            });
-
-            // تفعيل الزر الحالي إذا كان يعمل
-            if (currentRadioId && isMusicPlaying) {
-                const activeBtn = document.getElementById('btn-radio-' + currentRadioId);
-                if (activeBtn) {
-                    activeBtn.classList.remove('btn-secondary');
-                    activeBtn.classList.add('btn-primary', 'radio-active');
-                }
-            }
-        }
-
-        // تشغيل تلقائي للراديو بعد أول ضغطة للمستخدم لتخطي حظر المتصفح
-        window.addEventListener('click', () => {
-            const savedMusicState = localStorage.getItem('hub_music_enabled');
-            const savedRadioUrl = localStorage.getItem('hub_radio_url');
-            const savedRadioId = localStorage.getItem('hub_radio_id');
-            
-            if (savedMusicState === 'true' && savedRadioUrl && !isMusicPlaying) {
-                currentRadioId = savedRadioId;
-                playRadio(savedRadioUrl, savedRadioId);
-            }
-        }, { once: true });
-
 
         let customPopupCallback = null;
 
