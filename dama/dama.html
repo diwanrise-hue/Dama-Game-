@@ -550,7 +550,9 @@
             <button class="modal-close-btn" onclick="closeAppModal('in-game-profile-modal')">✕</button>
             <h3 id="igp-title" style="margin-bottom: 25px;">الملف الشخصي</h3>
             <div class="profile-display-avatar" id="igp-avatar" style="width: 80px; height: 80px; margin: 0 auto 15px auto; border-radius: 50%; padding: 2px; border: 1px solid rgba(255,255,255,0.2); position: relative;"></div>
-            <h4 id="igp-name" style="margin: 0 0 25px 0; font-size: 22px; font-weight: 700; color: white;">الاسم</h4>
+            
+            <h4 id="igp-name" style="margin: 0 0 5px 0; font-size: 22px; font-weight: 700; color: white;">الاسم</h4>
+            <div style="color: #a1a1aa; font-size: 12px; margin-bottom: 20px; font-family: monospace; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 10px; display: inline-block;">ID: <span id="igp-id-display">...</span></div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 15px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);">
                 <div style="display: flex; flex-direction: column;">
@@ -567,9 +569,9 @@
                 </div>
             </div>
 
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; text-align: start; margin-bottom: 15px;">
-                <input type="text" id="friend-id-input" class="online-input" placeholder="معرف الصديق (ID)" style="margin-bottom: 0; height: 40px; font-size: 12px; flex: 1;">
-                <button id="add-friend-btn" class="save-settings-btn" style="margin-top: 0; height: 40px; padding: 0 15px; width: auto; font-size: 13px;">إضافة</button>
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <input type="text" id="friend-id-input" class="online-input" placeholder="معرف الصديق (ID)" style="margin-bottom: 0; height: 40px; font-size: 12px; width: 100%;">
+                <button id="add-friend-btn" class="save-settings-btn" style="margin-top: 0; height: 40px; padding: 0 30px; width: auto; font-size: 13px;">إضافة صديق</button>
             </div>
 
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; text-align: start;">
@@ -1090,14 +1092,16 @@
 
         window.applyProfileDataToUI = function(profile) {
             const currentTokens = profile.tokens !== undefined ? profile.tokens : 0;
+            const currentId = profile.id || getUserId();
             
             const textElements = {
                 'badge-username-display-game': profile.name,
                 'card-my-name': profile.name,
                 'mm-my-name': profile.name,
                 'profile-stat-tokens-badge': currentTokens,
-                'profile-stat-tokens-store': currentTokens, // تحديث رصيد المتجر
+                'profile-stat-tokens-store': currentTokens, 
                 'igp-name': profile.name,
+                'igp-id-display': currentId,
                 'igp-games': profile.games !== undefined ? profile.games : 0,
                 'igp-wins': profile.wins !== undefined ? profile.wins : 0,
                 'igp-losses': profile.losses !== undefined ? profile.losses : 0
