@@ -7,6 +7,7 @@ const RADIO_STATIONS = {
     kurdish: [
         { name: "KurdFlix FM", url: "https://stream.zeno.fm/gmdsp1mgs7zuv" },
         { name: "دينغي كوردسات (Dengi Kurdsat)", url: "https://stream.zeno.fm/e87fd7r29f8uv" }, 
+        { name: "Kamal Mohammad", url: "https://stream.zeno.fm/rex374xgr2zuv" },
         { name: "كمال كولجين", url: "https://stream.zeno.fm/624egn8hpm0uv" },
         { name: "احمد خليل", url: "https://stream.zeno.fm/uw3bpcdkpm0uv" },
         { name: "سانا برزنجي", url: "https://stream.zeno.fm/hrguyt6hpm0uv" },
