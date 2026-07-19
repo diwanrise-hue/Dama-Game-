@@ -389,7 +389,7 @@ function updateRadioButtonsUI() {
     }
 }
 
-// 4. دوال الصوت المطورة (محدثة لحل مشكلة التقطيع والتعليق)
+// 4. دوال الصوت المطورة (محدثة لحل مشكلة التقطيع والتعليق والانتقال التلقائي للقنوات المنقطعة)
 function triggerPlayRadio() {
     const currentChannel = RADIO_STATIONS[selectedCategory][currentChannelIndex];
     if (currentChannel && currentChannel.url) {
@@ -411,6 +411,7 @@ function playRadio(url, category, index) {
         audioInstance.pause();
         audioInstance.onwaiting = null;
         audioInstance.onplaying = null;
+        audioInstance.onerror = null;
         audioInstance.removeAttribute('src'); 
         audioInstance = null;
     }
@@ -427,7 +428,7 @@ function playRadio(url, category, index) {
     // تطبيق مستوى الصوت الحالي المحفوظ فوراً عند بدء البث الجديد
     audioInstance.volume = radioVolume;
 
-    // 4. آلية ذكية لمراقبة التقطيع التلقائي والإنعاش الفوري
+    // 4. آلية ذكية لمراقبة التقطيع التلقائي والإنعاش الفوري والانتقال للمحطة التالية عند الانقطاع النهائي
     let stallTimeout;
     
     // عند تذبذب الشبكة ودخول الصوت في مرحلة تحميل معلق في المنتصف
@@ -437,14 +438,35 @@ function playRadio(url, category, index) {
             statusText.style.color = "#ff9500";
         }
         
-        // إذا استمر التعليق لأكثر من 4 ثوانٍ، يعيد الكود الاتصال فورياً بآخر نقطة بث حي
+        // إذا استمر التعليق لأكثر من 4 ثوانٍ، بدلاً من إيقاف الراديو ينتقل تلقائياً للقناة التالية لضمان استمرار العمل
         clearTimeout(stallTimeout);
         stallTimeout = setTimeout(() => {
             if (isMusicPlaying) {
-                console.log("تمت إعادة إنعاش الراديو تلقائياً لتجاوز التقطيع البصري.");
-                triggerPlayRadio(); 
+                console.log("استمر انقطاع البث لأكثر من 4 ثوانٍ، جاري الانتقال تلقائياً للقناة التالية.");
+                if (statusText) {
+                    statusText.innerText = "( ضعف الاتصال.. ننتقل للتالية ⏩ )";
+                    statusText.style.color = "#ff453a";
+                }
+                setTimeout(() => {
+                    if (isMusicPlaying) nextChannel();
+                }, 1000);
             }
         }, 4000);
+    };
+
+    // معالجة الانقطاع النهائي للبث أو الفشل المباشر في تحميل الرابط (روابط منقطعة نهائياً)
+    audioInstance.onerror = () => {
+        clearTimeout(stallTimeout);
+        if (isMusicPlaying) {
+            console.log("حدث خطأ نهائي في القناة، جاري التبديل للمحطة التالية تلقائياً.");
+            if (statusText) {
+                statusText.innerText = "( القناة غير متاحة.. ننتقل للتالية ⏩ )";
+                statusText.style.color = "#ff453a";
+            }
+            setTimeout(() => {
+                if (isMusicPlaying) nextChannel();
+            }, 1500);
+        }
     };
 
     // عندما يتم تحميل البيانات المباشرة بنجاح ويعود الصوت للعمل بسلاسة
@@ -475,12 +497,16 @@ function playRadio(url, category, index) {
             if (e.name === 'AbortError' || e.message.includes('interrupted')) {
                 console.log("تغيير سريع بين المحطات الفضائية للراديو.");
             } else {
+                console.log("فشل تشغيل البث، الانتقال للقناة التالية تلقائياً.");
                 if (statusText) {
-                    statusText.innerText = "( اضغط لإعادة التشغيل ↻ )";
+                    statusText.innerText = "( فشل الاتصال.. ننتقل للتالية ⏩ )";
                     statusText.style.color = "#ff453a";
                 }
-                isMusicPlaying = false;
-                updateRadioButtonsUI();
+                // الحفاظ على حالة التشغيل مفعلة للانتقال التلقائي دون انطفاء الراديو
+                isMusicPlaying = true;
+                setTimeout(() => {
+                    nextChannel();
+                }, 1500);
             }
         });
     }
@@ -495,6 +521,7 @@ function stopRadio() {
         audioInstance.pause();
         audioInstance.onwaiting = null;
         audioInstance.onplaying = null;
+        audioInstance.onerror = null;
         audioInstance.removeAttribute('src'); 
         audioInstance = null;
     }
