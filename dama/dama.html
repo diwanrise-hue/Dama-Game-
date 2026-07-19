@@ -30,7 +30,7 @@
         }
         
         /* ========================================== */
-        /* رقعة اللعب والمشهد ثلاثي الأبعاد (الطاولة والكراسي) */
+        /* رقعة اللعب والمشهد ثلاثي الأبعاد (تم تحسينه جذرياً) */
         /* ========================================== */
         .scoreboard { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; background: rgba(45, 48, 55, 0.6); padding: 15px; border-radius: 12px; align-items: center; width: 90%; max-width: 350px; transition: all 0.3s; }
         .score-row { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; width: 100%; }
@@ -38,12 +38,12 @@
         .mini-piece.active-white { background: #fff; border: 1px solid #bdc3c7; }
         .mini-piece.active-black { background: #2c2c35; border: 1px solid #1a1a24; }
         
-        /* حاوية المشهد بالكامل لإعطاء المنظور */
+        /* حاوية المشهد بالكامل - تم ضبط المنظور ليكون مريحاً للعين */
         .game-container { 
             display: flex; flex-direction: row; justify-content: center; align-items: center; 
             width: 100%; box-sizing: border-box; 
-            perspective: 1200px; 
-            padding: 10px 0 50px 0;
+            perspective: 900px; /* زاوية رؤية أعمق وأكثر واقعية */
+            padding: 10px 0 40px 0;
         }
         
         /* المشهد ثلاثي الأبعاد الذي يجمع الطاولة والكراسي */
@@ -51,58 +51,63 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transform: rotateX(40deg) translateY(-10px);
+            transform: rotateX(28deg) translateY(-5px); /* ميلان طبيعي يمنع تمطط الساحة */
             transform-style: preserve-3d;
-            gap: 15px;
+            gap: 8px; /* تقريب الكراسي للطاولة */
         }
 
-        /* الكراسي (المقاعد) */
+        /* تصميم الكراسي (المقاعد) لتبدو عصرية وأنيقة */
         .chair {
-            background: linear-gradient(135deg, #8B4513, #5C3A21);
-            border-radius: 12px;
+            background: linear-gradient(180deg, #4A2E1B, #1A0F06);
+            border-radius: 30px;
             position: relative;
             transform-style: preserve-3d;
+            border: 1px solid rgba(255,255,255,0.05);
         }
+        
         .top-chair {
-            width: 40vw; max-width: 180px;
-            height: 35px;
-            transform: translateZ(-15px);
-            box-shadow: 0 12px 0 #3b2413, 0 20px 20px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.1);
+            width: 35vw; max-width: 140px;
+            height: 22px;
+            transform: translateZ(-8px); /* وضع الكرسي خلف الطاولة قليلاً */
+            box-shadow: 0 6px 0 #0f0803, 0 10px 15px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1);
         }
+        
         .bottom-chair {
-            width: 50vw; max-width: 220px;
-            height: 45px;
-            transform: translateZ(40px);
-            box-shadow: 0 18px 0 #2a190b, 0 30px 25px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.1);
+            width: 45vw; max-width: 180px;
+            height: 28px;
+            transform: translateZ(12px); /* بروز الكرسي للأمام */
+            box-shadow: 0 10px 0 #0f0803, 0 20px 25px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.1);
         }
 
-        /* الطاولة */
+        /* الطاولة الخشبية الفاخرة */
         .table-container {
-            background: linear-gradient(135deg, #5C3A21, #3b2413);
-            padding: 4vw; /* مسافة بين الرقعة وحافة الطاولة */
-            border-radius: 20px;
+            background: linear-gradient(145deg, #5C3A21, #2A190B);
+            padding: 12px; /* حواف أنحف وأكثر أناقة */
+            border-radius: 16px;
             transform-style: preserve-3d;
+            z-index: 5;
             box-shadow: 
-                0 25px 0 #2a190b, 
-                0 45px 35px rgba(0,0,0,0.8),
-                inset 0 0 20px rgba(0,0,0,0.6);
-            border: 2px solid rgba(255,255,255,0.05);
+                0 15px 0 #1A0F06, /* عمق الطاولة */
+                0 35px 35px rgba(0,0,0,0.7), /* ظل الطاولة الناعم */
+                inset 0 0 10px rgba(0,0,0,0.5); /* تعتيم داخلي */
+            border: 1px solid rgba(255,255,255,0.08); /* لمعة على الحواف */
         }
 
-        /* الرقعة */
+        /* الرقعة (الساحة) */
         #board { 
             display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); 
-            width: 82vw; max-width: 380px; aspect-ratio: 1 / 1; 
+            width: 86vw; max-width: 380px; aspect-ratio: 1 / 1; 
             background-color: #3e2723;
-            border: 10px solid #4A2E1B; border-radius: 8px;
+            /* استبدال الإطار المخطط القبيح بإطار أنيق */
+            border: 6px solid #3b2413; 
+            border-radius: 6px;
             
-            /* رفع الرقعة فوق الطاولة قليلاً */
-            transform: translateZ(12px);
+            /* رفع الرقعة فوق الطاولة */
+            transform: translateZ(6px);
             transform-style: preserve-3d;
             box-shadow: 
-                0 10px 15px rgba(0,0,0,0.7), 
-                inset 0 0 10px rgba(0,0,0,0.9);
-            border-image: repeating-linear-gradient(45deg, #5C3A21, #5C3A21 10px, #4A2E1B 10px, #4A2E1B 20px) 12;
+                0 5px 10px rgba(0,0,0,0.6), 
+                inset 0 0 15px rgba(0,0,0,0.8);
             transition: all 0.5s ease; 
         }
 
@@ -110,7 +115,7 @@
             position: relative; width: 100%; height: 100%; display: flex; 
             justify-content: center; align-items: center; border: 0.8px solid rgba(0,0,0,0.5); 
             box-sizing: border-box; 
-            transform-style: preserve-3d; /* لتمرير الأبعاد للأحجار */
+            transform-style: preserve-3d; 
         }
         .cell.light { background-color: var(--light-cell); transition: background-color 0.5s; }
         .cell.dark { background-color: var(--dark-cell); transition: background-color 0.5s; }
@@ -120,10 +125,10 @@
         /* بروز الأحجار وتجسيمها */
         .piece { 
             width: 80%; height: 80%; border-radius: 50%; cursor: pointer; 
-            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.2), 0 6px 5px rgba(0,0,0,0.6); 
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.5); 
             transition: transform 0.2s, background 0.4s, border 0.4s, box-shadow 0.2s; 
             display: flex; align-items: center; justify-content: center; position: relative; 
-            transform: translateZ(5px); /* رفع الحجر عن السطح */
+            transform: translateZ(6px); /* رفع الحجر عن السطح بشكل متناسق */
         }
         .piece::before { content: ''; position: absolute; width: 45%; height: 45%; border-radius: 50%; pointer-events: none; border: 1px solid rgba(0,0,0,0.1); }
         .piece.white { background: radial-gradient(circle at 30% 30%, #ffffff, #dcdde1, #95a5a6); border: 1px solid #bdc3c7; }
@@ -133,23 +138,23 @@
         
         .piece.selected { 
             outline: 3px solid #2ecc71; 
-            transform: translateZ(25px) scale(1.1) !important; /* قفز الحجر للأعلى عند تحديده */
-            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.2), 0 20px 10px rgba(0,0,0,0.5) !important;
+            transform: translateZ(20px) scale(1.1) !important; /* قفز الحجر للأعلى عند تحديده */
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3), 0 15px 10px rgba(0,0,0,0.5) !important;
         }
         
         .piece.white.dama { 
             background: radial-gradient(circle at 30% 30%, #ffffff, #dcdde1, #bdc3c7) !important; 
             border: 3px solid #fff !important; 
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1), 0 12px 8px rgba(0,0,0,0.6), 0 0 10px rgba(255, 255, 255, 0.6) !important; 
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1), 0 8px 6px rgba(0,0,0,0.5), 0 0 10px rgba(255, 255, 255, 0.4) !important; 
             z-index: 10; 
-            transform: translateZ(10px); /* الملوك أعلى قليلاً */
+            transform: translateZ(10px); 
         }
         .piece.white.dama::after { content: '👑'; color: #d4af37; text-shadow: 0 0 2px rgba(0,0,0,0.5); }
         
         .piece.black.dama { 
             background: radial-gradient(circle at 30% 30%, #555, #2b2b35, #1e1e24) !important; 
             border: 2px solid #2b2b35 !important; 
-            box-shadow: inset -2px -2px 5px rgba(255,255,255,0.1), 0 12px 8px rgba(0,0,0,0.7), 0 0 10px rgba(0,0,0,0.5) !important; 
+            box-shadow: inset -2px -2px 5px rgba(255,255,255,0.1), 0 8px 6px rgba(0,0,0,0.5), 0 0 10px rgba(0,0,0,0.3) !important; 
             z-index: 10; 
             transform: translateZ(10px); 
         }
@@ -159,20 +164,20 @@
         .piece.dama::after { font-size: 80%; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; transition: text-shadow 0.3s, color 0.3s; }
         
         .piece.white.dama.selected, .piece.black.dama.selected { 
-            transform: translateZ(35px) scale(1.15) !important; 
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1), 0 25px 15px rgba(0,0,0,0.6), 0 0 15px rgba(255, 255, 255, 0.6) !important;
+            transform: translateZ(28px) scale(1.15) !important; 
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1), 0 20px 15px rgba(0,0,0,0.5), 0 0 15px rgba(255, 255, 255, 0.6) !important;
         }
 
         .piece.forced { border: 2px solid #e74c3c !important; animation: forcedPulse 1.2s infinite ease-in-out !important; }
         .piece.dama.forced { border: 4px double #e74c3c !important; animation: forcedPulseDama 1.2s infinite ease-in-out !important; }
         
         @keyframes forcedPulse { 
-            0%, 100% { transform: translateZ(5px) scale(1); box-shadow: 0 6px 5px rgba(0,0,0,0.6), 0 0 18px #e74c3c, inset 0 0 8px #e74c3c; } 
-            50% { transform: translateZ(15px) scale(1.06); box-shadow: 0 15px 10px rgba(0,0,0,0.4), 0 0 25px #e74c3c, inset 0 0 12px #e74c3c; } 
+            0%, 100% { transform: translateZ(6px) scale(1); box-shadow: 0 4px 6px rgba(0,0,0,0.5), 0 0 18px #e74c3c, inset 0 0 8px #e74c3c; } 
+            50% { transform: translateZ(14px) scale(1.06); box-shadow: 0 12px 10px rgba(0,0,0,0.4), 0 0 25px #e74c3c, inset 0 0 12px #e74c3c; } 
         }
         @keyframes forcedPulseDama { 
-            0%, 100% { transform: translateZ(10px) scale(1); box-shadow: 0 12px 8px rgba(0,0,0,0.6), 0 0 25px #e74c3c, inset 0 0 12px #e74c3c; } 
-            50% { transform: translateZ(25px) scale(1.1); box-shadow: 0 20px 15px rgba(0,0,0,0.5), 0 0 35px #e74c3c, inset 0 0 18px #e74c3c; } 
+            0%, 100% { transform: translateZ(10px) scale(1); box-shadow: 0 8px 6px rgba(0,0,0,0.5), 0 0 25px #e74c3c, inset 0 0 12px #e74c3c; } 
+            50% { transform: translateZ(22px) scale(1.1); box-shadow: 0 18px 15px rgba(0,0,0,0.4), 0 0 35px #e74c3c, inset 0 0 18px #e74c3c; } 
         }
         
         /* ========================================== */
@@ -587,7 +592,7 @@
     </div>
     
     <div class="game-container">
-        <!-- مشهد اللعب: الكرسي العلوي، ثم الطاولة، ثم الكرسي السفلي -->
+        <!-- المشهد المتكامل: الكرسي العلوي، الطاولة وفي داخلها الرقعة، الكرسي السفلي -->
         <div class="scene">
             <div class="chair top-chair"></div>
             
