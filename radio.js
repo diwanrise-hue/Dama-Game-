@@ -2,10 +2,10 @@
 //  radio.js - النسخة النهائية المصححة والمطورة
 // ========================================== //
 
-// 1. هيكل البيانات للأصناف والقنوات (تم تنظيف المسافات الزائدة)
+// 1. هيكل البيانات للأصناف والقنوات (تم تنظيف المسافات الزائدة وتصحيح الأسماء)
 const RADIO_STATIONS = {
     kurdish: [
-        { name: "Kurd floklore", url: "https://stream.zeno.fm/gmdsp1mgs7zuv" },
+        { name: "Kurd folklore", url: "https://stream.zeno.fm/gmdsp1mgs7zuv" },
         { name: "دينغي كوردسات (Dengi Kurdsat)", url: "https://stream.zeno.fm/e87fd7r29f8uv" }, 
         { name: "Kamal Mohammad", url: "https://stream.zeno.fm/rex374xgr2zuv" },
         { name: "كمال كولجين", url: "https://stream.zeno.fm/624egn8hpm0uv" },
@@ -269,6 +269,16 @@ function injectRadioUI() {
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', uiHTML);
+    
+    // إضافة ميزة إغلاق النافذة عند النقر خارجها
+    const modalOverlay = document.getElementById('radio-modal');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRadioModal();
+            }
+        });
+    }
     
     const sliderElement = document.getElementById('radio-volume-slider');
     if (sliderElement) {
