@@ -23,10 +23,10 @@ const RADIO_STATIONS = {
 let audioInstance = null;
 let isMusicPlaying = false;
 
-// إدارة الحالة وإعدادات الصوت المحفوظة
+// إدارة الحالة وإعدادات الصوت (تم تحديد القيمة الافتراضية هنا لتكون 0.3 أي 30%)
 let selectedCategory = localStorage.getItem('hub_radio_category') || 'kurdish';
 let currentChannelIndex = parseInt(localStorage.getItem('hub_radio_channel_index')) || 0;
-let radioVolume = localStorage.getItem('hub_radio_volume') !== null ? parseFloat(localStorage.getItem('hub_radio_volume')) : 1.0;
+let radioVolume = localStorage.getItem('hub_radio_volume') !== null ? parseFloat(localStorage.getItem('hub_radio_volume')) : 0.3;
 
 if (!RADIO_STATIONS[selectedCategory] || !RADIO_STATIONS[selectedCategory][currentChannelIndex]) {
     selectedCategory = 'kurdish';
@@ -150,7 +150,7 @@ function injectRadioUI() {
             transition: 0.3s;
         }
 
-        /* حاوية شريط التحكم في الصوت المضاف حديثاً */
+        /* حاوية شريط التحكم في الصوت المطور للتلوين الديناميكي */
         .radio-volume-container {
             display: flex;
             align-items: center;
@@ -172,18 +172,28 @@ function injectRadioUI() {
             appearance: none;
             height: 6px;
             border-radius: 3px;
-            background: #3a3a3c;
             outline: none;
-            accent-color: #30d158;
             cursor: pointer;
+            background: #3a3a3c; /* لون خلفية احتياطي */
         }
+        /* تصميم مقبض السحب ليتوافق مع الامتلاء */
         .radio-volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            background: #30d158;
+            background: #ffffff;
+            border: 2px solid #30d158;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+        .radio-volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #30d158;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
@@ -243,10 +253,10 @@ function injectRadioUI() {
                     <div id="radio-status" class="radio-status-text"></div>
                 </div>
 
-                <!-- شريط التحكم في الصوت (تمت إضافته هنا فوق زر التشغيل والإيقاف) -->
+                <!-- شريط التحكم في الصوت (متموضع فوق زر التشغيل والإيقاف تماماً) -->
                 <div class="radio-volume-container">
                     <span class="radio-volume-icon">🔊</span>
-                    <input type="range" id="radio-volume-slider" class="radio-volume-slider" min="0" max="1" step="0.05" oninput="changeRadioVolume(this.value)">
+                    <input type="range" id="radio-volume-slider" class="radio-volume-slider" min="0" max="1" step="0.01" oninput="changeRadioVolume(this.value)">
                 </div>
 
                 <!-- زر التحكم الموحد -->
@@ -258,8 +268,12 @@ function injectRadioUI() {
     `;
     document.body.insertAdjacentHTML('beforeend', uiHTML);
     
-    // المزامنة الأولية لقيمة شريط الصوت من الذاكرة المحفوظة
-    document.getElementById('radio-volume-slider').value = radioVolume;
+    // المزامنة الأولية لمستوى الصوت ورسم خلفية شريط التلوين عند الإقلاع الأول
+    const sliderElement = document.getElementById('radio-volume-slider');
+    if (sliderElement) {
+        sliderElement.value = radioVolume;
+        changeRadioVolume(radioVolume);
+    }
     
     updateRadioButtonsUI();
 }
@@ -311,12 +325,20 @@ function toggleRadioPlayState() {
     }
 }
 
-// دالة التحكم في الصوت وتغييره حياً
+// دالة التحكم الديناميكي لامتلاء شريط مستوى الصوت بشكل تبايني دقيق ومبهر
 function changeRadioVolume(value) {
     radioVolume = parseFloat(value);
     localStorage.setItem('hub_radio_volume', value);
+    
     if (audioInstance) {
         audioInstance.volume = radioVolume;
+    }
+    
+    // آلية تلوين الجزء الممتلئ من اليمين للياسر بما يتوافق مع نمط واجهة الـ RTL للراديو
+    const slider = document.getElementById('radio-volume-slider');
+    if (slider) {
+        const percentage = radioVolume * 100;
+        slider.style.background = `linear-gradient(to left, #30d158 ${percentage}%, #3a3a3c ${percentage}%)`;
     }
 }
 
@@ -374,7 +396,7 @@ function playRadio(url, category, index) {
     const toggleActionBtn = document.getElementById('radio-toggle-action-btn');
 
     if (statusText) {
-        statusText.innerText = "( jاري الاتصال بالبث... 🔄 )";
+        statusText.innerText = "( جاري الاتصال بالبث... 🔄 )";
         statusText.style.color = "#ff9500"; 
     }
 
@@ -396,7 +418,7 @@ function playRadio(url, category, index) {
     audioInstance.crossOrigin = "anonymous";
     audioInstance.preload = "none"; 
     
-    // تطبيق مستوى الصوت الحالي المختار من قبل المستخدم فوراً
+    // تطبيق مستوى الصوت الحالي المحفوظ فوراً عند بدء البث الجديد
     audioInstance.volume = radioVolume;
 
     // 4. آلية ذكية لمراقبة التقطيع التلقائي والإنعاش الفوري
