@@ -1,8 +1,65 @@
 // ========================================== //
-//  radio.js - النسخة النهائية المصححة والمطورة
+//  radio.js - النسخة النهائية المصححة والمطورة والمترجمة
 // ========================================== //
 
-// 1. هيكل البيانات للأصناف والقنوات (تم تنظيف المسافات الزائدة وتصحيح الأسماء)
+// 0. نظام الترجمة (العربية، الكردية، الإنجليزية)
+const RADIO_TRANSLATIONS = {
+    ar: {
+        title: "الراديو والموسيقى",
+        cat_english: "الإنجليزية",
+        cat_arabic: "العربية",
+        cat_kurdish: "الكردية",
+        play_btn: "تشغيل ▶",
+        stop_btn: "إيقاف الراديو 🔴",
+        status_connecting: "( جاري الاتصال بالبث... 🔄 )",
+        status_refreshing: "( جاري إنعاش البث... ⏳ )",
+        status_playing: "( تعمل الآن 🟢 )",
+        status_failed_all: "( عذراً، لا يوجد اتصال بالبث حالياً ❌ )",
+        status_failed_next: "( فشل الاتصال.. ننتقل للتالية ⏩ )",
+        log_fast_switch: "تغيير سريع بين المحطات الفضائية للراديو.",
+        direction: "rtl"
+    },
+    ku: {
+        title: "ڕادیۆ و مۆسیقا",
+        cat_english: "ئینگلیزی",
+        cat_arabic: "عەرەبی",
+        cat_kurdish: "کوردی",
+        play_btn: "لێدان ▶",
+        stop_btn: "وەستاندنی ڕادیۆ 🔴",
+        status_connecting: "( پەیوەندیکردن بە پەخشەوە... 🔄 )",
+        status_refreshing: "( نوێکردنەوەی پەخش... ⏳ )",
+        status_playing: "( ئێستا پەخش دەکرێت 🟢 )",
+        status_failed_all: "( ببورە، پەخشی ڕادیۆ بەردەست نییە ❌ )",
+        status_failed_next: "( پەیوەندی سەرکەوتوو نەبوو.. گواستنەوە بۆ داهاتوو ⏩ )",
+        log_fast_switch: "گۆڕینی خێرا لە نێوان وێستگەکانی ڕادیۆ.",
+        direction: "rtl"
+    },
+    en: {
+        title: "Radio & Music",
+        cat_english: "English",
+        cat_arabic: "Arabic",
+        cat_kurdish: "Kurdish",
+        play_btn: "Play ▶",
+        stop_btn: "Stop Radio 🔴",
+        status_connecting: "( Connecting to stream... 🔄 )",
+        status_refreshing: "( Refreshing stream... ⏳ )",
+        status_playing: "( Now Playing 🟢 )",
+        status_failed_all: "( Sorry, stream unavailable ❌ )",
+        status_failed_next: "( Connection failed.. skipping to next ⏩ )",
+        log_fast_switch: "Fast switching between radio stations.",
+        direction: "ltr"
+    }
+};
+
+// تحديد اللغة الحالية (يمكن أخذها من لغة المتصفح، أو localStorage أو الافتراضي عربي)
+let currentAppLang = localStorage.getItem('app_lang') || document.documentElement.lang || 'ar';
+if (!RADIO_TRANSLATIONS[currentAppLang]) currentAppLang = 'ar';
+
+function t(key) {
+    return RADIO_TRANSLATIONS[currentAppLang][key];
+}
+
+// 1. هيكل البيانات للأصناف والقنوات
 const RADIO_STATIONS = {
     kurdish: [
         { name: "Kurd folklore", url: "https://stream.zeno.fm/gmdsp1mgs7zuv" },
@@ -30,12 +87,10 @@ let isMusicPlaying = false;
 let failedAttempts = 0; 
 let stallTimeout = null; 
 
-// إدارة الحالة وإعدادات الصوت (مع حماية إضافية من القيم الخاطئة في التخزين)
+// إدارة الحالة وإعدادات الصوت
 let selectedCategory = localStorage.getItem('hub_radio_category') || 'kurdish';
-
 let parsedIndex = parseInt(localStorage.getItem('hub_radio_channel_index'));
 let currentChannelIndex = !isNaN(parsedIndex) ? parsedIndex : 0;
-
 let savedVolume = localStorage.getItem('hub_radio_volume');
 let radioVolume = (savedVolume !== null && !isNaN(parseFloat(savedVolume))) ? parseFloat(savedVolume) : 0.3;
 
@@ -64,7 +119,7 @@ function injectRadioUI() {
         .radio-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center;
-            z-index: 10000; direction: rtl; font-family: 'Tajawal', sans-serif;
+            z-index: 10000; font-family: 'Tajawal', sans-serif;
         }
 
         /* صندوق النافذة الرئيسي */
@@ -76,8 +131,13 @@ function injectRadioUI() {
 
         .radio-header { display: flex; justify-content: center; align-items: center; margin-bottom: 25px; position: relative; }
         .radio-header h3 { margin: 0; font-size: 20px; font-weight: 700; color: #fff; }
+        
+        /* ضبط زر الإغلاق ليتناسب مع اتجاه اللغة (RTL/LTR) */
+        [dir="rtl"] .close-btn { left: 0; right: auto; }
+        [dir="ltr"] .close-btn { right: 0; left: auto; }
+        
         .close-btn { 
-            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            position: absolute; top: 50%; transform: translateY(-50%);
             background: none; border: none; color: #888; font-size: 20px; cursor: pointer; padding: 5px;
         }
 
@@ -98,33 +158,20 @@ function injectRadioUI() {
 
         /* حاوية المؤشر النبضي والأسهم الجانبية */
         .visualizer-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px;
         }
 
         /* أزرار الأسهم الجانبية للتنقل */
         .nav-arrow-btn {
-            background: #2c2c2e;
-            border: 1px solid #3a3a3c;
-            color: #30d158;
-            font-size: 18px;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s ease;
-            user-select: none;
+            background: #2c2c2e; border: 1px solid #3a3a3c; color: #30d158;
+            font-size: 18px; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; transition: 0.2s ease; user-select: none;
         }
-        .nav-arrow-btn:hover {
-            background: #3a3a3c;
-            box-shadow: 0 0 8px rgba(48, 209, 88, 0.4);
-        }
+        .nav-arrow-btn:hover { background: #3a3a3c; box-shadow: 0 0 8px rgba(48, 209, 88, 0.4); }
+        
+        /* تدوير الأسهم في حالة الإنجليزية (LTR) لتكون منطقية */
+        [dir="ltr"] .nav-prev-icon { transform: scaleX(-1); }
+        [dir="ltr"] .nav-next-icon { transform: scaleX(-1); }
 
         /* المؤشر النبضي البصري */
         .visualizer-box {
@@ -142,79 +189,38 @@ function injectRadioUI() {
         }
 
         /* صندوق اسم القناة والحالة */
-        .channel-info-box {
-            margin-bottom: 25px;
-            min-height: 55px;
-        }
+        .channel-info-box { margin-bottom: 25px; min-height: 55px; }
         .channel-name-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: #ffffff;
-            display: block;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
+            font-size: 20px; font-weight: 700; color: #ffffff; display: block; margin-bottom: 6px; letter-spacing: 0.5px;
         }
-        .radio-status-text {
-            font-size: 13px;
-            font-weight: 600;
-            min-height: 18px;
-            transition: 0.3s;
-        }
+        .radio-status-text { font-size: 13px; font-weight: 600; min-height: 18px; transition: 0.3s; }
 
-        /* حاوية شريط التحكم في الصوت المطور لتلوين ديناميكي */
+        /* حاوية شريط التحكم في الصوت */
         .radio-volume-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            background: #2c2c2e;
-            padding: 10px 15px;
-            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            margin-bottom: 20px; background: #2c2c2e; padding: 10px 15px; border-radius: 12px;
         }
-        .radio-volume-icon {
-            font-size: 16px;
-            color: #30d158;
-            user-select: none;
-        }
+        .radio-volume-icon { font-size: 16px; color: #30d158; user-select: none; }
         .radio-volume-slider {
-            flex: 1;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 6px;
-            border-radius: 3px;
-            outline: none;
-            cursor: pointer;
-            background: #3a3a3c;
+            flex: 1; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px;
+            outline: none; cursor: pointer; background: #3a3a3c; direction: ltr; /* الصوت دائماً LTR */
         }
-        /* تصميم مقبض السحب ليتوافق مع الامتلاء */
         .radio-volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #30d158;
-            cursor: pointer;
+            -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+            border-radius: 50%; background: #ffffff; border: 2px solid #30d158; cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
         .radio-volume-slider::-moz-range-thumb {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #30d158;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            width: 12px; height: 12px; border-radius: 50%; background: #ffffff;
+            border: 2px solid #30d158; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
 
         /* زر التشغيل والإيقاف الموحد */
         .radio-actions { display: flex; }
         .action-btn {
             flex: 1; padding: 14px 10px; border: none; border-radius: 12px;
-            cursor: pointer; font-size: 16px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit;
-            transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+            cursor: pointer; font-size: 16px; font-weight: bold; display: flex; justify-content: center; 
+            align-items: center; gap: 8px; font-family: inherit; transition: background 0.3s, color 0.3s, box-shadow 0.3s;
         }
         .play-btn { background: #30d158; color: white; box-shadow: 0 4px 10px rgba(48, 209, 88, 0.3); }
         .stop-btn { background: #3a1c1e; color: #ff453a; box-shadow: 0 4px 10px rgba(255, 69, 58, 0.15); }
@@ -231,25 +237,25 @@ function injectRadioUI() {
     const uiHTML = `
         <button id="music-toggle-btn" class="radio-floating-btn" onclick="openRadioModal()">📻</button>
 
-        <div id="radio-modal" class="radio-modal-overlay" dir="rtl">
+        <div id="radio-modal" class="radio-modal-overlay" dir="${t('direction')}">
             <div class="radio-modal-content">
                 <div class="radio-header">
                     <button class="close-btn" onclick="closeRadioModal()">✕</button>
-                    <h3>الراديو والموسيقى</h3>
+                    <h3 id="ui-radio-title">${t('title')}</h3>
                 </div>
                 
                 <div class="stations-list">
-                    <button id="btn-station-english" class="station-btn" onclick="selectRadioCategory('english')">الإنجليزية</button>
-                    <button id="btn-station-arabic" class="station-btn" onclick="selectRadioCategory('arabic')">العربية</button>
-                    <button id="btn-station-kurdish" class="station-btn active" onclick="selectRadioCategory('kurdish')">الكردية</button>
+                    <button id="btn-station-english" class="station-btn" onclick="selectRadioCategory('english')">${t('cat_english')}</button>
+                    <button id="btn-station-arabic" class="station-btn" onclick="selectRadioCategory('arabic')">${t('cat_arabic')}</button>
+                    <button id="btn-station-kurdish" class="station-btn active" onclick="selectRadioCategory('kurdish')">${t('cat_kurdish')}</button>
                 </div>
 
                 <div class="visualizer-container">
-                    <button class="nav-arrow-btn" onclick="prevChannel()">❮</button>
+                    <button class="nav-arrow-btn nav-prev-icon" onclick="prevChannel()">❮</button>
                     <div id="visualizer" class="visualizer-box">
                         ${barsHTML}
                     </div>
-                    <button class="nav-arrow-btn" onclick="nextChannel()">❯</button>
+                    <button class="nav-arrow-btn nav-next-icon" onclick="nextChannel()">❯</button>
                 </div>
 
                 <div class="channel-info-box">
@@ -263,14 +269,15 @@ function injectRadioUI() {
                 </div>
 
                 <div class="radio-actions">
-                    <button id="radio-toggle-action-btn" class="action-btn play-btn" onclick="toggleRadioPlayState()">تشغيل ▶</button>
+                    <button id="radio-toggle-action-btn" class="action-btn ${isMusicPlaying ? 'stop-btn' : 'play-btn'}" onclick="toggleRadioPlayState()">
+                        ${isMusicPlaying ? t('stop_btn') : t('play_btn')}
+                    </button>
                 </div>
             </div>
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', uiHTML);
     
-    // إضافة ميزة إغلاق النافذة عند النقر خارجها
     const modalOverlay = document.getElementById('radio-modal');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
@@ -289,7 +296,27 @@ function injectRadioUI() {
     updateRadioButtonsUI();
 }
 
-// 3. دوال التحكم بالواجهة والتنقل
+// 3. دوال تحديث الترجمة للواجهة والتغيير الديناميكي
+function setRadioLanguage(langCode) {
+    if (RADIO_TRANSLATIONS[langCode]) {
+        currentAppLang = langCode;
+        localStorage.setItem('app_lang', langCode);
+        
+        // تحديث النصوص الحية في الواجهة
+        const modal = document.getElementById('radio-modal');
+        if (modal) {
+            modal.setAttribute('dir', t('direction'));
+            document.getElementById('ui-radio-title').innerText = t('title');
+            document.getElementById('btn-station-english').innerText = t('cat_english');
+            document.getElementById('btn-station-arabic').innerText = t('cat_arabic');
+            document.getElementById('btn-station-kurdish').innerText = t('cat_kurdish');
+            
+            updateRadioButtonsUI();
+        }
+    }
+}
+
+// 4. دوال التحكم بالواجهة والتنقل
 function openRadioModal() {
     document.getElementById('radio-modal').style.display = 'flex';
 }
@@ -331,7 +358,6 @@ function toggleRadioPlayState() {
     }
 }
 
-// تعديل اتجاه تعبئة الـ Gradient ليناسب الـ RTL بصرياً بشكل صحيح (to left)
 function changeRadioVolume(value) {
     radioVolume = parseFloat(value);
     localStorage.setItem('hub_radio_volume', value);
@@ -343,7 +369,9 @@ function changeRadioVolume(value) {
     const slider = document.getElementById('radio-volume-slider');
     if (slider) {
         const percentage = radioVolume * 100;
-        slider.style.background = `linear-gradient(to left, #30d158 ${percentage}%, #3a3a3c ${percentage}%)`;
+        // تعديل اتجاه الألوان في شريط الصوت بناءً على لغة الواجهة
+        const directionStr = t('direction') === 'rtl' ? 'to left' : 'to right';
+        slider.style.background = `linear-gradient(${directionStr}, #30d158 ${percentage}%, #3a3a3c ${percentage}%)`;
     }
 }
 
@@ -363,31 +391,41 @@ function updateRadioButtonsUI() {
 
     const visualizer = document.getElementById('visualizer');
     const toggleBtn = document.getElementById('music-toggle-btn');
-    const statusText = document.getElementById('radio-status');
     const toggleActionBtn = document.getElementById('radio-toggle-action-btn');
+    const statusText = document.getElementById('radio-status');
+    
+    // تحديث الألوان في شريط الصوت
+    const slider = document.getElementById('radio-volume-slider');
+    if (slider) changeRadioVolume(radioVolume);
     
     if (isMusicPlaying) {
         if(toggleBtn) toggleBtn.classList.add('playing');
         
-        // التحقق مما إذا كان الصوت يعمل فعلياً لتشغيل المؤشر البصري
         if(visualizer && audioInstance && !audioInstance.paused && audioInstance.readyState >= 3) {
             visualizer.classList.add('playing');
+            if (statusText) statusText.innerText = t('status_playing');
         } else if (visualizer) {
             visualizer.classList.remove('playing');
+        }
+        
+        if (toggleActionBtn) {
+            toggleActionBtn.innerText = t('stop_btn');
+            toggleActionBtn.className = "action-btn stop-btn";
         }
         
     } else {
         if(visualizer) visualizer.classList.remove('playing');
         if(toggleBtn) toggleBtn.classList.remove('playing');
         if (statusText) statusText.innerText = "";
+        
         if (toggleActionBtn) {
-            toggleActionBtn.innerText = "تشغيل ▶";
+            toggleActionBtn.innerText = t('play_btn');
             toggleActionBtn.className = "action-btn play-btn";
         }
     }
 }
 
-// 4. دوال الصوت المطورة
+// 5. دوال الصوت المطورة
 function triggerPlayRadio() {
     const currentChannel = RADIO_STATIONS[selectedCategory][currentChannelIndex];
     if (currentChannel && currentChannel.url) {
@@ -401,14 +439,12 @@ function playRadio(url, category, index) {
     const visualizer = document.getElementById('visualizer');
 
     if (statusText) {
-        statusText.innerText = "( جاري الاتصال بالبث... 🔄 )";
+        statusText.innerText = t('status_connecting');
         statusText.style.color = "#ff9500"; 
     }
     
-    // إيقاف المؤشر البصري مؤقتاً لحين بدء الصوت الفعلي
     if (visualizer) visualizer.classList.remove('playing');
 
-    // تفريغ الذاكرة وقطع الاتصال بالطريقة المعيارية الآمنة للمتصفحات
     if (audioInstance) {
         audioInstance.pause();
         audioInstance.onwaiting = null;
@@ -423,13 +459,12 @@ function playRadio(url, category, index) {
     const optimizedUrl = url.includes('?') ? `${url}&_live=${liveTimestamp}` : `${url}?_live=${liveTimestamp}`;
 
     audioInstance = new Audio(optimizedUrl);
-    // تم حذف audioInstance.crossOrigin لتفادي أخطاء CORS مع خوادم الراديو
     audioInstance.preload = "none"; 
     audioInstance.volume = radioVolume;
 
     audioInstance.onwaiting = () => {
         if (isMusicPlaying && statusText) {
-            statusText.innerText = "( جاري إنعاش البث... ⏳ )";
+            statusText.innerText = t('status_refreshing');
             statusText.style.color = "#ff9500";
         }
         
@@ -438,7 +473,7 @@ function playRadio(url, category, index) {
             if (isMusicPlaying) {
                 handleConnectionFailure(statusText);
             }
-        }, 8000); // زيادة الوقت إلى 8 ثوانٍ لدعم الاتصالات البطيئة
+        }, 8000); 
     };
 
     audioInstance.onerror = () => {
@@ -452,14 +487,13 @@ function playRadio(url, category, index) {
         clearTimeout(stallTimeout);
         failedAttempts = 0; 
         if (statusText) {
-            statusText.innerText = "( تعمل الآن 🟢 )";
+            statusText.innerText = t('status_playing');
             statusText.style.color = "#30d158";
         }
         if (toggleActionBtn) {
-            toggleActionBtn.innerText = "إيقاف الراديو 🔴";
+            toggleActionBtn.innerText = t('stop_btn');
             toggleActionBtn.className = "action-btn stop-btn";
         }
-        // تفعيل المؤشر البصري فقط عندما يعمل الصوت فعلياً
         if (visualizer) visualizer.classList.add('playing');
     };
 
@@ -470,11 +504,11 @@ function playRadio(url, category, index) {
             localStorage.setItem('hub_radio_url', url);
             localStorage.setItem('hub_radio_category', category);
             localStorage.setItem('hub_radio_channel_index', index.toString());
-            localStorage.setItem('hub_music_enabled', 'true'); // حفظ الحالة كـ مفعل للعودة لاحقاً
+            localStorage.setItem('hub_music_enabled', 'true');
             updateRadioButtonsUI();
         }).catch(e => {
             if (e.name === 'AbortError' || e.message.includes('interrupted')) {
-                console.log("تغيير سريع بين المحطات الفضائية للراديو.");
+                console.log(t('log_fast_switch'));
             } else {
                 isMusicPlaying = true;
                 handleConnectionFailure(statusText);
@@ -489,14 +523,14 @@ function handleConnectionFailure(statusText) {
 
     if (failedAttempts >= maxChannels) {
          if (statusText) {
-             statusText.innerText = "( عذراً، لا يوجد اتصال بالبث حالياً ❌ )";
+             statusText.innerText = t('status_failed_all');
              statusText.style.color = "#ff453a";
          }
          stopRadio(); 
          failedAttempts = 0; 
     } else {
          if (statusText) {
-             statusText.innerText = "( فشل الاتصال.. ننتقل للتالية ⏩ )";
+             statusText.innerText = t('status_failed_next');
              statusText.style.color = "#ff453a";
          }
          setTimeout(() => {
@@ -505,7 +539,7 @@ function handleConnectionFailure(statusText) {
     }
 }
 
-// 5. تهيئة وحفظ حالة الخروج
+// 6. تهيئة وحفظ حالة الخروج
 function stopRadio() {
     const statusText = document.getElementById('radio-status');
     if (statusText) statusText.innerText = ""; 
@@ -517,7 +551,7 @@ function stopRadio() {
         audioInstance.onwaiting = null;
         audioInstance.onplaying = null;
         audioInstance.onerror = null;
-        audioInstance.src = ''; // تفريغ المسار
+        audioInstance.src = ''; 
         audioInstance.load();   
         audioInstance = null;
     }
@@ -534,7 +568,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedCategory = localStorage.getItem('hub_radio_category') || 'kurdish';
         const savedIndex = parseInt(localStorage.getItem('hub_radio_channel_index')) || 0;
         
-        // الآن ستعمل هذه الميزة بنجاح لأن التحديث لا يمسح الحالة المفعلة
         if (savedMusicState === 'true' && RADIO_STATIONS[savedCategory] && RADIO_STATIONS[savedCategory][savedIndex] && !isMusicPlaying) {
             selectedCategory = savedCategory;
             currentChannelIndex = savedIndex;
@@ -546,7 +579,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', handleFirstClick);
 });
 
-// عند مغادرة الصفحة نقوم بـ إيقاف البث الصوتي مؤقتاً لحماية المتصفح، دون تخريب بيانات الـ localStorage
 const handleGameExitState = () => {
     if (audioInstance) {
         audioInstance.pause();
@@ -555,7 +587,7 @@ const handleGameExitState = () => {
 window.addEventListener('beforeunload', handleGameExitState);
 window.addEventListener('pagehide', handleGameExitState);
 
-// تصدير الدوال للنطاق العالمي (Global Scope)
+// تصدير الدوال للاستخدام العام (بما في ذلك دالة تغيير اللغة)
 window.openRadioModal = openRadioModal;
 window.closeRadioModal = closeRadioModal;
 window.selectRadioCategory = selectRadioCategory;
@@ -563,3 +595,4 @@ window.nextChannel = nextChannel;
 window.prevChannel = prevChannel;
 window.toggleRadioPlayState = toggleRadioPlayState;
 window.changeRadioVolume = changeRadioVolume;
+window.setRadioLanguage = setRadioLanguage;
