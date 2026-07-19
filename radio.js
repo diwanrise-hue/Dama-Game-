@@ -6,8 +6,7 @@
 const RADIO_STATIONS = {
     kurdish: [
         { name: "دينغي كوردسات (Dengi Kurdsat)", url: "https://stream.zeno.fm/e87fd7r29f8uv" }, 
-         { name: "kurd4", url: "https://stream.zeno.fm/624egn8hpm0uv" },
-        
+        { name: "kurd4", url: "https://stream.zeno.fm/624egn8hpm0uv" },
         { name: "دهوك الموسيقية (Duhok Music)", url: "https://stream-142.zeno.fm/088y8wcae0zuv?zs=DuhokLive" },
         { name: "بادينان (Badinan FM)", url: "https://stream-156.zeno.fm/x0xhw6c6g2zuv?zs=AfL9IRdsQ_qHIebZBo-9GA" }
     ],
@@ -24,9 +23,10 @@ const RADIO_STATIONS = {
 let audioInstance = null;
 let isMusicPlaying = false;
 
-// إدارة الحالة
+// إدارة الحالة وإعدادات الصوت المحفوظة
 let selectedCategory = localStorage.getItem('hub_radio_category') || 'kurdish';
 let currentChannelIndex = parseInt(localStorage.getItem('hub_radio_channel_index')) || 0;
+let radioVolume = localStorage.getItem('hub_radio_volume') !== null ? parseFloat(localStorage.getItem('hub_radio_volume')) : 1.0;
 
 if (!RADIO_STATIONS[selectedCategory] || !RADIO_STATIONS[selectedCategory][currentChannelIndex]) {
     selectedCategory = 'kurdish';
@@ -150,6 +150,44 @@ function injectRadioUI() {
             transition: 0.3s;
         }
 
+        /* حاوية شريط التحكم في الصوت المضاف حديثاً */
+        .radio-volume-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: #2c2c2e;
+            padding: 10px 15px;
+            border-radius: 12px;
+        }
+        .radio-volume-icon {
+            font-size: 16px;
+            color: #30d158;
+            user-select: none;
+        }
+        .radio-volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #3a3a3c;
+            outline: none;
+            accent-color: #30d158;
+            cursor: pointer;
+        }
+        .radio-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #30d158;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+
         /* زر التشغيل والإيقاف الموحد */
         .radio-actions { display: flex; }
         .action-btn {
@@ -205,6 +243,12 @@ function injectRadioUI() {
                     <div id="radio-status" class="radio-status-text"></div>
                 </div>
 
+                <!-- شريط التحكم في الصوت (تمت إضافته هنا فوق زر التشغيل والإيقاف) -->
+                <div class="radio-volume-container">
+                    <span class="radio-volume-icon">🔊</span>
+                    <input type="range" id="radio-volume-slider" class="radio-volume-slider" min="0" max="1" step="0.05" oninput="changeRadioVolume(this.value)">
+                </div>
+
                 <!-- زر التحكم الموحد -->
                 <div class="radio-actions">
                     <button id="radio-toggle-action-btn" class="action-btn play-btn" onclick="toggleRadioPlayState()">تشغيل ▶</button>
@@ -213,6 +257,10 @@ function injectRadioUI() {
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', uiHTML);
+    
+    // المزامنة الأولية لقيمة شريط الصوت من الذاكرة المحفوظة
+    document.getElementById('radio-volume-slider').value = radioVolume;
+    
     updateRadioButtonsUI();
 }
 
@@ -260,6 +308,15 @@ function toggleRadioPlayState() {
         stopRadio();
     } else {
         triggerPlayRadio();
+    }
+}
+
+// دالة التحكم في الصوت وتغييره حياً
+function changeRadioVolume(value) {
+    radioVolume = parseFloat(value);
+    localStorage.setItem('hub_radio_volume', value);
+    if (audioInstance) {
+        audioInstance.volume = radioVolume;
     }
 }
 
@@ -317,7 +374,7 @@ function playRadio(url, category, index) {
     const toggleActionBtn = document.getElementById('radio-toggle-action-btn');
 
     if (statusText) {
-        statusText.innerText = "( جاري الاتصال بالبث... 🔄 )";
+        statusText.innerText = "( jاري الاتصال بالبث... 🔄 )";
         statusText.style.color = "#ff9500"; 
     }
 
@@ -338,6 +395,9 @@ function playRadio(url, category, index) {
     audioInstance = new Audio(optimizedUrl);
     audioInstance.crossOrigin = "anonymous";
     audioInstance.preload = "none"; 
+    
+    // تطبيق مستوى الصوت الحالي المختار من قبل المستخدم فوراً
+    audioInstance.volume = radioVolume;
 
     // 4. آلية ذكية لمراقبة التقطيع التلقائي والإنعاش الفوري
     let stallTimeout;
@@ -452,3 +512,4 @@ window.selectRadioCategory = selectRadioCategory;
 window.nextChannel = nextChannel;
 window.prevChannel = prevChannel;
 window.toggleRadioPlayState = toggleRadioPlayState;
+window.changeRadioVolume = changeRadioVolume;
