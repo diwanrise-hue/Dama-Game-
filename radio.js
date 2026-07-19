@@ -22,7 +22,7 @@ const RADIO_STATIONS = {
     ],
     english: [
         { name: " fm ", url: "https://stream.revma.ihrhls.com/zc185" },
-        { name: "New York's 2", url: "https://stream.revma.ihrhls.com/zc1469" }
+        { name: "New York's", url: "https://stream.vovmedia.vn/vov247" }
     ]
 };
 
