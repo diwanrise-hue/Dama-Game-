@@ -265,9 +265,12 @@
         }
         
         .leaderboard-full-screen {
-            width: 100% !important; height: 100% !important;
-            max-width: none !important; max-height: none !important;
-            border-radius: 0 !important; padding: 40px 20px 20px 20px !important;
+            width: 95% !important; 
+            height: 95vh !important;
+            max-width: 500px !important; 
+            max-height: 95vh !important;
+            border-radius: 32px !important; 
+            padding: 35px 20px 20px 20px !important;
             display: flex; flex-direction: column;
         }
 
@@ -552,7 +555,11 @@
             <div class="profile-display-avatar" id="igp-avatar" style="width: 80px; height: 80px; margin: 0 auto 15px auto; border-radius: 50%; padding: 2px; border: 1px solid rgba(255,255,255,0.2); position: relative;"></div>
             
             <h4 id="igp-name" style="margin: 0 0 5px 0; font-size: 22px; font-weight: 700; color: white;">الاسم</h4>
-            <div style="color: #a1a1aa; font-size: 12px; margin-bottom: 20px; font-family: monospace; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 10px; display: inline-block;">ID: <span id="igp-id-display">...</span></div>
+            
+            <div onclick="copyMyId()" id="copy-id-btn" style="cursor: pointer; color: #a1a1aa; font-size: 13px; margin-bottom: 20px; font-family: monospace; background: rgba(255,255,255,0.08); padding: 6px 14px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1);" title="نسخ المعرف" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+                <span>ID: <span id="igp-id-display" style="color: white; font-weight: bold;">...</span></span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 15px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);">
                 <div style="display: flex; flex-direction: column;">
@@ -927,6 +934,23 @@
             }
         }
 
+        // دالة نسخ الـ ID للمستخدم
+        window.copyMyId = function() {
+            const idText = document.getElementById('igp-id-display').innerText;
+            if (idText && idText !== '...') {
+                navigator.clipboard.writeText(idText).then(() => {
+                    const toast = document.getElementById('toast-notification');
+                    if (toast) {
+                        toast.innerText = '📋 تم نسخ الـ ID بنجاح';
+                        toast.classList.add('show');
+                        setTimeout(() => toast.classList.remove('show'), 2500);
+                    }
+                }).catch(err => {
+                    console.error('فشل في نسخ المعرف: ', err);
+                });
+            }
+        };
+
         window.showEquipNotification = function(itemType) {
             const toast = document.getElementById('toast-notification');
             if (!toast) return;
@@ -1132,6 +1156,12 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
+            // تهيئة اللغة بناءً على إعدادات index.html المحفوظة
+            let savedAppLang = localStorage.getItem('appLang') || localStorage.getItem('lang') || 'ar';
+            document.documentElement.lang = savedAppLang;
+            document.documentElement.dir = savedAppLang === 'ar' ? 'rtl' : 'ltr';
+            window.currentLang = savedAppLang;
+
             window.addEventListener('message', (event) => {
                 if (!event.data) return;
                 
