@@ -14,7 +14,7 @@ const RADIO_STATIONS = {
         { name: "بادينان (Badinan FM)", url: "https://stream-156.zeno.fm/x0xhw6c6g2zuv?zs=AfL9IRdsQ_qHIebZBo-9GA" }
     ],
     arabic: [
-        { name: "عربي 1", url: "https://tatar.net.ua/radio/8000/radio.mp3" },
+        { name: " نغم فيروز", url: "https://stream.zeno.fm/24ydgrmvpg8uv" },
         { name: "عربي 2", url: "https://تغيير_الرابط_هنا_مستقبلاً.mp3" }
     ],
     english: [
