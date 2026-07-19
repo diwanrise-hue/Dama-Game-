@@ -28,6 +28,7 @@ const RADIO_STATIONS = {
 
 let audioInstance = null;
 let isMusicPlaying = false;
+let failedAttempts = 0; // متغيّر جديد لتتبع محاولات الاتصال الفاشلة المتتالية
 
 // إدارة الحالة وإعدادات الصوت (تم تحديد القيمة الافتراضية هنا لتكون 0.3 أي 30%)
 let selectedCategory = localStorage.getItem('hub_radio_category') || 'kurdish';
@@ -59,7 +60,7 @@ function injectRadioUI() {
         .radio-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center;
-            z-index: 10000; dir: rtl; font-family: 'Tajawal', sans-serif;
+            z-index: 10000; direction: rtl; /* تم تصحيح الخطأ هنا */ font-family: 'Tajawal', sans-serif;
         }
 
         /* صندوق النافذة الرئيسي */
@@ -216,9 +217,12 @@ function injectRadioUI() {
     `;
     document.head.appendChild(style);
 
+    // حساب الأوقات العشوائية لكل عمود مرة واحدة لراحة المعالج والتصفح السلس
     let barsHTML = '';
     for(let i = 0; i < 30; i++) {
-        barsHTML += '<div class="bar"></div>';
+        const randomDelay = (Math.random() * 0.5).toFixed(2);
+        const randomDuration = (0.5 + Math.random() * 0.5).toFixed(2);
+        barsHTML += `<div class="bar" style="animation-delay: ${randomDelay}s; animation-duration: ${randomDuration}s;"></div>`;
     }
 
     const uiHTML = `
@@ -298,6 +302,7 @@ function selectRadioCategory(category) {
     if (RADIO_STATIONS[category]) {
         selectedCategory = category;
         currentChannelIndex = 0; 
+        failedAttempts = 0; // تصفير المحاولات الفاشلة عند تغيير القسم
         updateRadioButtonsUI();
         
         if (isMusicPlaying) {
@@ -327,6 +332,7 @@ function toggleRadioPlayState() {
     if (isMusicPlaying) {
         stopRadio();
     } else {
+        failedAttempts = 0; // تصفير المحاولات عند التشغيل اليدوي
         triggerPlayRadio();
     }
 }
@@ -371,11 +377,6 @@ function updateRadioButtonsUI() {
     if (isMusicPlaying) {
         if(visualizer) visualizer.classList.add('playing');
         if(toggleBtn) toggleBtn.classList.add('playing');
-        
-        document.querySelectorAll('.visualizer-box .bar').forEach(bar => {
-            bar.style.animationDelay = (Math.random() * 0.5) + "s";
-            bar.style.animationDuration = (0.5 + Math.random() * 0.5) + "s";
-        });
     } else {
         if(visualizer) visualizer.classList.remove('playing');
         if(toggleBtn) toggleBtn.classList.remove('playing');
@@ -406,13 +407,14 @@ function playRadio(url, category, index) {
         statusText.style.color = "#ff9500"; 
     }
 
-    // 1. إيقاف وتنظيف أي اتصال قديم تماماً وتفريغ الذاكرة المؤقتة لضمان استقرار الشبكة
+    // 1. إيقاف وتنظيف أي اتصال قديم تماماً وتفريغ الذاكرة المؤقتة لضمان استقرار الشبكة بطريقة معيارية
     if (audioInstance) {
         audioInstance.pause();
         audioInstance.onwaiting = null;
         audioInstance.onplaying = null;
         audioInstance.onerror = null;
-        audioInstance.removeAttribute('src'); 
+        audioInstance.src = ''; // صحيح ومعياري
+        audioInstance.load();   // قطع الاتصال فوراً بالبث القديم
         audioInstance = null;
     }
 
@@ -443,13 +445,7 @@ function playRadio(url, category, index) {
         stallTimeout = setTimeout(() => {
             if (isMusicPlaying) {
                 console.log("استمر انقطاع البث لأكثر من 4 ثوانٍ، جاري الانتقال تلقائياً للقناة التالية.");
-                if (statusText) {
-                    statusText.innerText = "( ضعف الاتصال.. ننتقل للتالية ⏩ )";
-                    statusText.style.color = "#ff453a";
-                }
-                setTimeout(() => {
-                    if (isMusicPlaying) nextChannel();
-                }, 1000);
+                handleConnectionFailure(statusText);
             }
         }, 4000);
     };
@@ -459,19 +455,14 @@ function playRadio(url, category, index) {
         clearTimeout(stallTimeout);
         if (isMusicPlaying) {
             console.log("حدث خطأ نهائي في القناة، جاري التبديل للمحطة التالية تلقائياً.");
-            if (statusText) {
-                statusText.innerText = "( القناة غير متاحة.. ننتقل للتالية ⏩ )";
-                statusText.style.color = "#ff453a";
-            }
-            setTimeout(() => {
-                if (isMusicPlaying) nextChannel();
-            }, 1500);
+             handleConnectionFailure(statusText);
         }
     };
 
     // عندما يتم تحميل البيانات المباشرة بنجاح ويعود الصوت للعمل بسلاسة
     audioInstance.onplaying = () => {
         clearTimeout(stallTimeout);
+        failedAttempts = 0; // تصفير المحاولات الفاشلة عند النجاح
         if (statusText) {
             statusText.innerText = "( تعمل الآن 🟢 )";
             statusText.style.color = "#30d158";
@@ -498,17 +489,36 @@ function playRadio(url, category, index) {
                 console.log("تغيير سريع بين المحطات الفضائية للراديو.");
             } else {
                 console.log("فشل تشغيل البث، الانتقال للقناة التالية تلقائياً.");
-                if (statusText) {
-                    statusText.innerText = "( فشل الاتصال.. ننتقل للتالية ⏩ )";
-                    statusText.style.color = "#ff453a";
-                }
                 // الحفاظ على حالة التشغيل مفعلة للانتقال التلقائي دون انطفاء الراديو
                 isMusicPlaying = true;
-                setTimeout(() => {
-                    nextChannel();
-                }, 1500);
+                handleConnectionFailure(statusText);
             }
         });
+    }
+}
+
+// دالة مساعدة للتعامل مع فشل الاتصال ومنع الحلقة اللانهائية
+function handleConnectionFailure(statusText) {
+    failedAttempts++;
+    const maxChannels = RADIO_STATIONS[selectedCategory].length;
+
+    if (failedAttempts >= maxChannels) {
+         // إذا فشلت كل قنوات القسم، أوقف المحاولات لمنع حلقة لا نهائية
+         console.log("فشلت جميع المحاولات في هذا القسم. تم إيقاف الراديو لتجنب الحلقة اللانهائية.");
+         if (statusText) {
+             statusText.innerText = "( عذراً، لا يوجد اتصال بالبث حالياً ❌ )";
+             statusText.style.color = "#ff453a";
+         }
+         stopRadio(); // إيقاف الراديو
+         failedAttempts = 0; // تصفير العداد للمرات القادمة
+    } else {
+         if (statusText) {
+             statusText.innerText = "( فشل الاتصال.. ننتقل للتالية ⏩ )";
+             statusText.style.color = "#ff453a";
+         }
+         setTimeout(() => {
+             if (isMusicPlaying) nextChannel();
+         }, 1500);
     }
 }
 
@@ -522,7 +532,8 @@ function stopRadio() {
         audioInstance.onwaiting = null;
         audioInstance.onplaying = null;
         audioInstance.onerror = null;
-        audioInstance.removeAttribute('src'); 
+        audioInstance.src = ''; // صحيح ومعياري
+        audioInstance.load();   // قطع الاتصال فوراً
         audioInstance = null;
     }
     isMusicPlaying = false;
