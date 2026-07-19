@@ -218,15 +218,15 @@ function injectRadioUI() {
             border: 2px solid #30d158; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
 
-        /* زر التشغيل والإيقاف الموحد */
+        /* زر التشغيل والإيقاف الموحد - إضافة حدود واضحة */
         .radio-actions { display: flex; }
         .action-btn {
-            flex: 1; padding: 14px 10px; border: none; border-radius: 12px;
+            flex: 1; padding: 14px 10px; border-radius: 12px; border: 2px solid transparent;
             cursor: pointer; font-size: 16px; font-weight: bold; display: flex; justify-content: center; 
-            align-items: center; gap: 8px; font-family: inherit; transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+            align-items: center; gap: 8px; font-family: inherit; transition: background 0.3s, color 0.3s, box-shadow 0.3s, border-color 0.3s;
         }
-        .play-btn { background: #30d158; color: white; box-shadow: 0 4px 10px rgba(48, 209, 88, 0.3); }
-        .stop-btn { background: #3a1c1e; color: #ff453a; box-shadow: 0 4px 10px rgba(255, 69, 58, 0.15); }
+        .play-btn { background: #30d158; color: white; border-color: #30d158; box-shadow: 0 4px 10px rgba(48, 209, 88, 0.3); }
+        .stop-btn { background: #3a1c1e; color: #ff453a; border-color: #ff453a; box-shadow: 0 4px 10px rgba(255, 69, 58, 0.15); }
     `;
     document.head.appendChild(style);
 
@@ -380,9 +380,8 @@ function changeRadioVolume(value) {
     const slider = document.getElementById('radio-volume-slider');
     if (slider) {
         const percentage = radioVolume * 100;
-        // تعديل اتجاه الألوان في شريط الصوت بناءً على لغة الواجهة
-        const directionStr = t('direction') === 'rtl' ? 'to left' : 'to right';
-        slider.style.background = `linear-gradient(${directionStr}, #30d158 ${percentage}%, #3a3a3c ${percentage}%)`;
+        // شريط الصوت تم ضبطه ليكون دائماً LTR في الـ CSS، لذا يجب أن يكون اتجاه التعبئة دائماً لليمين ليتطابق مع حركة الزر
+        slider.style.background = `linear-gradient(to right, #30d158 ${percentage}%, #3a3a3c ${percentage}%)`;
     }
 }
 
