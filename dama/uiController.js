@@ -850,17 +850,36 @@ export const ui = {
         container.appendChild(box); 
         document.body.appendChild(container);
         
+        // 💡 تطبيق نظام الجوائز مع التحقق من الإنترنت (مكافحة الغش الأوفلاين) 💡
         if (gameState.userProfile) { 
             gameState.userProfile.gamesPlayed++; 
-            if (isMeWin) {
-                gameState.userProfile.wins++; 
-                gameState.userProfile.tokens = (gameState.userProfile.tokens || 0) + 50;
-                box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "لقد ربحت 🪙") + " 50"));
-            } else { 
-                gameState.userProfile.losses++; 
-                gameState.userProfile.tokens = (gameState.userProfile.tokens || 0) + 10;
-                box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "لقد ربحت 🪙") + " 10"));
-            } 
+            
+            const isServerConnected = (typeof socket !== 'undefined' && socket && socket.connected);
+
+            if (isServerConnected) {
+                // اللاعب متصل: امنحه الأموال وأرسلها للسيرفر
+                if (isMeWin) {
+                    gameState.userProfile.wins++; 
+                    gameState.userProfile.tokens = (gameState.userProfile.tokens || 0) + 50;
+                    box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "لقد ربحت 🪙") + " 50"));
+                } else { 
+                    gameState.userProfile.losses++; 
+                    gameState.userProfile.tokens = (gameState.userProfile.tokens || 0) + 10;
+                    box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "لقد ربحت 🪙") + " 10"));
+                }
+                
+                if (!gameState.isOnlineMode) {
+                    socket.emit('claimBotReward', { isWin: isMeWin });
+                }
+            } else {
+                // اللاعب أوفلاين: لا توجد أموال، يظهر له تنبيه
+                const offlineMsg = gameState.lang === 'ar' ? "الإنترنت مفصول (وضع التدريب) 🚫🪙" : "Offline mode (No rewards) 🚫🪙";
+                box.appendChild(this.makeEl('div', 'offline-alert', "margin-top:15px;color:#a1a1aa;font-weight:600;font-size:13px;", offlineMsg));
+                
+                if (isMeWin) gameState.userProfile.wins++;
+                else gameState.userProfile.losses++;
+            }
+
             if (gameState.userProfile.id) {
                 gameState.userProfile.id = gameState.userProfile.id.toUpperCase();
             }
@@ -1104,8 +1123,9 @@ ui.onClick('hint-btn', () => {
         const counterEl = document.getElementById('hint-counter');
         if (counterEl) counterEl.textContent = profile.hints;
 
+        // 💡 التعديل الهام: نظام حماية المصباح لمنع الاختراق
         if (socket && socket.connected) {
-            socket.emit('syncProfile', profile);
+            socket.emit('useHint'); 
         }
 
         let from = { r: moveObj[0].fromR, c: moveObj[0].fromC };
