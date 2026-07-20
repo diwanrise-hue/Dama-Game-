@@ -16,30 +16,7 @@
             padding-bottom: 120px !important; padding-top: 85px !important; 
             background-color: #2c3e50; font-family: 'Tajawal', 'Outfit', Arial, sans-serif; 
             margin: 0; display: flex; flex-direction: column; align-items: center; 
-            -webkit-tap-highlight-color: transparent; transition: background 0.3s ease; 
-        }
-
-        /* ========================================== */
-        /* تخصيصات وضع الأونلاين (Online Mode Styles) */
-        /* ========================================== */
-        body.online-mode-active {
-            padding-top: 15px !important;
-            justify-content: flex-start;
-        }
-        
-        body.online-mode-active #profile-badge,
-        body.online-mode-active #hamburger-menu-btn,
-        body.online-mode-active #undo-btn {
-            display: none !important;
-        }
-
-        body.online-mode-active #status-area {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        
-        body.online-mode-active .scoreboard {
-            margin-bottom: 15px;
+            -webkit-tap-highlight-color: transparent; transition: background 0.3s ease, padding 0.4s ease; 
         }
 
         #status-area {
@@ -132,6 +109,8 @@
         #online-toggle-btn:hover, #store-portal-corner-btn:hover {
             background: rgba(255,255,255,0.15) !important; transform: scale(1.05);
         }
+
+        #chat-btn:hover { background: rgba(255,255,255,0.15) !important; transform: scale(1.05); }
 
         @keyframes magicGlow {
             0% { box-shadow: 0 0 5px #f1c40f, inset 0 0 5px #f1c40f; transform: scale(1); }
@@ -399,7 +378,7 @@
         button, select, .control-panel button, .control-panel select, 
         .scoreboard, .settings-card, 
         .save-settings-btn, .store-buy-btn, .custom-tab-button, 
-        .modal-close-btn, #hamburger-menu-btn, #online-toggle-btn, #store-portal-corner-btn {
+        .modal-close-btn, #hamburger-menu-btn, #online-toggle-btn, #store-portal-corner-btn, #chat-btn {
             border: 1px solid rgba(135, 206, 235, 0.4) !important;
             box-shadow: 0 0 3px rgba(135, 206, 235, 0.3) !important;
             outline: none !important;
@@ -473,6 +452,62 @@
         @keyframes botFloat {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
+        }
+
+        /* ========================================== */
+        /* تعديلات وضع الأونلاين الحصرية (Online Mode Only) */
+        /* ========================================== */
+        body.online-mode-active {
+            padding-top: 15px !important; /* رفع الإطارات للأعلى قدر الإمكان */
+        }
+
+        /* إخفاء كبسولة البروفايل وزر الخيارات وزر التراجع وزر الدردشة كلياً في الأونلاين */
+        body.online-mode-active #profile-badge,
+        body.online-mode-active #hamburger-menu-btn,
+        body.online-mode-active #undo-btn,
+        body.online-mode-active #chat-btn {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        /* ترتيب العناصر بشكل ثابت: 1.إطار اللاعبين 2.الدور 3.النتيجة 4.الساحة */
+        body.online-mode-active #status-area {
+            margin-top: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            width: 100% !important;
+            order: 1 !important;
+        }
+
+        body.online-mode-active #match-players-card {
+            width: 95vw !important;
+            max-width: 500px !important; /* جعله عريضاً ليصل إلى قرب أطراف الشاشة */
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 10px 30px !important;
+            margin-bottom: 15px !important;
+            box-sizing: border-box !important;
+        }
+
+        body.online-mode-active .match-vs-text {
+            font-size: 24px !important;
+            font-weight: 800 !important;
+            color: #a1a1aa !important;
+        }
+
+        body.online-mode-active #turn-box-container {
+            margin-bottom: 15px !important;
+        }
+
+        body.online-mode-active .scoreboard {
+            order: 2 !important;
+        }
+
+        body.online-mode-active .game-container {
+            order: 3 !important;
         }
     </style>
 </head>
@@ -560,6 +595,11 @@
         <span class="notification-badge"></span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(52, 152, 219, 0.2)" stroke="#3498db" stroke-width="2" style="margin-left: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path></svg>
         <span style="font-size: 13px; font-weight: 600;">اونلاين</span>
+    </button>
+
+    <button id="chat-btn" title="الرسائل" style="display: none; position: fixed; bottom: 130px; right: 15px; z-index: 9998; width: 46px; height: 46px; border-radius: 14px; background: rgba(45, 48, 55, 0.65) !important; backdrop-filter: blur(10px); color: white; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; border: 1px solid rgba(135, 206, 235, 0.4) !important; box-shadow: 0 0 3px rgba(135, 206, 235, 0.3) !important; transition: all 0.3s;">
+        💬
+        <span id="chat-badge" style="display: none; position: absolute; top: -4px; right: -4px; background: #e74c3c; color: white; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 50%; border: 1px solid #282a32;">1</span>
     </button>
 
     <button id="store-portal-corner-btn" onclick="openAppModal('store-modal')" style="position: fixed; bottom: 75px; right: 15px; z-index: 9998; width: 46px; height: 46px; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;" title="المتجر الملكي">
