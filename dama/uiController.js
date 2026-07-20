@@ -55,7 +55,12 @@ export const ui = {
     playSound(audio) {
         if (!audio) return;
         audio.currentTime = 0;
-        audio.play().catch(err => console.warn("Audio playback prevented:", err));
+        let playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(err => {
+                // تجاهل الخطأ بصمت إذا منع المتصفح (مثل سفاري) التشغيل التلقائي للصوت
+            });
+        }
     },
     
     getVal(id, defaultValue = "") {
@@ -111,12 +116,11 @@ export const ui = {
         const currentLang = window.currentLang || gameState.lang || 'ar';
         document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
         
-        const setHtml = (id, txt) => { const e = this.getEl(id); if (e) e.innerText = txt; };
-        const setPlaceholder = (id, txt) => { const e = this.getEl(id); if (e) e.placeholder = txt; };
+        const setHtml = (id, txt) => { const e = this.getEl(id); if (e) e.innerText = txt || ""; };
+        const setPlaceholder = (id, txt) => { const e = this.getEl(id); if (e) e.placeholder = txt || ""; };
         
         const tObj = translations[currentLang] || translations.ar;
         
-        // تم إزالة 'reset-btn' من القاموس ليتم تعيينه يدوياً إلى "(ابداء)"
         const idToKeyMap = {
             'main-title': 'app_title', 'set-title': 'set_title', 
             'save-settings-btn': 'save_settings_btn', 'lang-label': 'langLabel', 
@@ -139,7 +143,7 @@ export const ui = {
             'card-my-name': 'badge_you', 'badge-username-display-game': 'badge_you'
         };
         
-        Object.keys(idToKeyMap).forEach(id => setHtml(id, tObj[idToKeyMap[id]]));
+        Object.keys(idToKeyMap).forEach(id => setHtml(id, tObj[idToKeyMap[id]] || idToKeyMap[id]));
         
         // الأزرار المطلوبة بدقة: "الخروج"
         setHtml('exit-game-btn', this.translate("الخروج", "Exit"));
@@ -161,16 +165,16 @@ export const ui = {
         }
 
         const placeholders = {
-            'online-room-input': tObj.ph_room,
-            'online-password-input': tObj.ph_pass,
-            'friend-id-input': tObj.add_friend_placeholder
+            'online-room-input': tObj.ph_room || '',
+            'online-password-input': tObj.ph_pass || '',
+            'friend-id-input': tObj.add_friend_placeholder || ''
         };
         Object.keys(placeholders).forEach(id => setPlaceholder(id, placeholders[id]));
         
         if (window.updateInventoryUI) window.updateInventoryUI();
             
         const onlineBtnText = document.querySelector('#online-toggle-btn span:last-child');
-        if (onlineBtnText) onlineBtnText.innerText = tObj.online_btn;
+        if (onlineBtnText) onlineBtnText.innerText = tObj.online_btn || this.translate("اونلاين", "Online");
 
         const turnInd = this.getEl('turn-indicator');
         if(turnInd) {
@@ -182,14 +186,12 @@ export const ui = {
         this.startTurn();
     },
 
-    // تم إضافة متغير جديد customCancelText ليتيح للسوكت إرسال زر "الخروج" عند طلب الإعادة
     showCustomAlert(message, title = null, onConfirm = null, showCancel = false, customCancelText = null, customOkText = null) {
         title = title || this.translate("تنبيه", "Alert");
         
         this.setTxt('custom-alert-message', message);
         this.setTxt('custom-alert-title', title);
         this.setTxt('custom-alert-ok', customOkText || this.translate("حسناً", "OK"));
-        // يمكننا التحكم بالتسمية من الخارج لدعم "الخروج" في حال طلب إعادة اللعب
         this.setTxt('custom-alert-cancel', customCancelText || this.translate("إلغاء", "Cancel"));
         
         const okBtn = this.getEl('custom-alert-ok');
@@ -249,10 +251,10 @@ export const ui = {
             'reset-btn': normalState, 
             'diff-quick-select': normalState, 
             'online-toggle-btn': normalState,
-            'resign-btn': onlineState, // زر الانسحاب
+            'resign-btn': onlineState, 
             'undo-btn': normalState, 
             'match-players-card': active ? 'flex' : 'none',
-            'chat-btn': active ? 'flex' : 'none' // زر الشات
+            'chat-btn': active ? 'flex' : 'none' 
         };
         Object.keys(displays).forEach(id => this.setDisplay(id, displays[id]));
         
@@ -318,7 +320,6 @@ export const ui = {
         
         const flip = gameState.isOnlineMode && gameState.onlineFlip;
         
-        // التحقق مما إذا كنا بحاجة لإعادة بناء الرقعة بالكامل
         const needsRebuild = forceRebuild || board.children.length === 0 || board.dataset.flip !== String(flip);
         
         if (needsRebuild) {
@@ -348,7 +349,6 @@ export const ui = {
             }
         }
         
-        // بدلاً من مسح الرقعة بالكامل، نقوم بتحديث المربعات فقط بذكاء لمنع الـ DOM Destruction
         for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
                 const cell = board.querySelector(`[data-row="${r}"][data-col="${c}"]`);
@@ -366,7 +366,6 @@ export const ui = {
                         currentPiece.className = `piece ${isWhite ? 'white' : 'black'} ${isDama ? 'dama' : ''}`.trim();
                         cell.appendChild(currentPiece);
                     } else {
-                        // تحديث الخصائص مع الحفاظ على الكلاسات المؤقتة مثل selected و forced
                         if (isWhite) {
                             currentPiece.classList.add('white');
                             currentPiece.classList.remove('black');
@@ -493,7 +492,8 @@ export const ui = {
             this.setTxt('turn-countdown', this.translate(`⏳ المتبقي للدور: ${gameState.turnTimeLeft} ثانية`, `⏳ Turn Time Left: ${gameState.turnTimeLeft}s`));
             
             if (gameState.turnTimeLeft === 10) {
-                sfx.clock.play().catch(() => {});
+                let playPromise = sfx.clock.play();
+                if (playPromise !== undefined) playPromise.catch(() => {});
             }
             
             if (gameState.turnTimeLeft <= 0) {
@@ -554,13 +554,11 @@ export const ui = {
         let maxJ = 0;
 
         if (gameState.isMultiJumping && gameState.selectedPiece) {
-            // إذا كنا في حالة أكل مستمر، نحسب الأكل المتبقي للحجر المحدد فقط لمنع التبديل
             let cell = gameState.selectedPiece.parentElement;
             let r = parseInt(cell.dataset.row);
             let c = parseInt(cell.dataset.col);
             maxJ = gameEngine.findMaxJumps(r, c, gameState.currentTurn, gameState.virtualBoard);
         } else {
-            // إذا كان دوراً جديداً عادياً، نفحص اللوحة بالكامل كما كان سابقاً
             gameState.virtualBoard.forEach((row, r) => {
                 row.forEach((p, c) => {
                     if (p?.startsWith(gameState.currentTurn)) {
@@ -575,7 +573,7 @@ export const ui = {
         gameState.isMultiJumping = false;
         
         if (gameState.requiredJumps > 0) {
-            tInd.textContent = `${translations[gameState.lang].forced} ${gameState.requiredJumps}`;
+            tInd.textContent = `${translations[gameState.lang].forced || "إجباري"} ${gameState.requiredJumps}`;
             tInd.style.color = "#e74c3c";
             
             let fList = [];
@@ -604,9 +602,9 @@ export const ui = {
             if (gameState.isOnlineMode) {
                 tInd.textContent = gameState.currentTurn === gameState.myOnlineColor ? this.translate("دورك الآن", "Your Turn") : this.translate("دور منافسك", "Opponent's Turn");
             } else if (gameState.currentTurn === gameState.playerColor) {
-                tInd.textContent = translations[gameState.lang].turn;
+                tInd.textContent = translations[gameState.lang].turn || "دورك";
             } else {
-                tInd.textContent = translations[gameState.lang].aiTurn;
+                tInd.textContent = translations[gameState.lang].aiTurn || "دور الحاسوب";
             }
         }
         
@@ -699,10 +697,14 @@ export const ui = {
             const worker = getAiWorker();
             if (worker) {
                 worker.onmessage = function(e) {
+                    worker.onmessage = null; 
+                    worker.onerror = null;
                     let chosenMove = e.data.move || moves[0];
                     processMove(chosenMove);
                 };
                 worker.onerror = function(err) {
+                    worker.onmessage = null;
+                    worker.onerror = null;
                     console.error("AI Worker Error:", err);
                     let chosenMove = moves[0];
                     processMove(chosenMove);
@@ -808,7 +810,6 @@ export const ui = {
             }
         });
         
-        // زر "الخروج" المبرمج في جافاسكريبت للنافذة الزجاجية المتطورة للنتائج
         const eBtn = this.makeEl('button', 'modal-btn-exit', "flex:1;background:rgba(255,69,58,0.15);color:#ff453a;border:1px solid rgba(255,69,58,0.3);border-radius:50px;height:50px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.3s cubic-bezier(0.25, 1, 0.5, 1);outline:none;box-shadow:0 0 3px rgba(255,69,58,0.3);", this.translate("الخروج", "Exit"));
         eBtn.id = 'modal-btn-exit';
         eBtn.onmouseenter = () => eBtn.style.transform = 'scale(0.96)';
@@ -854,13 +855,12 @@ export const ui = {
             if (isMeWin) {
                 gameState.userProfile.wins++; 
                 gameState.userProfile.tokens = (gameState.userProfile.tokens || 0) + 50;
-                box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang].tokenReward || "لقد ربحت 🪙") + " 50"));
+                box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "لقد ربحت 🪙") + " 50"));
             } else { 
                 gameState.userProfile.losses++; 
                 gameState.userProfile.tokens = (gameState.userProfile.tokens || 0) + 10;
-                box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang].tokenReward || "لقد ربحت 🪙") + " 10"));
+                box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "لقد ربحت 🪙") + " 10"));
             } 
-            // تأكيد حفظ المعرف بأحرف كبيرة في التخزين المحلي لمنع التضارب
             if (gameState.userProfile.id) {
                 gameState.userProfile.id = gameState.userProfile.id.toUpperCase();
             }
@@ -884,10 +884,9 @@ export const ui = {
     updateProfileUI() {
         if (!gameState.userProfile) return;
         
-        // داخل دالة updateProfileUI() في uiController.js
         if (gameState.userProfile) {
             if (typeof window.applyTheme === 'function') {
-                window.applyTheme(gameState.userProfile); // نمرر كامل كائن الملف الشخصي ليطبق كل شيء
+                window.applyTheme(gameState.userProfile); 
             }
         }
 
@@ -909,7 +908,6 @@ export const ui = {
                 const noFriendsTxt = this.makeEl('p', null, "text-align:center;color:#a1a1aa;font-size:12px;", this.translate("لا يوجد أصدقاء حالياً", "No friends currently"));
                 fList.appendChild(noFriendsTxt);
             } else {
-                // تصفية وتكرير المعرفات لتجنب التكرار بحروف صغيرة/كبيرة
                 const normalizedFriends = [...new Set((gameState.userProfile.friends || []).map(id => id.toUpperCase()))];
                 gameState.userProfile.friends = normalizedFriends;
 
@@ -938,7 +936,6 @@ export const ui = {
         }
     },
 
-    // دالة جديدة لتحديث واجهة لوحة الشرف لدعم شكل البيانات المتطور الوارد من السيرفر (كائنات بدلاً من نصوص)
     updateLeaderboardUI(data) {
         const winsList = this.getEl('leaderboard-wins-list');
         const tokensList = this.getEl('leaderboard-tokens-list');
@@ -972,7 +969,6 @@ export const ui = {
         if (saved) { 
             try {
                 const parsed = JSON.parse(saved);
-                // توحيد معرف اللاعب لقالب السيرفر
                 if (parsed.id) parsed.id = parsed.id.toUpperCase();
                 if (parsed.friends) {
                     parsed.friends = [...new Set(parsed.friends.map(f => f.toUpperCase()))];
@@ -991,7 +987,6 @@ export const ui = {
         if (typeof window.openAppModal === 'function') window.openAppModal('matchmaking-modal');
         else this.setDisplay('matchmaking-modal', 'flex'); 
         
-        // مزامنة المعرّف ليكون بأحرف كبيرة لمنع تضارب الاتصال بالسيرفر
         const pId = (gameState.userProfile.id || "").toUpperCase();
         gameState.userProfile.id = pId;
 
@@ -1082,23 +1077,19 @@ ui.onClick('hint-btn', () => {
         return;
     }
 
-    // تحديد لون اللاعب الحالي بدقة الذي يريد المساعدة لنفسه
     let myColor = gameState.isOnlineMode ? gameState.myOnlineColor : gameState.playerColor;
     let eleganceMoves = gameEngine.generateAllTurnMoves(myColor, gameState.virtualBoard);
     if (eleganceMoves.length === 0) return;
 
-    // تعطيل الزر مؤقتاً لتجنب النقرات المتعددة
     const hintBtn = document.getElementById('hint-btn');
     if (hintBtn) {
         hintBtn.style.pointerEvents = 'none';
         hintBtn.style.opacity = '0.5';
     }
     
-    // إشعار اللاعب بأن المصباح يقوم بحسابات معقدة لصالح اللاعب
     ui.setTxt('turn-countdown', ui.translate("👁️ المصباح يحسب حركتك الأسطورية القادمة...", "👁️ Lamp is calculating your next legendary move..."));
 
     const showGlow = (moveObj) => {
-        // إعادة تفعيل الزر وإخفاء رسالة التفكير
         if (hintBtn) {
             hintBtn.style.pointerEvents = 'auto';
             hintBtn.style.opacity = '1';
@@ -1107,14 +1098,12 @@ ui.onClick('hint-btn', () => {
 
         if (!moveObj || moveObj.length === 0) return;
         
-        // 1. خصم التلميح وتحديث العداد في الواجهة
         profile.hints--;
         localStorage.setItem('hub_user_profile', JSON.stringify(profile));
         
         const counterEl = document.getElementById('hint-counter');
         if (counterEl) counterEl.textContent = profile.hints;
 
-        // 2. مزامنة الخصم مع السيرفر لحمايته من الضياع
         if (socket && socket.connected) {
             socket.emit('syncProfile', profile);
         }
@@ -1127,7 +1116,6 @@ ui.onClick('hint-btn', () => {
         let fCell = board.querySelector(`[data-row="${from.r}"][data-col="${from.c}"]`);
         let tCell = board.querySelector(`[data-row="${to.r}"][data-col="${to.c}"]`);
         
-        // توهج ذهبي (Premium) مخصص لحركتك الصحيحة لكي تفوز
         if (fCell) { fCell.style.boxShadow = "inset 0 0 35px #FFD700"; setTimeout(() => fCell.style.boxShadow="", 3500); }
         if (tCell) { tCell.style.boxShadow = "inset 0 0 35px #FFD700"; setTimeout(() => tCell.style.boxShadow="", 3500); }
         ui.playSound(ui.sfx.move);
@@ -1136,18 +1124,19 @@ ui.onClick('hint-btn', () => {
     const worker = getAiWorker();
     if (worker) {
         worker.onmessage = (e) => {
+            worker.onmessage = null; 
+            worker.onerror = null;
             let bestMove = e.data.move;
             showGlow(bestMove || eleganceMoves[0]);
         };
         worker.onerror = () => {
-            // حل بديل متزامن وقوي بعمق 6 لتعظيم جودة حركتك الحالية في حال تعطل الوركر
+            worker.onmessage = null;
+            worker.onerror = null;
             let syncMove = gameAI.minimax(gameState.virtualBoard, 6, -Infinity, Infinity, true, myColor).move;
             showGlow(syncMove || eleganceMoves[0]);
         }
-        // تمرير لونك الحالي للوركر ليقوم بالتعظيم الاستراتيجي لك (وليس للخصم)
         worker.postMessage({ board: gameState.virtualBoard, depth: 8, aiColor: myColor });
     } else {
-        // إذا كان المتصفح لا يدعم الوركرز، نستخدم عمق 6 لتعظيم حركتك بدون تعليق المتصفح
         setTimeout(() => {
             let bestMove = gameAI.minimax(gameState.virtualBoard, 6, -Infinity, Infinity, true, myColor).move || eleganceMoves[0];
             showGlow(bestMove);
@@ -1174,7 +1163,7 @@ document.addEventListener('click', (e) => {
     const actionElement = e.target.closest('[data-action]');
     if (actionElement) {
         const action = actionElement.dataset.action;
-        const fId = (actionElement.dataset.fid || "").toUpperCase(); // توحيد المعرفات بأحرف كبيرة
+        const fId = (actionElement.dataset.fid || "").toUpperCase(); 
 
         if (action === 'challenge-friend') {
             if (typeof window.challengeFriend === 'function') {
@@ -1183,7 +1172,6 @@ document.addEventListener('click', (e) => {
                 ui.showCustomAlert(ui.translate("قريباً... سيتم تفعيل نظام التحديات!", "Coming soon... Challenge system will be activated!"));
             }
         } else if (action === 'remove-friend') {
-            // حذف الصديق مع معالجة غير حساسة لحالة الأحرف
             gameState.userProfile.friends = (gameState.userProfile.friends || []).filter(id => id.toUpperCase() !== fId); 
             localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile)); 
             ui.updateProfileUI();
