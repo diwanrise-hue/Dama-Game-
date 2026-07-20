@@ -83,7 +83,6 @@ export const socketManager = {
                 purchasedItems: [],
                 friends: []
             };
-            // تحسين: حفظ ملف تعريف الضيف في LocalStorage فوراً لمنع تغيير الـ ID عند تحديث الصفحة
             try {
                 localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile));
             } catch (e) {
@@ -225,7 +224,6 @@ export const socketManager = {
         socket.on('opponentMove', data => {
             if (!data || !data.updatedBoard) return;
             
-            // 💡 خطوة الحماية: التحقق مما إذا كان الدور مستمراً لنفس الشخص (أكل متعدد)
             let isMultiJumpContinuation = (gameState.currentTurn === data.nextTurn);
             
             gameState.virtualBoard = data.updatedBoard;
@@ -243,6 +241,7 @@ export const socketManager = {
                 }
             } catch (err) { console.warn(err); }
             
+            // التأكد من تفريغ الحجر المحدد للاعب المحلي 
             if(gameState.selectedPiece) {
                 gameState.selectedPiece.classList.remove('selected');
                 gameState.selectedPiece = null;
@@ -254,15 +253,12 @@ export const socketManager = {
                 ui.highlightMove(data.from, data.to);
             }
             
-            // 💡 إذا كان الدور مستمراً لنفس اللاعب، نقوم بقفل المتغيرات على الحجر الجديد فوراً قبل تشغيل الدور
+            // 💡 التعديل الهام: تمييز حجر الخصم بصرياً عند القفز المتعدد دون إعطائه لمتغير اللاعب المحلي
             if (isMultiJumpContinuation && data.to) {
-                gameState.isMultiJumping = true;
-                // نحدد الحجر برمجياً بناءً على إحداثيات هبوطه الجديدة data.to
                 const boardEl = document.getElementById('board');
                 const activeCell = boardEl?.querySelector(`[data-row="${data.to.r}"][data-col="${data.to.c}"]`);
                 if (activeCell && activeCell.children.length > 0) {
-                    gameState.selectedPiece = activeCell.children[0];
-                    gameState.selectedPiece.classList.add('selected');
+                    activeCell.children[0].classList.add('forced'); 
                 }
             }
             
