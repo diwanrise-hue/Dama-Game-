@@ -111,18 +111,46 @@ export const socketManager = {
         ];
         eventsToTurnOff.forEach(event => socket.off(event));
 
+        // عند عودة الإنترنت والاتصال بنجاح
         socket.on('connect', () => {
+            console.log('Connected to server successfully');
+            
             const profile = this._ensureUserProfile();
             socket.emit('deviceFingerprint', { guestId: profile.id });
             if (gameState.isOnlineMode && gameState.onlineRoomID) {
                 this.handleRoomAction('joinRoom', gameState.onlineRoomID);
             }
+
+            // إخفاء النافذة الجميلة فوراً وبشكل تلقائي بمجرد عودة الإنترنت
+            const currentUI = window.ui || ui;
+            if (currentUI && typeof currentUI.setDisplay === 'function') {
+                currentUI.setDisplay('custom-alert-modal', 'none');
+            } else if (typeof window.closeAppModal === 'function') {
+                window.closeAppModal('custom-alert-modal');
+            }
         });
 
-        socket.on('disconnect', () => console.log("⚠️ Connection lost, retrying..."));
+        // عند انقطاع الإنترنت أو الخادم
+        socket.on('disconnect', (reason) => {
+            console.warn('Disconnected:', reason);
+            
+            const currentUI = window.ui || ui;
+            const currentGameState = window.gameState || gameState;
 
+            if (currentUI && typeof currentUI.showCustomAlert === 'function') {
+                const title = currentGameState && currentGameState.lang === 'en' ? "Connection Lost" : "انقطاع الاتصال";
+                const msg = currentGameState && currentGameState.lang === 'en' 
+                    ? "⚠️ Connection lost. Retrying..." 
+                    : "⚠️ عذراً، انقطع الاتصال بالخادم أو الإنترنت ضعيف. يرجى الانتظار، جاري محاولة إعادة الاتصال...";
+                
+                // إظهار النافذة الجميلة بدون زر إلغاء
+                currentUI.showCustomAlert(msg, title, null, false);
+            }
+        });
+
+        // عند ضعف الإنترنت ومحاولة إعادة الاتصال
         socket.on('connect_error', (err) => {
-            console.warn("⚠️ تنبيه المطور: الإنترنت مقطوع أو ضعيف جداً بالجهاز حالياً!");
+            console.warn('Connection Error:', err);
             
             const mmModal = document.getElementById('matchmaking-modal');
             if (mmModal && (mmModal.style.display === 'block' || mmModal.style.display === 'flex')) {
@@ -130,15 +158,17 @@ export const socketManager = {
                 clearInterval(gameState.mmInterval);
                 gameState.mmInterval = null;
             }
-            
-            const now = Date.now();
-            if (now - this.lastConnectionErrorTime > 10000) {
-                this.lastConnectionErrorTime = now;
-                this._showToast(
-                    gameState.lang === 'ar' 
-                    ? "الإنترنت ضعيف! جاري إعادة الاتصال..." 
-                    : "Connection weak! Retrying..."
-                );
+
+            const currentUI = window.ui || ui;
+            const currentGameState = window.gameState || gameState;
+
+            if (currentUI && typeof currentUI.showCustomAlert === 'function') {
+                const title = currentGameState && currentGameState.lang === 'en' ? "Connection Error" : "ضعف الإنترنت";
+                const msg = currentGameState && currentGameState.lang === 'en' 
+                    ? "⚠️ Internet connection is weak. Retrying..." 
+                    : "⚠️ جاري محاولة استعادة الاتصال بالإنترنت، يرجى الانتظار...";
+                
+                currentUI.showCustomAlert(msg, title, null, false);
             }
         });
 
