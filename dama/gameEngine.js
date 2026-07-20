@@ -148,16 +148,16 @@ export const gameEngine = {
         return enemy;
     },
 
-    checkGameOver(bState) {
+    checkGameOver(bState, isSimulation = false) {
         let whiteMoves = this.generateAllTurnMoves('white', bState).length;
         let blackMoves = this.generateAllTurnMoves('black', bState).length;
 
         if (whiteMoves === 0) {
-            this.endGame('black');
+            if (!isSimulation) this.endGame('black');
             return 'black';
         }
         if (blackMoves === 0) {
-            this.endGame('white');
+            if (!isSimulation) this.endGame('white');
             return 'white';
         }
         return null;
@@ -224,3 +224,5 @@ export const gameEngine = {
         console.log("[Game Engine] A fresh new game has been initialized successfully.");
     }
 };
+
+window.gameEngine = gameEngine;
