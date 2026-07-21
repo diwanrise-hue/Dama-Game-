@@ -33,27 +33,34 @@
         /* رقعة اللعب واللوحات (مع التوريث البصري)    */
         /* ========================================== */
         .scoreboard { 
-            display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; 
-            background: rgba(30, 32, 40, 0.85); padding: 15px; border-radius: 12px; 
+            display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; 
+            background: rgba(30, 32, 40, 0.85); padding: 10px 15px; border-radius: 12px; 
             align-items: center; width: 90%; max-width: 350px; transition: all 0.3s ease; 
-            box-sizing: border-box; border: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box; border: 2px solid rgba(255,255,255,0.05);
+            min-height: auto !important;
         }
-        .score-row { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .score-row { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; width: 100%; align-items: center; }
         
-        /* 🌟 الدوائر الفارغة (مكان الأحجار المفقودة) */
+        /* 🌟 الدوائر الفارغة (مكان الأحجار المفقودة) محمية من التمطيط */
         .mini-piece-empty { 
-            width: 15px; height: 15px; border-radius: 50%; 
+            width: 14px; height: 14px; border-radius: 50%; 
             background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.15); 
+            flex: 0 0 14px; margin: 1px;
         }
         
-        /* 🌟 الأحجار المصغرة الذكية (ترث نفس ستايل الحجر الكبير وصوره) */
+        /* 🌟 الأحجار المصغرة الذكية محمية بقفل (Flex: 0 0 14px) */
         .piece.mini { 
-            width: 16px !important; height: 16px !important; 
-            min-width: 16px !important; min-height: 16px !important; 
-            margin: 0 !important; cursor: default; transform: none !important; 
-            animation: none !important; box-shadow: 0 2px 5px rgba(0,0,0,0.5) !important; 
+            width: 14px !important; height: 14px !important; 
+            flex: 0 0 14px !important; /* قفل يمنع التشوه والتمطيط نهائياً */
+            min-width: 14px !important; min-height: 14px !important; 
+            max-width: 14px !important; max-height: 14px !important;
+            margin: 1px !important; padding: 0 !important; 
+            cursor: default; transform: none !important; 
+            animation: none !important; box-shadow: 0 2px 4px rgba(0,0,0,0.5) !important; 
             background-size: cover !important; background-position: center !important; 
             border-width: 1px !important;
+            border-radius: 50% !important;
+            display: inline-block !important;
         }
         .piece.mini::before, .piece.mini::after { display: none !important; }
         
@@ -762,7 +769,7 @@
         </div>
     </div>
 
-    <!-- نافذة التنبيهات -->
+    <!-- نافذة التنبيهات المخصصة -->
     <div id="custom-alert-modal" class="modal-overlay">
         <div class="settings-card" dir="auto" style="max-width: 300px;">
             <h3 id="custom-alert-title">تنبيه</h3>
@@ -867,7 +874,7 @@
         </div>
     </div>
 
-    <!-- نافذة المتجر المصغرة -->
+    <!-- نافذة المتجر المصغرة (التأكيد) -->
     <div id="purchase-modal" class="modal-overlay">
         <div class="settings-card" dir="auto" style="max-width: 300px;">
             <h3 id="modal-item-name">اسم المنتج</h3>
