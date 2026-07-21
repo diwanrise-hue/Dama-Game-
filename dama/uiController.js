@@ -242,7 +242,6 @@ export const ui = {
         }, 3000);
     },
 
-    // 🎭 ترتيب الشاشة أثناء اللعب أوفلاين (ضد البوت)
     toggleOfflineInMatchUI(active) {
         if (gameState.isOnlineMode) return;
         window.isMatchRunning = active;
@@ -250,17 +249,14 @@ export const ui = {
         const flexState = active ? 'none' : 'flex';
         const inlineState = active ? 'none' : 'inline-block';
         
-        // إخفاء الأزرار الجانبية أثناء اللعب
         this.setDisplay('online-toggle-btn', flexState);
         this.setDisplay('store-portal-corner-btn', flexState);
         this.setDisplay('hamburger-menu-btn', flexState);
         this.setDisplay('diff-quick-select', inlineState);
         
-        // إظهار زر الحقيبة والانسحاب
         this.setDisplay('bag-quick-btn', active ? 'flex' : 'none');
         this.setDisplay('resign-btn', active ? 'inline-block' : 'none');
         
-        // زر التراجع يظهر فقط إذا كان الوضع تعليمي
         if (active && gameState.isTutorialMode) {
             this.setDisplay('undo-btn', 'inline-block');
         } else {
@@ -281,7 +277,7 @@ export const ui = {
             'online-toggle-btn': flexState,
             'store-portal-corner-btn': flexState,
             'hamburger-menu-btn': flexState,
-            'bag-quick-btn': 'none', // الحقيبة لا تظهر في الأونلاين أبدًا
+            'bag-quick-btn': 'none',
             'resign-btn': onlineState, 
             'undo-btn': 'none', 
             'match-players-card': active ? 'flex' : 'none',
@@ -421,13 +417,29 @@ export const ui = {
     },
 
     drawEmptyBoard() {
+        // 🧹 تنظيف عميق (Deep Clean) لحل أخطاء الذاكرة الوهمية (Ghost Multi-jumps)
+        gameState.gameId = Date.now();
+        if (gameState.aiTimeout) {
+            clearTimeout(gameState.aiTimeout);
+            gameState.aiTimeout = null;
+        }
+
         gameState.virtualBoard = Array(8).fill(null).map(() => Array(8).fill(null));
         gameState.isGameActive = false;
         window.isMatchRunning = false;
+        
+        // 🚨 تصفير جميع مؤشرات القفز لمنع خطأ (Mandatory 2) الوهمي
+        gameState.isMultiJumping = false;
+        gameState.jumpsCount = 0;
+        gameState.requiredJumps = 0;
+        gameState.selectedPiece = null;
+        gameState.lastJumpDir = { dr: null, dc: null };
+
         this.toggleOfflineInMatchUI(false);
         
         this.clearHighlights();
         document.querySelectorAll('.cell.last-move').forEach(c => c.classList.remove('last-move'));
+        document.querySelectorAll('.piece.forced').forEach(p => p.classList.remove('forced'));
         
         const tInd = this.getEl('turn-indicator');
         if (tInd) {
@@ -440,14 +452,11 @@ export const ui = {
     },
 
     initBoard() {
-        clearTimeout(gameState.aiTimeout);
-        gameState.aiTimeout = null;
+        this.drawEmptyBoard(); // نستخدم دالة التنظيف العميق أولاً قبل بناء اللوحة
         
         gameState.botMoveCount = 0;
-        gameState.virtualBoard = Array(8).fill(null).map(() => Array(8).fill(null));
         gameState.boardHistory = []; 
 
-        // 🧠 قراءة مربع اختيار "الوضع التعليمي" عند بدء اللعبة
         const tutorialCheck = document.getElementById('tutorial-mode-checkbox');
         if (!gameState.isOnlineMode && tutorialCheck) {
             gameState.isTutorialMode = tutorialCheck.checked;
@@ -462,9 +471,6 @@ export const ui = {
             this.toggleOfflineInMatchUI(true);
         }
         
-        this.clearHighlights();
-        document.querySelectorAll('.cell.last-move').forEach(c => c.classList.remove('last-move'));
-        
         let topC = gameState.playerColor === 'white' ? 'black' : 'white';
         gameState.pieceDirection = {};
         gameState.pieceDirection[topC] = 1;
@@ -478,15 +484,13 @@ export const ui = {
         }
         
         gameState.currentTurn = 'white';
-        gameState.selectedPiece = null;
-        gameState.isMultiJumping = false;
         gameState.blockGameOverModal = true;
         
         setTimeout(() => { gameState.blockGameOverModal = false; }, 1000);
         
         this.renderBoard(true);
         saveGameState();
-        this.updateProfileUI(); // لتحديث نص المصباح فوراً
+        this.updateProfileUI(); 
         this.startTurn();
     },
 
@@ -591,12 +595,16 @@ export const ui = {
         
         const isBoardEmpty = gameState.virtualBoard.every(row => row.every(cell => cell === null));
         
+        // 🏆 حل مشكلة ظهور النتيجة داخل مؤشر الدور بدلاً من النافذة المنبثقة
         if (!isBoardEmpty && ((gameState.currentTurn === 'white' && wMoves === 0) || (gameState.currentTurn === 'black' && bMoves === 0))) {
             if (gameState.blockGameOverModal) return; 
-            let winMsg = gameState.currentTurn === 'white' ? translations[gameState.lang].winBlack : translations[gameState.lang].winWhite;
-            tInd.textContent = winMsg;
+            
+            let winnerColor = gameState.currentTurn === 'white' ? 'black' : 'white';
+            tInd.textContent = winnerColor === 'white' ? this.translate("فاز الأبيض!", "White Wins!") : this.translate("فاز الأسود!", "Black Wins!");
             tInd.style.color = "#2ecc71";
-            this.showGameOverModal(winMsg);
+            
+            // استدعاء دالة النافذة الموحدة (التي تصلح للأونلاين والأوفلاين)
+            this.showResultsModal(winnerColor);
             return;
         }
         
@@ -770,7 +778,8 @@ export const ui = {
         }
     },
 
-    showOnlineResultsModal(winnerColor) {
+    // 🏆 الدالة الموحدة لظهور نتائج الفوز (للأونلاين والأوفلاين)
+    showResultsModal(winnerColor) {
         clearInterval(gameState.turnTimerInterval); 
         gameState.turnTimerInterval = null;
         sfx.clock.pause(); 
@@ -899,7 +908,6 @@ export const ui = {
             const isServerConnected = (typeof socket !== 'undefined' && socket && socket.connected);
 
             if (isServerConnected) {
-                // 🛑 منع إرسال الجوائز للسيرفر إذا كان في "الوضع التعليمي"
                 if (!gameState.isOnlineMode && gameState.isTutorialMode) {
                     box.appendChild(this.makeEl('div', 'tutorial-alert', "margin-top:15px;color:#a1a1aa;font-weight:600;font-size:13px;", "وضع تعليمي (بدون جوائز) 🚫🪙"));
                 } else {
@@ -952,7 +960,6 @@ export const ui = {
             window.applyProfileDataToUI(gameState.userProfile);
         }
         
-        // ✨ إظهار كلمة "مجاني" أو عدد المصابيح حسب الوضع
         const hintCounter = document.getElementById('hint-counter');
         if (hintCounter) {
             if (gameState.isTutorialMode && !gameState.isOnlineMode) {
@@ -1106,11 +1113,6 @@ window.handleStartClick = function() {
                     localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile));
                     ui.updateProfileUI();
                 }
-                gameState.gameId = Date.now();
-                if (gameState.aiTimeout) {
-                    clearTimeout(gameState.aiTimeout);
-                    gameState.aiTimeout = null;
-                }
                 ui.drawEmptyBoard();
                 if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
             },
@@ -1153,11 +1155,6 @@ window.handleResignClick = function() {
                     localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile));
                     ui.updateProfileUI();
                 }
-                gameState.gameId = Date.now();
-                if (gameState.aiTimeout) {
-                    clearTimeout(gameState.aiTimeout);
-                    gameState.aiTimeout = null;
-                }
                 ui.drawEmptyBoard();
             },
             true,
@@ -1167,8 +1164,8 @@ window.handleResignClick = function() {
     }
 };
 
-
 ui.onClick('undo-btn', () => {
+    // الحماية الصارمة: لا تراجع أثناء التفكير
     if (gameState.isOnlineMode || gameState.currentTurn !== gameState.playerColor) return; 
 
     if (!gameState.boardHistory || gameState.boardHistory.length <= 1) return;
