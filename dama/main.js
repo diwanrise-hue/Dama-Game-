@@ -1,3 +1,4 @@
+// main.js
 import { ui } from './uiController.js';
 import { socket, socketManager } from './socketManager.js'; 
 import { gameEngine } from './gameEngine.js'; 
@@ -92,6 +93,11 @@ window.addEventListener('load', () => {
     if (!loadGameState()) {
         ui.drawEmptyBoard();
     } else {
+        // التأكد من استعادة حالة الأزرار بعد التحميل بنجاح
+        if (gameState.virtualBoard.some(r => r.some(c => c !== null))) {
+            window.isMatchRunning = true;
+            ui.toggleOfflineInMatchUI(true);
+        }
         ui.renderBoard();
         ui.updateTexts();
         ui.startTurn();
@@ -121,96 +127,18 @@ window.challengeFriend = function(friendId) {
 
 ui.onClick('diff-quick-select', saveGameState);
 
-ui.onClick('reset-btn', () => { 
-    ui.toggleOnlineUILayout(false); 
-    gameState.isOnlineMode ? ui.showCustomAlert(gameState.lang === 'ar' ? "مغادرة الأونلاين؟" : "Leave online?", null, () => { 
-        gameState.isOnlineMode = false; 
-        clearTimeout(gameState.aiTimeout); 
-        if(socket && socket.connected) socket.emit('leaveMatchmakingPool'); 
-        ui.setDisplay('new-game-modal', 'flex'); 
-    }, true) : ui.setDisplay('new-game-modal', 'flex'); 
-});
+// 👇 تم تنظيف أوامر reset-btn و resign-btn وغيرها التي كانت تسبب التضارب مع ملف uiController 👇
 
 ui.onClick('start-white-btn', () => { gameState.playerColor = 'white'; localStorage.removeItem('dama_saved_game'); ui.initBoard(); ui.setDisplay('new-game-modal', 'none'); });
 ui.onClick('start-black-btn', () => { gameState.playerColor = 'black'; localStorage.removeItem('dama_saved_game'); ui.initBoard(); ui.setDisplay('new-game-modal', 'none'); });
 ui.onClick('new-game-modal', e => { if (e.target.id === 'new-game-modal') ui.setDisplay('new-game-modal', 'none'); });
 ui.onClick('cancel-new-game-btn', () => ui.setDisplay('new-game-modal', 'none'));
+
 ui.onClick('settings-btn', e => { e.stopPropagation(); ui.setDisplay('settings-overlay', 'flex'); });
 ui.onClick('save-settings-btn', () => { saveGameState(); ui.setDisplay('settings-overlay', 'none'); });
 ui.onClick('settings-overlay', e => { if (e.target.id === 'settings-overlay') ui.setDisplay('settings-overlay', 'none'); });
 
-ui.onClick('game-over-close-btn', () => {
-    ui.setDisplay('game-over-modal', 'none');
-    if (gameState.isOnlineMode) {
-        if (typeof socketManager.handleExitGame === 'function') {
-            socketManager.handleExitGame();
-        }
-    } else {
-        ui.drawEmptyBoard();
-    }
-});
-
 ui.onClick('lang-select-modal', e => { gameState.lang = e.target.value; ui.updateTexts(); saveGameState(); });
-
-ui.onClick('resign-btn', () => ui.showCustomAlert(
-    gameState.lang === 'ar' ? "متأكد من الانسحاب؟" : "Sure to resign?", 
-    null, 
-    () => { 
-        if (gameState.isOnlineMode) {
-            try {
-                if (socket && socket.connected) {
-                    socket.emit('playerResigned', { roomID: gameState.onlineRoomID });
-                }
-            } catch(err) {
-                console.error("فشل إرسال الانسحاب للسيرفر:", err);
-            }
-            ui.showOnlineResultsModal(gameState.myOnlineColor === 'white' ? 'black' : 'white');
-        } else {
-            if (typeof gameEngine.handleSurrender === 'function') {
-                gameEngine.handleSurrender(gameState.playerColor);
-            }
-            ui.showGameOverModal(gameState.lang === 'ar' ? "انسحبت! الخصم يفوز 🏆" : "Resigned! Opponent Wins 🏆");
-        }
-    }, 
-    true
-));
-
-ui.onClick('rematch-btn', () => {
-    if (gameState.isOnlineMode) {
-        if (typeof socketManager.sendRematchRequest === 'function') {
-            socketManager.sendRematchRequest();
-        } else if (socket && socket.connected) {
-            socket.emit('requestRematch', { roomID: gameState.onlineRoomID });
-        }
-        const ind = document.getElementById('turn-indicator');
-        if (ind) ind.innerHTML = gameState.lang === 'ar' ? "بانتظار موافقة الخصم..." : "Waiting for opponent...";
-    } else {
-        gameEngine.resetGame();
-        ui.setDisplay('game-over-modal', 'none');
-    }
-});
-
-ui.onClick('exit-game-btn', () => {
-    ui.setDisplay('game-over-modal', 'none'); 
-    
-    if (gameState.isOnlineMode) {
-        if (typeof socketManager.handleExitGame === 'function') {
-            socketManager.handleExitGame();
-        } else {
-            gameState.isOnlineMode = false;
-            ui.toggleOnlineUILayout(false);
-            if(socket && socket.connected) socket.emit('leaveMatchmakingPool');
-            ui.drawEmptyBoard();
-            ui.setDisplay('new-game-modal', 'flex');
-        }
-    } else {
-        if (typeof gameEngine.closeResultsMenu === 'function') {
-            gameEngine.closeResultsMenu();
-        }
-        ui.drawEmptyBoard(); 
-        ui.setDisplay('new-game-modal', 'flex'); 
-    }
-});
 
 ui.onClick('login-guest-btn', () => { gameState.userProfile = { ...gameState.userProfile, name: (gameState.lang==='en'?"Guest_":"زائر_") + (10000 + ([...gameState.deviceFingerprint].reduce((a, c) => a + c.charCodeAt(0), 0) % 90000)), id: "GUEST-" + (10000 + ([...gameState.deviceFingerprint].reduce((a, c) => a + c.charCodeAt(0), 0) % 90000)), avatar: ui.getVal('login-avatar-select', '1000132081.png'), isCustomAvatar: false }; localStorage.setItem('dama_guest_expiry', Date.now() + (30 * 24 * 60 * 60 * 1000)); localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile)); ui.updateProfileUI(); ui.setDisplay('login-modal', 'none'); });
 
@@ -226,7 +154,6 @@ ui.onClick('add-friend-btn', () => { let fId = ui.getVal('friend-id-input').trim
 
 document.getElementById('avatar-upload-input')?.addEventListener('change', e => { 
     const file = e.target.files[0]; 
-    // تم تعديل حجم الصورة إلى 800KB كحد أقصى لتجنب خطأ QuotaExceededError في الـ LocalStorage
     if (!file || !file.type.startsWith('image/') || file.size > 800 * 1024) return ui.showCustomAlert(gameState.lang === 'en' ? "Image too large (Max 800KB)." : "حجم الصورة كبير جداً (الأقصى 800KB)."); 
     const reader = new FileReader(); 
     reader.onload = ev => { 
