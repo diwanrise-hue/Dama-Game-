@@ -851,7 +851,8 @@
     </div>
     
     <div class="control-panel" id="bottom-control-panel">
-        <button id="reset-btn" title="Reset" onclick="window.handleStartClick()">ابداء</button>
+        <!-- 💡 تمت إزالة الأحداث الخاطئة من الأزرار (سيتم التحكم بها من uiController.js بأمان) -->
+        <button id="reset-btn" title="Reset">ابداء</button>
         <button id="undo-btn" title="تراجع (أوفلاين)" style="font-size: 18px; display: none;">↩️</button>
         
         <button id="hint-btn" title="أفضل حركة" style="font-size: 18px; position: relative; overflow: visible;">
@@ -871,7 +872,7 @@
             <option value="9">L9</option>
         </select>
         
-        <button id="resign-btn" title="الانسحاب" onclick="window.handleResignClick()" style="display: none; font-weight: bold;">الانسحاب</button>
+        <button id="resign-btn" title="الانسحاب" style="display: none; font-weight: bold;">الانسحاب</button>
     </div>
 
     <script src="https://diwanrise-dama-game-diwan.hf.space/socket.io/socket.io.js"></script>
@@ -1331,21 +1332,6 @@
             }
         });
 
-        // 🧠 المنطق الجديد لتعقب حالة الأونلاين بدون التأثير على الأوفلاين
-        function uiStateChangeTracker() {
-            const matchCard = document.getElementById('match-players-card');
-            const isOnline = (matchCard && matchCard.style.display !== 'none');
-            
-            if (isOnline) {
-                document.body.classList.add('online-mode-active');
-            } else {
-                document.body.classList.remove('online-mode-active');
-            }
-        }
-        
-        window.addEventListener('popstate', uiStateChangeTracker);
-        document.addEventListener('click', () => setTimeout(uiStateChangeTracker, 50));
-
         window.addEventListener('load', () => {
             history.replaceState({ screen: 'dama-game' }, '');
         });
@@ -1381,7 +1367,7 @@
             }
         }
 
-        // 🛡️ زر الرجوع في الهاتف أصبح ذكياً ومحمياً
+        // 🛡️ زر الرجوع في الهاتف أصبح ذكياً ومحمياً تماماً
         window.addEventListener('popstate', function(event) {
             const alertCancel = document.getElementById('custom-alert-cancel');
 
@@ -1397,9 +1383,10 @@
                 return; 
             }
 
-            // إذا كان هناك مباراة تلعب حالياً، أظهر رسالة الانسحاب بدلاً من الخروج من اللعبة
+            // إذا كان هناك مباراة تلعب حالياً، نطلب من uiController.js محاكاة ضغطة زر الانسحاب الآمنة
             if (window.isMatchRunning) {
-                window.handleResignClick();
+                const resignBtn = document.getElementById('resign-btn');
+                if (resignBtn) resignBtn.click();
                 history.pushState({ screen: 'dama-game' }, ''); 
                 return;
             }
