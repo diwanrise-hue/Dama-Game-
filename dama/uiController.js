@@ -517,7 +517,8 @@ export const ui = {
             return; 
         }
 
-        if (!gameState.isOnlineMode) {
+        // 💡 التعديل الهام لمنع تلوث السجل أثناء القفزات المتعددة
+        if (!gameState.isOnlineMode && !gameState.isMultiJumping) {
             if (!gameState.boardHistory) gameState.boardHistory = [];
             let currentBoardStr = JSON.stringify(gameState.virtualBoard);
             let lastSavedStr = gameState.boardHistory.length > 0 ? JSON.stringify(gameState.boardHistory[gameState.boardHistory.length - 1].board) : "";
@@ -846,28 +847,23 @@ export const ui = {
         container.appendChild(box); 
         document.body.appendChild(container);
 
-        // 💡 تطبيق النظام المركزي: اللعبة لا تمتلك الأموال، بل تطلبها من السيرفر (Hub) 💡
         if (gameState.userProfile) { 
             const isServerConnected = (typeof socket !== 'undefined' && socket && socket.connected);
 
             if (isServerConnected) {
-                // عرض رسالة بصرية فقط، والسيرفر المركزي هو من سيضيف الرصيد
                 if (isMeWin) {
                     box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "مكافأة الفوز 🪙") + " 50"));
                 } else { 
                     box.appendChild(this.makeEl('div', 'token-reward-alert', "margin-top:15px;color:#f5a623;font-weight:700;font-size:15px;", (translations[gameState.lang]?.tokenReward || "مكافأة اللعب 🪙") + " 10"));
                 }
                 
-                // إرسال طلب للسيرفر المركزي (damaserver.js) ليتحقق ويضيف الرصيد إلى المحفظة (index.html)
                 if (!gameState.isOnlineMode) {
                     socket.emit('claimBotReward', { isWin: isMeWin });
                 }
             } else {
-                // اللاعب أوفلاين: تنبيه بأنه في وضع التدريب ولا توجد أموال
                 const offlineMsg = gameState.lang === 'ar' ? "الإنترنت مفصول (وضع التدريب) 🚫🪙" : "Offline mode (No rewards) 🚫🪙";
                 box.appendChild(this.makeEl('div', 'offline-alert', "margin-top:15px;color:#a1a1aa;font-weight:600;font-size:13px;", offlineMsg));
                 
-                // تحديث الإحصائيات المحلية (للتسلية فقط) دون المساس بالمال
                 gameState.userProfile.gamesPlayed++;
                 if (isMeWin) gameState.userProfile.wins++;
                 else gameState.userProfile.losses++;
@@ -878,20 +874,12 @@ export const ui = {
                 localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile)); 
             }
             
+            if (window.parent) {
+                window.parent.postMessage({ type: 'SYNC_PROFILE' }, '*');
+            }
             this.updateProfileUI(); 
         }
         this.toggleOnlineUILayout(false);
-    },
-
-    showGameOverModal(message) {
-        if (gameState.blockGameOverModal) return; 
-        
-        let winnerColor = 'white';
-        const lowerMsg = message.toLowerCase();
-        if (message.includes('الأسود') || lowerMsg.includes('black') || (message.includes('انسحبت') && gameState.playerColor === 'white') || (lowerMsg.includes('resigned') && gameState.playerColor === 'white')) {
-            winnerColor = 'black';
-        }
-        this.showOnlineResultsModal(winnerColor);
     },
 
     updateProfileUI() {
@@ -1042,33 +1030,40 @@ export const ui = {
 ui.onClick('undo-btn', () => {
     if (gameState.isOnlineMode || !gameState.boardHistory || gameState.boardHistory.length <= 1) return;
 
-    let stepsToPop = (gameState.currentTurn !== gameState.playerColor) ? 1 : 2;
-    if (gameState.boardHistory.length <= stepsToPop) stepsToPop = 1;
+    // 1. إيقاف الذكاء الاصطناعي فوراً لتجنب التداخل
+    gameState.gameId = Date.now();
+    if (gameState.aiTimeout) {
+        clearTimeout(gameState.aiTimeout);
+        gameState.aiTimeout = null;
+    }
 
-    for (let i = 0; i < stepsToPop; i++) {
+    // 2. إزالة اللوحة الحالية من السجل
+    gameState.boardHistory.pop();
+
+    // 3. التراجع الذكي: نستمر بالحذف حتى نجد آخر لوحة كان فيها الدور للاعب
+    while (gameState.boardHistory.length > 1 && 
+           gameState.boardHistory[gameState.boardHistory.length - 1].turn !== gameState.playerColor) {
         gameState.boardHistory.pop();
     }
-    
+
     let prevState = gameState.boardHistory[gameState.boardHistory.length - 1];
 
     if (prevState) {
+        // استعادة اللوحة والدور
         gameState.virtualBoard = JSON.parse(JSON.stringify(prevState.board));
         gameState.currentTurn = prevState.turn;
         
+        // تنظيف التحديدات والقفزات
         ui.clearHighlights();
         document.querySelectorAll('.cell.last-move').forEach(c => c.classList.remove('last-move'));
-        ui.renderBoard();
-        
         if (gameState.selectedPiece) {
             gameState.selectedPiece.classList.remove('selected');
             gameState.selectedPiece = null;
         }
+        gameState.isMultiJumping = false;
         
-        if (gameState.aiTimeout) {
-            clearTimeout(gameState.aiTimeout);
-            gameState.aiTimeout = null;
-        }
-        
+        // إعادة رسم اللوحة وبدء الدور
+        ui.renderBoard();
         ui.playSound(ui.sfx.move);
         ui.startTurn();
     }
@@ -1111,15 +1106,20 @@ ui.onClick('hint-btn', () => {
 
         if (!moveObj || moveObj.length === 0) return;
         
-        // إذا كان الجهاز متصلاً بالإنترنت نطلب من السيرفر خصم المصباح بصمت
+        // 1. الخصم المحلي الفوري (التحديث الأنيق والمباشر)
+        profile.hints--;
+        const counterEl = document.getElementById('hint-counter');
+        if (counterEl) counterEl.textContent = profile.hints;
+        
+        // 2. الحفظ في الذاكرة ومزامنة المحفظة الأم (index.html)
+        localStorage.setItem('hub_user_profile', JSON.stringify(profile));
+        if (window.parent) {
+            window.parent.postMessage({ type: 'SYNC_PROFILE' }, '*');
+        }
+
+        // 3. إرسال الطلب الصامت للسيرفر المركزي لخصمه من قاعدة البيانات
         if (socket && socket.connected) {
             socket.emit('useHint'); 
-        } else {
-            // إذا كان أوفلاين، نخصم المصباح محلياً لكي يستمتع به
-            profile.hints--;
-            localStorage.setItem('hub_user_profile', JSON.stringify(profile));
-            const counterEl = document.getElementById('hint-counter');
-            if (counterEl) counterEl.textContent = profile.hints;
         }
 
         let from = { r: moveObj[0].fromR, c: moveObj[0].fromC };
