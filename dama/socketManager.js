@@ -53,14 +53,20 @@ export const socketManager = {
                 const parsed = JSON.parse(stored);
                 if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
                     if (parsed.id && typeof parsed.id === 'string' && !parsed.id.includes('__proto__')) {
+                        // 💡 التعديل الجذري: منع مسح المصابيح والمظاهر أثناء بناء الملف!
                         gameState.userProfile = {
                             id: String(parsed.id).trim().toUpperCase(),
                             name: String(parsed.name || 'Guest').trim(),
                             avatar: String(parsed.avatar || '1000132081.png').trim(),
+                            isCustomAvatar: !!parsed.isCustomAvatar,
                             tokens: typeof parsed.tokens === 'number' ? parsed.tokens : 0,
                             gamesPlayed: Number(parsed.gamesPlayed) || 0,
                             wins: Number(parsed.wins) || 0,
                             losses: Number(parsed.losses) || 0,
+                            hints: parsed.hints !== undefined ? Number(parsed.hints) : 5,
+                            equippedBg: parsed.equippedBg || 'bg_wood',
+                            equippedFr: parsed.equippedFr || 'fr_classic',
+                            equippedPc: parsed.equippedPc || 'pc_original',
                             purchasedItems: Array.isArray(parsed.purchasedItems) ? parsed.purchasedItems : [],
                             friends: Array.isArray(parsed.friends) ? parsed.friends : []
                         };
@@ -76,10 +82,15 @@ export const socketManager = {
                 id: 'GUEST-' + Math.random().toString(36).substring(2, 9).toUpperCase(), 
                 name: 'Guest', 
                 avatar: '1000132081.png',
+                isCustomAvatar: false,
                 tokens: 0,
                 gamesPlayed: 0,
                 wins: 0,
                 losses: 0,
+                hints: 5,
+                equippedBg: 'bg_wood',
+                equippedFr: 'fr_classic',
+                equippedPc: 'pc_original',
                 purchasedItems: [],
                 friends: []
             };
@@ -111,7 +122,6 @@ export const socketManager = {
         ];
         eventsToTurnOff.forEach(event => socket.off(event));
 
-        // 🟢 التعديل الهام: عند عودة الإنترنت والاتصال بالخادم
         socket.on('connect', () => {
             console.log('Connected to server successfully');
             const profile = this._ensureUserProfile();
@@ -120,7 +130,6 @@ export const socketManager = {
                 this.handleRoomAction('joinRoom', gameState.onlineRoomID);
             }
             
-            // إخفاء نافذة التحذير الجميلة فوراً وبشكل تلقائي بمجرد عودة الإنترنت
             if (typeof ui.setDisplay === 'function') {
                 ui.setDisplay('custom-alert-modal', 'none');
             } else if (typeof window.closeAppModal === 'function') {
@@ -128,7 +137,6 @@ export const socketManager = {
             }
         });
 
-        // 🔴 التعديل الهام: عند انقطاع الإنترنت كلياً
         socket.on('disconnect', (reason) => {
             console.warn('Disconnected:', reason);
             if (typeof ui.showCustomAlert === 'function') {
@@ -137,12 +145,10 @@ export const socketManager = {
                     ? "⚠️ Connection lost. Retrying..." 
                     : "⚠️ عذراً، انقطع الاتصال بالخادم أو الإنترنت ضعيف. يرجى الانتظار، جاري محاولة إعادة الاتصال...";
                 
-                // إظهار النافذة الزجاجية الأنيقة بدون زر إلغاء لتنبيه اللاعب
                 ui.showCustomAlert(msg, title, null, false);
             }
         });
 
-        // 🟡 التعديل الهام: عند ضعف الإنترنت ومحاولة الخادم إعادة الاتصال
         socket.on('connect_error', (err) => {
             console.warn("⚠️ تنبيه المطور: الإنترنت مقطوع أو ضعيف جداً بالجهاز حالياً!", err);
             
@@ -166,7 +172,6 @@ export const socketManager = {
                         ? "⚠️ Internet connection is weak. Retrying..." 
                         : "⚠️ جاري محاولة استعادة الاتصال بالإنترنت، يرجى الانتظار...";
                     
-                    // إظهار النافذة الزجاجية الأنيقة
                     ui.showCustomAlert(msg, title, null, false);
                 }
             }
