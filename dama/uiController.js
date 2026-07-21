@@ -295,7 +295,6 @@ export const ui = {
         this.updateScoreboard();
     },
 
-    // 🎨 تطبيق فكرة التوريث البصري بذكاء
     updateScoreboard() {
         let whiteCount = 0, blackCount = 0;
         
@@ -308,17 +307,22 @@ export const ui = {
             });
         });
         
-        // --- 🌟 مزامنة تصميم الإطار (Frame Sync) 🌟 ---
+        // --- 🌟 مزامنة تصميم الإطار والخلفية بذكاء 🌟 ---
         const boardEl = this.getEl('board');
         const sbEl = document.querySelector('.scoreboard');
         if (boardEl && sbEl) {
             const brdSt = window.getComputedStyle(boardEl);
+            sbEl.style.background = brdSt.background;
+            sbEl.style.backgroundColor = brdSt.backgroundColor;
             sbEl.style.border = brdSt.border;
-            sbEl.style.borderImage = brdSt.borderImage;
-            // إخفاء الـ borderRadius إذا كان هناك صورة إطار حتى لا تتشوه
-            if (brdSt.borderImage !== 'none') {
+            sbEl.style.borderWidth = '3px'; // إجبار الإطار على أن يكون نحيفاً لمنع الضخامة
+            
+            if (brdSt.borderImage && brdSt.borderImage !== 'none') {
+                sbEl.style.borderImage = brdSt.borderImage;
+                sbEl.style.borderImageWidth = '3px'; // تصغير الصورة المقطوعة لتناسب الحجم
                 sbEl.style.borderRadius = '0px';
             } else {
+                sbEl.style.borderImage = 'none';
                 sbEl.style.borderRadius = '12px';
             }
         }
@@ -330,7 +334,6 @@ export const ui = {
             for (let i = 0; i < 16; i++) {
                 const dot = document.createElement('div');
                 if (i < count) {
-                    // 🌟 توريث كلاس الحجر الأصلي ليأخذ نفس شكل المتجر
                     dot.className = `piece mini ${activeClass}`;
                 } else {
                     dot.className = `mini-piece-empty`;
@@ -492,6 +495,7 @@ export const ui = {
         
         this.renderBoard(true);
         
+        // تسجيل النقطة الأولى في السجل لمعرفة هل اللاعب حرك أم لا
         gameState.boardHistory.push({
             board: JSON.parse(JSON.stringify(gameState.virtualBoard)),
             turn: gameState.currentTurn
@@ -1045,7 +1049,6 @@ export const ui = {
 // 🌟 الأزرار العامة: بدء، انسحاب، والتراجع 🌟
 // ==========================================
 
-// 🛡️ دالة ذكية للتحقق: هل حرك اللاعب فعلاً؟
 function hasPlayerMoved() {
     if (!gameState.boardHistory) return false;
     
@@ -1056,9 +1059,8 @@ function hasPlayerMoved() {
     }
 }
 
-// 🎯 زر "البدء" الذكي
 ui.onClick('reset-btn', () => {
-    if (window.isMatchRunning && !gameState.isOnlineMode) {
+    if (window.isMatchRunning && !gameState.isOnlineMode && !gameState.isGameOver) {
         if (hasPlayerMoved()) {
             ui.showCustomAlert(
                 ui.translate("بدء لعبة جديدة الآن سيعتبر انسحاباً وخسارة. هل توافق؟", "Starting a new game counts as resignation. Agree?"),
@@ -1071,7 +1073,6 @@ ui.onClick('reset-btn', () => {
                         ui.updateProfileUI();
                         if (window.parent) window.parent.postMessage({ type: 'SYNC_PROFILE' }, '*');
                     }
-                    ui.drawEmptyBoard();
                     if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
                     else document.getElementById('new-game-modal').style.display = 'flex';
                 },
@@ -1089,7 +1090,6 @@ ui.onClick('reset-btn', () => {
     }
 });
 
-// 🎯 زر "الانسحاب" المباشر
 ui.onClick('resign-btn', () => {
     if (gameState.isOnlineMode) {
         ui.showCustomAlert(
