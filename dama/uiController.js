@@ -295,6 +295,7 @@ export const ui = {
         this.updateScoreboard();
     },
 
+    // 🎨 تطبيق فكرة التوريث البصري بذكاء
     updateScoreboard() {
         let whiteCount = 0, blackCount = 0;
         
@@ -307,13 +308,33 @@ export const ui = {
             });
         });
         
+        // --- 🌟 مزامنة تصميم الإطار (Frame Sync) 🌟 ---
+        const boardEl = this.getEl('board');
+        const sbEl = document.querySelector('.scoreboard');
+        if (boardEl && sbEl) {
+            const brdSt = window.getComputedStyle(boardEl);
+            sbEl.style.border = brdSt.border;
+            sbEl.style.borderImage = brdSt.borderImage;
+            // إخفاء الـ borderRadius إذا كان هناك صورة إطار حتى لا تتشوه
+            if (brdSt.borderImage !== 'none') {
+                sbEl.style.borderRadius = '0px';
+            } else {
+                sbEl.style.borderRadius = '12px';
+            }
+        }
+
         const renderScoreDots = (container, count, color) => {
             if (!container) return;
             container.innerHTML = '';
-            const activeClass = color === 'white' ? 'active-white' : 'active-black';
+            const activeClass = color === 'white' ? 'white' : 'black';
             for (let i = 0; i < 16; i++) {
                 const dot = document.createElement('div');
-                dot.className = `mini-piece ${i < count ? activeClass : ''}`.trim();
+                if (i < count) {
+                    // 🌟 توريث كلاس الحجر الأصلي ليأخذ نفس شكل المتجر
+                    dot.className = `piece mini ${activeClass}`;
+                } else {
+                    dot.className = `mini-piece-empty`;
+                }
                 container.appendChild(dot);
             }
         };
@@ -364,7 +385,7 @@ export const ui = {
                 if (!cell) continue;
                 
                 const boardVal = gameState.virtualBoard[r][c];
-                let currentPiece = cell.querySelector('.piece');
+                let currentPiece = cell.querySelector('.piece:not(.mini)');
                 
                 if (boardVal) {
                     const isWhite = boardVal.includes('white');
@@ -471,7 +492,6 @@ export const ui = {
         
         this.renderBoard(true);
         
-        // تسجيل النقطة الأولى في السجل لمعرفة هل اللاعب حرك أم لا لاحقاً
         gameState.boardHistory.push({
             board: JSON.parse(JSON.stringify(gameState.virtualBoard)),
             turn: gameState.currentTurn
@@ -1038,7 +1058,7 @@ function hasPlayerMoved() {
 
 // 🎯 زر "البدء" الذكي
 ui.onClick('reset-btn', () => {
-    if (window.isMatchRunning && !gameState.isOnlineMode && !gameState.isGameOver) {
+    if (window.isMatchRunning && !gameState.isOnlineMode) {
         if (hasPlayerMoved()) {
             ui.showCustomAlert(
                 ui.translate("بدء لعبة جديدة الآن سيعتبر انسحاباً وخسارة. هل توافق؟", "Starting a new game counts as resignation. Agree?"),
@@ -1051,6 +1071,7 @@ ui.onClick('reset-btn', () => {
                         ui.updateProfileUI();
                         if (window.parent) window.parent.postMessage({ type: 'SYNC_PROFILE' }, '*');
                     }
+                    ui.drawEmptyBoard();
                     if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
                     else document.getElementById('new-game-modal').style.display = 'flex';
                 },
