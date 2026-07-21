@@ -143,8 +143,6 @@ export const ui = {
         setHtml('theme-close-btn', this.translate("الخروج", "Exit"));
         setHtml('online-close-btn', this.translate("إلغاء", "Cancel"));
         setHtml('custom-alert-cancel', this.translate("إلغاء", "Cancel"));
-        
-        // 🛠️ تم إزالة الأقواس من كلمة ابداء كما طلبت
         setHtml('reset-btn', this.translate("ابداء", "Start"));
 
         const resignBtn = this.getEl('resign-btn');
@@ -309,8 +307,26 @@ export const ui = {
             });
         });
         
-        // 🗑️ تم إزالة كود نسخ خلفية الساحة والإطار لأنه يسبب تشوهاً بصرياً 
-        // سنكتفي بتوريث شكل الأحجار فقط لتبقى اللوحة أنيقة وواضحة.
+        const isWhite = gameState.playerColor === 'white';
+        
+        // --- 🌟 تلوين الأشرطة بذكاء من ألوان الساحة المتوفرة 🌟 ---
+        const oppRow = this.getEl('opponent-score-row');
+        const myRow = this.getEl('my-score-row');
+        
+        if (oppRow && myRow) {
+            // المعاكس يأخذ اللون الفاتح إذا كان أسود، واللون الغامق إذا كان أبيض (لإبراز التباين)
+            const oppStonesColor = isWhite ? 'black' : 'white';
+            const myStonesColor = gameState.playerColor;
+
+            oppRow.style.backgroundColor = (oppStonesColor === 'black') ? 'var(--light-cell)' : 'var(--dark-cell)';
+            myRow.style.backgroundColor = (myStonesColor === 'black') ? 'var(--light-cell)' : 'var(--dark-cell)';
+            
+            // إضافة ظل داخلي وإطار لتظهر كحفرة أنيقة محفورة
+            oppRow.style.boxShadow = 'inset 0 4px 8px rgba(0,0,0,0.5)';
+            myRow.style.boxShadow = 'inset 0 4px 8px rgba(0,0,0,0.5)';
+            oppRow.style.border = '1px solid rgba(255,255,255,0.1)';
+            myRow.style.border = '1px solid rgba(255,255,255,0.1)';
+        }
 
         const renderScoreDots = (container, count, color) => {
             if (!container) return;
@@ -319,6 +335,7 @@ export const ui = {
             for (let i = 0; i < 16; i++) {
                 const dot = document.createElement('div');
                 if (i < count) {
+                    // نأخذ الكلاس الأصلي للحجر ليرث التصميم المصغر
                     dot.className = `piece mini ${activeClass}`;
                 } else {
                     dot.className = `mini-piece-empty`;
@@ -327,9 +344,8 @@ export const ui = {
             }
         };
         
-        const isWhite = gameState.playerColor === 'white';
-        renderScoreDots(this.getEl('opponent-score-row'), isWhite ? blackCount : whiteCount, isWhite ? 'black' : 'white');
-        renderScoreDots(this.getEl('my-score-row'), isWhite ? whiteCount : blackCount, gameState.playerColor);
+        renderScoreDots(oppRow, isWhite ? blackCount : whiteCount, isWhite ? 'black' : 'white');
+        renderScoreDots(myRow, isWhite ? whiteCount : blackCount, gameState.playerColor);
     },
 
     renderBoard(forceRebuild = false) {
