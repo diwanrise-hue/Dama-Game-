@@ -471,6 +471,7 @@ export const ui = {
         
         this.renderBoard(true);
         
+        // تسجيل النقطة الأولى في السجل لمعرفة هل اللاعب حرك أم لا لاحقاً
         gameState.boardHistory.push({
             board: JSON.parse(JSON.stringify(gameState.virtualBoard)),
             turn: gameState.currentTurn
@@ -847,7 +848,7 @@ export const ui = {
             } else {
                 setTimeout(() => { 
                     container.remove();
-                    ui.initBoard(); 
+                    this.initBoard(); 
                 }, 500); 
             }
         });
@@ -866,7 +867,7 @@ export const ui = {
             container.remove(); 
             
             if (typeof window.closeAppModal === 'function') window.closeAppModal('game-over-modal');
-            else ui.setDisplay('game-over-modal', 'none'); 
+            else this.setDisplay('game-over-modal', 'none'); 
             
             if (gameState.turnTimerInterval) {
                 clearInterval(gameState.turnTimerInterval);
@@ -880,7 +881,7 @@ export const ui = {
             gameState.isOnlineMode = false; 
             gameState.onlineRoomID = null; 
             
-            ui.drawEmptyBoard();
+            this.drawEmptyBoard();
         });
         
         btns.append(rBtn, eBtn); 
@@ -1037,7 +1038,7 @@ function hasPlayerMoved() {
 
 // 🎯 زر "البدء" الذكي
 ui.onClick('reset-btn', () => {
-    if (window.isMatchRunning && !gameState.isOnlineMode) {
+    if (window.isMatchRunning && !gameState.isOnlineMode && !gameState.isGameOver) {
         if (hasPlayerMoved()) {
             ui.showCustomAlert(
                 ui.translate("بدء لعبة جديدة الآن سيعتبر انسحاباً وخسارة. هل توافق؟", "Starting a new game counts as resignation. Agree?"),
@@ -1050,7 +1051,6 @@ ui.onClick('reset-btn', () => {
                         ui.updateProfileUI();
                         if (window.parent) window.parent.postMessage({ type: 'SYNC_PROFILE' }, '*');
                     }
-                    ui.drawEmptyBoard();
                     if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
                     else document.getElementById('new-game-modal').style.display = 'flex';
                 },
@@ -1110,7 +1110,6 @@ ui.onClick('resign-btn', () => {
         }
     }
 });
-
 
 ui.onClick('undo-btn', () => {
     if (gameState.isOnlineMode || gameState.currentTurn !== gameState.playerColor) return; 
