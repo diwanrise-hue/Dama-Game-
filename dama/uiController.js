@@ -414,7 +414,7 @@ export const ui = {
         gameState.requiredJumps = 0;
         gameState.selectedPiece = null;
         gameState.lastJumpDir = { dr: null, dc: null };
-        gameState.boardHistory = []; // تصفير السجل لتأكيد أن اللاعب لم يحرك شيئاً
+        gameState.boardHistory = []; 
 
         this.toggleOfflineInMatchUI(false);
         
@@ -471,7 +471,6 @@ export const ui = {
         
         this.renderBoard(true);
         
-        // تسجيل النقطة صفر في السجل
         gameState.boardHistory.push({
             board: JSON.parse(JSON.stringify(gameState.virtualBoard)),
             turn: gameState.currentTurn
@@ -848,7 +847,7 @@ export const ui = {
             } else {
                 setTimeout(() => { 
                     container.remove();
-                    this.initBoard(); 
+                    ui.initBoard(); 
                 }, 500); 
             }
         });
@@ -867,7 +866,7 @@ export const ui = {
             container.remove(); 
             
             if (typeof window.closeAppModal === 'function') window.closeAppModal('game-over-modal');
-            else this.setDisplay('game-over-modal', 'none'); 
+            else ui.setDisplay('game-over-modal', 'none'); 
             
             if (gameState.turnTimerInterval) {
                 clearInterval(gameState.turnTimerInterval);
@@ -881,7 +880,7 @@ export const ui = {
             gameState.isOnlineMode = false; 
             gameState.onlineRoomID = null; 
             
-            this.drawEmptyBoard();
+            ui.drawEmptyBoard();
         });
         
         btns.append(rBtn, eBtn); 
@@ -1025,21 +1024,25 @@ export const ui = {
 // 🌟 الأزرار العامة: بدء، انسحاب، والتراجع 🌟
 // ==========================================
 
-// 🛡️ دالة التحقق إذا كان اللاعب قد حرك أي حجر
+// 🛡️ دالة ذكية للتحقق: هل حرك اللاعب فعلاً؟
 function hasPlayerMoved() {
-    return gameState.boardHistory && gameState.boardHistory.length > 1;
+    if (!gameState.boardHistory) return false;
+    
+    if (gameState.playerColor === 'white') {
+        return gameState.boardHistory.length > 1;
+    } else {
+        return gameState.boardHistory.length > 2;
+    }
 }
 
-// 🎯 زر "البدء" الذكي - التحديث الجذري
+// 🎯 زر "البدء" الذكي
 ui.onClick('reset-btn', () => {
     if (window.isMatchRunning && !gameState.isOnlineMode) {
-        
-        // إذا قام اللاعب بحركة واحدة على الأقل، حذره من الخسارة!
         if (hasPlayerMoved()) {
             ui.showCustomAlert(
                 ui.translate("بدء لعبة جديدة الآن سيعتبر انسحاباً وخسارة. هل توافق؟", "Starting a new game counts as resignation. Agree?"),
                 ui.translate("تنبيه", "Warning"),
-                () => { // إذا وافق على الانسحاب
+                () => { 
                     if (!gameState.isTutorialMode && gameState.userProfile) {
                         gameState.userProfile.losses++;
                         gameState.userProfile.gamesPlayed++;
@@ -1056,7 +1059,6 @@ ui.onClick('reset-btn', () => {
                 ui.translate("نعم، انسحاب", "Yes, Resign")
             );
         } else {
-            // إذا لم يقم بأي حركة، فقط افتح نافذة البدء بدون تحذير أو خسارة!
             if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
             else document.getElementById('new-game-modal').style.display = 'flex';
         }
@@ -1082,23 +1084,30 @@ ui.onClick('resign-btn', () => {
             ui.translate("نعم", "Yes")
         );
     } else {
-        ui.showCustomAlert(
-            ui.translate("هل أنت متأكد من الانسحاب؟ سيتم احتساب خسارة.", "Are you sure you want to resign? It counts as a loss."),
-            ui.translate("تأكيد الانسحاب", "Confirm Resign"),
-            () => { 
-                if (hasPlayerMoved() && !gameState.isTutorialMode && gameState.userProfile) {
-                    gameState.userProfile.losses++;
-                    gameState.userProfile.gamesPlayed++;
-                    localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile));
-                    ui.updateProfileUI();
-                    if (window.parent) window.parent.postMessage({ type: 'SYNC_PROFILE' }, '*');
-                }
-                ui.drawEmptyBoard();
-            },
-            true,
-            ui.translate("إلغاء", "Cancel"),
-            ui.translate("نعم", "Yes")
-        );
+        if (!hasPlayerMoved()) {
+            ui.showCustomAlert(
+                ui.translate("هل تريد إلغاء المباراة والعودة للواجهة الرئيسية؟", "Cancel match and return?"),
+                ui.translate("إلغاء المباراة", "Cancel Match"),
+                () => { 
+                    ui.drawEmptyBoard(); 
+                },
+                true,
+                ui.translate("تراجع", "Back"),
+                ui.translate("نعم", "Yes")
+            );
+        } else {
+            ui.showCustomAlert(
+                ui.translate("هل أنت متأكد من الانسحاب؟ سيتم احتساب خسارة.", "Are you sure you want to resign? It counts as a loss."),
+                ui.translate("تأكيد الانسحاب", "Confirm Resign"),
+                () => { 
+                    let opponentColor = gameState.playerColor === 'white' ? 'black' : 'white';
+                    ui.showResultsModal(opponentColor);
+                },
+                true,
+                ui.translate("إلغاء", "Cancel"),
+                ui.translate("نعم", "Yes")
+            );
+        }
     }
 });
 
