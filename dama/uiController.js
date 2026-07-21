@@ -28,6 +28,9 @@ function getAiWorker() {
     return null;
 }
 
+// 🕹️ متغير عام لمعرفة حالة المباراة ومنع فتح القوائم
+window.isMatchRunning = false;
+
 export const ui = {
     sfx: sfx,
     clickHandlers: new Map(), 
@@ -45,7 +48,7 @@ export const ui = {
     
     setDisplay(id, displayState) {
         const el = this.getEl(id);
-        if (el) el.style.display = displayState;
+        if (el) el.style.setProperty('display', displayState, 'important');
     },
     
     onClick(id, fn) {
@@ -239,28 +242,53 @@ export const ui = {
         }, 3000);
     },
 
+    // 🎭 ترتيب الشاشة أثناء اللعب أوفلاين (ضد البوت)
+    toggleOfflineInMatchUI(active) {
+        if (gameState.isOnlineMode) return;
+        window.isMatchRunning = active;
+        
+        const flexState = active ? 'none' : 'flex';
+        const inlineState = active ? 'none' : 'inline-block';
+        
+        // إخفاء الأزرار الجانبية أثناء اللعب
+        this.setDisplay('online-toggle-btn', flexState);
+        this.setDisplay('store-portal-corner-btn', flexState);
+        this.setDisplay('hamburger-menu-btn', flexState);
+        this.setDisplay('diff-quick-select', inlineState);
+        
+        // إظهار زر الحقيبة والانسحاب
+        this.setDisplay('bag-quick-btn', active ? 'flex' : 'none');
+        this.setDisplay('resign-btn', active ? 'inline-block' : 'none');
+        
+        // زر التراجع يظهر فقط إذا كان الوضع تعليمي
+        if (active && gameState.isTutorialMode) {
+            this.setDisplay('undo-btn', 'inline-block');
+        } else {
+            this.setDisplay('undo-btn', 'none');
+        }
+    },
+
     toggleOnlineUILayout(active, oppName = "", oppAvatar = "❓") {
         const normalState = active ? 'none' : 'inline-block';
+        const flexState = active ? 'none' : 'flex';
         const onlineState = active ? 'inline-block' : 'none';
+        
+        window.isMatchRunning = active;
         
         const displays = {
             'reset-btn': normalState, 
             'diff-quick-select': normalState, 
-            'online-toggle-btn': normalState,
+            'online-toggle-btn': flexState,
+            'store-portal-corner-btn': flexState,
+            'hamburger-menu-btn': flexState,
+            'bag-quick-btn': 'none', // الحقيبة لا تظهر في الأونلاين أبدًا
             'resign-btn': onlineState, 
+            'undo-btn': 'none', 
             'match-players-card': active ? 'flex' : 'none',
             'chat-btn': active ? 'flex' : 'none' 
         };
         Object.keys(displays).forEach(id => this.setDisplay(id, displays[id]));
         
-        // إخفاء زر الرجوع كلياً في حالة الأونلاين
-        if (active) {
-            this.setDisplay('undo-btn', 'none');
-        } else {
-            // في الأوفلاين، نظهره فقط إذا لم يكن في وضع تعليمي
-            this.setDisplay('undo-btn', gameState.isTutorialMode ? 'inline-block' : 'none');
-        }
-
         if (active && gameState.userProfile) {
             this.applyAvatar('card-my-avatar', gameState.userProfile.avatar, gameState.userProfile.isCustomAvatar);
             this.setTxt('card-my-name', gameState.userProfile.name || this.translate("أنت", "You"));
@@ -394,6 +422,10 @@ export const ui = {
 
     drawEmptyBoard() {
         gameState.virtualBoard = Array(8).fill(null).map(() => Array(8).fill(null));
+        gameState.isGameActive = false;
+        window.isMatchRunning = false;
+        this.toggleOfflineInMatchUI(false);
+        
         this.clearHighlights();
         document.querySelectorAll('.cell.last-move').forEach(c => c.classList.remove('last-move'));
         
@@ -423,19 +455,15 @@ export const ui = {
             gameState.isTutorialMode = false;
         }
 
-        // 💡 إظهار/إخفاء زر الرجوع حسب الوضع
+        gameState.isGameActive = true;
+        window.isMatchRunning = true;
+        
         if (!gameState.isOnlineMode) {
-            if (gameState.isTutorialMode) {
-                this.setDisplay('undo-btn', 'inline-block');
-            } else {
-                this.setDisplay('undo-btn', 'none');
-            }
+            this.toggleOfflineInMatchUI(true);
         }
         
         this.clearHighlights();
         document.querySelectorAll('.cell.last-move').forEach(c => c.classList.remove('last-move'));
-        
-        if (!gameState.isOnlineMode) this.toggleOnlineUILayout(false);
         
         let topC = gameState.playerColor === 'white' ? 'black' : 'white';
         gameState.pieceDirection = {};
@@ -858,11 +886,7 @@ export const ui = {
             
             gameState.isOnlineMode = false; 
             gameState.onlineRoomID = null; 
-            this.toggleOnlineUILayout(false); 
             
-            if (socket?.connected) {
-                socket.disconnect(); 
-            }
             this.drawEmptyBoard();
         });
         
@@ -907,7 +931,12 @@ export const ui = {
             }
             this.updateProfileUI(); 
         }
-        this.toggleOnlineUILayout(false);
+        
+        if (!gameState.isOnlineMode) {
+            this.toggleOfflineInMatchUI(false);
+        } else {
+            this.toggleOnlineUILayout(false);
+        }
     },
 
     updateProfileUI() {
@@ -975,7 +1004,31 @@ export const ui = {
     },
 
     updateLeaderboardUI(data) {
-        // ... (كود القائمة كما هو)
+        const winsList = this.getEl('leaderboard-wins-list');
+        const tokensList = this.getEl('leaderboard-tokens-list');
+        
+        const buildList = (listEl, items) => {
+            if (!listEl) return;
+            listEl.innerHTML = '';
+            if (!items || items.length === 0) {
+                listEl.appendChild(this.makeEl('li', null, "color:#a1a1aa;text-align:center;padding:10px;", this.translate("لا يوجد بيانات حالياً", "No data available")));
+                return;
+            }
+            items.forEach((player, idx) => {
+                const li = this.makeEl('li', null, "display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:white;align-items:center;font-size:13px;");
+                const rankSpan = this.makeEl('span', null, "font-weight:bold;color:#f1c40f;margin-left:8px;min-width:24px;", `#${idx + 1}`);
+                const nameSpan = this.makeEl('span', null, "flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:10px;", player.name || player.id);
+                const scoreSpan = this.makeEl('span', null, "font-weight:600;color:#87ceeb;", player.score);
+                
+                li.append(rankSpan, nameSpan, scoreSpan);
+                listEl.appendChild(li);
+            });
+        };
+
+        if (data) {
+            if (data.wins) buildList(winsList, data.wins);
+            if (data.tokens) buildList(tokensList, data.tokens);
+        }
     },
 
     initProfileSystem() {
@@ -996,7 +1049,36 @@ export const ui = {
     },
 
     startMatchmakingQueue() {
-        // ... (كود الأونلاين كما هو)
+        if (!gameState.userProfile) return;
+        
+        if (typeof window.openAppModal === 'function') window.openAppModal('matchmaking-modal');
+        else this.setDisplay('matchmaking-modal', 'flex'); 
+        
+        const pId = (gameState.userProfile.id || "").toUpperCase();
+        gameState.userProfile.id = pId;
+
+        this.applyAvatar('mm-my-avatar', gameState.userProfile.avatar, gameState.userProfile.isCustomAvatar);
+        this.setTxt('mm-my-name', gameState.userProfile.name || "You"); 
+        this.setTxt('mm-opp-avatar', "❓"); 
+        this.setTxt('mm-opp-name', this.translate("جاري البحث...", "Searching..."));
+        this.setTxt('mm-status-label', this.translate("فحص اللاعبين...", "Checking players...")); 
+        
+        gameState.mmTimeLeft = 0; 
+        clearInterval(gameState.mmInterval);
+        gameState.mmInterval = null;
+        
+        if (socket && !socket.connected) socket.connect();
+        if (socket?.connected) {
+            socket.emit('deviceFingerprint', { guestId: pId }); 
+            socket.emit('joinMatchmakingPool', { id: pId, name: gameState.userProfile.name, avatar: gameState.userProfile.avatar, deviceFingerprint: gameState.deviceFingerprint });
+        }
+        
+        gameState.mmInterval = setInterval(() => { 
+            gameState.mmTimeLeft++; 
+            const m = String(Math.floor(gameState.mmTimeLeft / 60)).padStart(2, '0');
+            const s = String(gameState.mmTimeLeft % 60).padStart(2, '0');
+            this.setTxt('mm-timer', `${m}:${s}`); 
+        }, 1000);
     },
 
     startOnlineGame() {
@@ -1008,8 +1090,83 @@ export const ui = {
 };
 
 // ==========================================
-// 🌟 التراجع المحمي والمصباح الذكي (وإدارة الوضع التعليمي) 🌟
+// 🌟 الأزرار العامة: الانسحاب، التراجع، والمصباح 🌟
 // ==========================================
+
+// 🛡️ دالة ذكية لمعالجة بدء لعبة جديدة أثناء اللعب
+window.handleStartClick = function() {
+    if (window.isMatchRunning && !gameState.isOnlineMode && !gameState.isGameOver) {
+        ui.showCustomAlert(
+            ui.translate("بدء لعبة جديدة الآن سيعتبر انسحاباً وخسارة. هل توافق؟", "Starting a new game counts as resignation. Agree?"),
+            ui.translate("تنبيه", "Warning"),
+            () => {
+                if (!gameState.isTutorialMode && gameState.userProfile) {
+                    gameState.userProfile.losses++;
+                    gameState.userProfile.gamesPlayed++;
+                    localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile));
+                    ui.updateProfileUI();
+                }
+                gameState.gameId = Date.now();
+                if (gameState.aiTimeout) {
+                    clearTimeout(gameState.aiTimeout);
+                    gameState.aiTimeout = null;
+                }
+                ui.drawEmptyBoard();
+                if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
+            },
+            true,
+            ui.translate("إلغاء", "Cancel"),
+            ui.translate("نعم، انسحاب", "Yes, Resign")
+        );
+    } else {
+        if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
+    }
+};
+
+// 🏳️ دالة الانسحاب المباشر
+window.handleResignClick = function() {
+    if (gameState.isOnlineMode) {
+        if (typeof triggerResignConfirmation === 'function') {
+            triggerResignConfirmation();
+        } else {
+            ui.showCustomAlert(
+                ui.translate("هل أنت متأكد من الانسحاب من هذه المباراة؟", "Are you sure you want to resign?"),
+                ui.translate("تأكيد الانسحاب", "Confirm Resign"),
+                () => {
+                    if (socketManager && typeof socketManager.sendSurrender === 'function') {
+                        socketManager.sendSurrender();
+                    }
+                },
+                true,
+                ui.translate("إلغاء", "Cancel"),
+                ui.translate("نعم", "Yes")
+            );
+        }
+    } else {
+        ui.showCustomAlert(
+            ui.translate("هل أنت متأكد من الانسحاب؟ سيتم احتساب خسارة.", "Are you sure you want to resign? It counts as a loss."),
+            ui.translate("تأكيد الانسحاب", "Confirm Resign"),
+            () => {
+                if (!gameState.isTutorialMode && gameState.userProfile) {
+                    gameState.userProfile.losses++;
+                    gameState.userProfile.gamesPlayed++;
+                    localStorage.setItem('hub_user_profile', JSON.stringify(gameState.userProfile));
+                    ui.updateProfileUI();
+                }
+                gameState.gameId = Date.now();
+                if (gameState.aiTimeout) {
+                    clearTimeout(gameState.aiTimeout);
+                    gameState.aiTimeout = null;
+                }
+                ui.drawEmptyBoard();
+            },
+            true,
+            ui.translate("إلغاء", "Cancel"),
+            ui.translate("نعم", "Yes")
+        );
+    }
+};
+
 
 ui.onClick('undo-btn', () => {
     if (gameState.isOnlineMode || gameState.currentTurn !== gameState.playerColor) return; 
