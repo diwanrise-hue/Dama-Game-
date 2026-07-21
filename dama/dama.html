@@ -203,10 +203,9 @@
         .side-menu-close { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; }
         .side-menu-close:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
         
-        /* تعديل الحشو الداخلي (padding) ليصبح أصغر ويسمح بتكبير الأيقونة دون تكبير الزر */
-        .side-menu-item { display: flex; align-items: center; gap: 15px; padding: 6px 15px; min-height: 54px; box-sizing: border-box; margin-bottom: 12px; border-radius: 14px; background: rgba(255,255,255,0.04); color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); }
+        .side-menu-item { display: flex; align-items: center; gap: 15px; padding: 10px 15px; min-height: 52px; box-sizing: border-box; margin-bottom: 12px; border-radius: 14px; background: rgba(255,255,255,0.04); color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); overflow: visible; }
         .side-menu-item:hover { background: rgba(255,255,255,0.1); border-color: rgba(135,206,235,0.4); transform: translateX(-5px); }
-        .side-menu-item span:first-child { font-size: 20px; }
+        .side-menu-item span:first-child { display: flex; align-items: center; justify-content: center; }
 
         /* ========================================== */
         /* إطار الدور (Turn Box) ثابت الحجم كلياً     */
@@ -551,7 +550,7 @@
     
     <!-- زر القائمة -->
     <button id="hamburger-menu-btn" onclick="toggleSideMenu()" title="القائمة الرئيسية">
-        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="12" x2="20" y2="12"></line>
             <line x1="4" y1="6" x2="20" y2="6"></line>
             <line x1="4" y1="18" x2="20" y2="18"></line>
@@ -560,7 +559,7 @@
     
     <!-- 🎒 زر الحقيبة السريع -->
     <button id="bag-quick-btn" onclick="openAppModal('themes-grid-overlay')" title="الحقيبة والأزياء" style="display: none; position: fixed; top: 15px; right: 15px; z-index: 10001; background: rgba(45, 48, 55, 0.65); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); width: 44px; height: 44px; border-radius: 14px !important; color: white; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,0.15); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); border: 1px solid rgba(135, 206, 235, 0.4) !important; padding: 0; font-size: 20px;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="38" height="38" style="vertical-align: middle; display: inline-block;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="34" height="34" style="vertical-align: middle; display: inline-block; transform: scale(1.3);">
           <defs>
             <linearGradient id="bagGold" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#fef08a"/>
@@ -699,7 +698,7 @@
             
             <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('online-modal')">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="42" height="42" style="vertical-align: middle; display: inline-block;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="34" height="34" style="vertical-align: middle; display: inline-block; transform: scale(1.3); transform-origin: center;">
                   <defs>
                     <linearGradient id="doorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stop-color="#8d6e63"/>
@@ -753,7 +752,7 @@
             
             <div class="side-menu-item" onclick="toggleSideMenu(); window.showLeaderboard()">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="42" height="42" style="vertical-align: middle; display: inline-block;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="34" height="34" style="vertical-align: middle; display: inline-block; transform: scale(1.3); transform-origin: center;">
                       <defs>
                         <linearGradient id="medalGm" x1="0" y1="0" x2="1" y2="1">
                           <stop offset="0%" stop-color="#fffbeb"/>
@@ -846,7 +845,7 @@
             
             <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('themes-grid-overlay')">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="42" height="42" style="vertical-align: middle; display: inline-block;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="34" height="34" style="vertical-align: middle; display: inline-block; transform: scale(1.3); transform-origin: center;">
                       <defs>
                         <linearGradient id="bagGoldSide" x1="0%" y1="0%" x2="100%" y2="100%">
                           <stop offset="0%" stop-color="#fef08a"/>
@@ -940,99 +939,39 @@
             
             <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('settings-overlay')">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="42" height="42" style="vertical-align: middle; display: inline-block;">
+                    <svg viewBox="0 0 100 100" width="34" height="34" style="vertical-align: middle; display: inline-block; transform: scale(1.3); transform-origin: center;">
                       <defs>
-                        <!-- Master Gear Gradient & Effects -->
-                        <radialGradient id="goldCoreGrad" cx="35%" cy="35%" r="65%">
-                          <stop offset="0%" stop-color="#fbbf24" />
-                          <stop offset="60%" stop-color="#d97706" />
-                          <stop offset="100%" stop-color="#78350f" />
+                        <radialGradient id="woodBase" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stop-color="#b45309"/>
+                          <stop offset="70%" stop-color="#78350f"/>
+                          <stop offset="100%" stop-color="#451a03"/>
                         </radialGradient>
-                        
-                        <linearGradient id="gearBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stop-color="#475569" />
-                          <stop offset="100%" stop-color="#0f172a" />
+                        <linearGradient id="woodHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.5"/>
+                          <stop offset="100%" stop-color="#451a03" stop-opacity="0.9"/>
                         </linearGradient>
-
-                        <linearGradient id="toothGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stop-color="#1e293b" />
-                          <stop offset="25%" stop-color="#64748b" />
-                          <stop offset="50%" stop-color="#f8fafc" />
-                          <stop offset="75%" stop-color="#475569" />
-                          <stop offset="100%" stop-color="#0f172a" />
-                        </linearGradient>
-
-                        <!-- Button & Panel Filters -->
-                        <filter id="buttonShadow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+                        <filter id="gear3D" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.6"/>
                         </filter>
-
-                        <filter id="gearShadow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
-                        </filter>
-
-                        <style>
-                          .gear-group {
-                            transform-origin: 60px 60px;
-                            animation: spinClockwise 12s linear infinite;
-                          }
-                          .gear-group:hover {
-                            animation-duration: 3s;
-                          }
-                          .gold-core:hover {
-                            filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8));
-                          }
-                          @keyframes spinClockwise {
-                            from { transform: rotate(0deg); }
-                            to { transform: rotate(360deg); }
-                          }
-                        </style>
                       </defs>
-
-                      <!-- Button Background / Game Plate -->
-                      <g filter="url(#buttonShadow)">
-                        <rect x="10" y="10" width="100" height="100" rx="20" fill="url(#gearBodyGrad)" stroke="#64748b" stroke-width="2"/>
-                        <rect x="12" y="12" width="96" height="96" rx="18" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="1.5"/>
-                      </g>
-
-                      <!-- Gear System Group -->
-                      <g class="gear-group" filter="url(#gearShadow)">
-                        <!-- 12 Trapezoidal Teeth -->
-                        <g fill="url(#toothGrad)">
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(0 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(30 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(60 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(90 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(120 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(150 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(180 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(210 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(240 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(270 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(300 60 60)"/>
-                          <polygon points="56,6 64,6 65.6,12.4 65.6,53.6 64,60 56,60 54.4,53.6 54.4,12.4" transform="rotate(330 60 60)"/>
-                        </g>
-
-                        <!-- Master Gear Outer Rim -->
-                        <circle cx="60" cy="60" r="22" fill="#334155" stroke="#94a3b8" stroke-width="1"/>
-                        <circle cx="60" cy="60" r="21" fill="url(#gearBodyGrad)" />
-
-                        <!-- Gear Body Inner Structure & Spokes -->
-                        <circle cx="60" cy="60" r="16" fill="#0f172a" />
-                        <g fill="#475569" opacity="0.6">
-                          <path d="M60 60 L68 48 A16 16 0 0 0 52 48 Z" transform="rotate(0 60 60)"/>
-                          <path d="M60 60 L68 48 A16 16 0 0 0 52 48 Z" transform="rotate(60 60 60)"/>
-                          <path d="M60 60 L68 48 A16 16 0 0 0 52 48 Z" transform="rotate(120 60 60)"/>
-                          <path d="M60 60 L68 48 A16 16 0 0 0 52 48 Z" transform="rotate(180 60 60)"/>
-                          <path d="M60 60 L68 48 A16 16 0 0 0 52 48 Z" transform="rotate(240 60 60)"/>
-                          <path d="M60 60 L68 48 A16 16 0 0 0 52 48 Z" transform="rotate(300 60 60)"/></g>
-
-                        <!-- Gold Core Center -->
-                        <circle class="gold-core" cx="60" cy="60" r="8" fill="url(#goldCoreGrad)" stroke="#b45309" stroke-width="0.5"/>
-
-                        <!-- Recessed Center Screw -->
-                        <circle cx="60" cy="60" r="3.5" fill="#e0e5ec"/>
-                        <line x1="58" y1="58" x2="62" y2="62" stroke="#475569" stroke-width="1" stroke-linecap="round"/>
+                      <g filter="url(#gear3D)">
+                        <!-- Gear Outer Teeth -->
+                        <path d="M46 5 L54 5 L57 15 L66 18 L74 11 L81 16 L76 24 L82 33 L92 36 L94 44 L84 48 L84 56 L94 60 L92 68 L82 71 L76 80 L81 88 L74 93 L66 86 L57 89 L54 99 L46 99 L43 89 L34 86 L26 93 L19 88 L24 80 L18 71 L8 68 L10 60 L20 56 L20 48 L10 44 L12 36 L22 33 L28 24 L21 16 L28 11 L36 18 L45 15 Z" fill="url(#woodBase)" stroke="#451a03" stroke-width="1"/>
+                        <path d="M46 5 L54 5 L57 15 L66 18 L74 11 L81 16 L76 24 L82 33 L92 36 L94 44 L84 48 L84 56 L94 60 L92 68 L82 71 L76 80 L81 88 L74 93 L66 86 L57 89 L54 99 L46 99 L43 89 L34 86 L26 93 L19 88 L24 80 L18 71 L8 68 L10 60 L20 56 L20 48 L10 44 L12 36 L22 33 L28 24 L21 16 L28 11 L36 18 L45 15 Z" fill="url(#woodHighlight)"/>
+                        
+                        <!-- Inner Cutout -->
+                        <circle cx="50" cy="50" r="24" fill="#2c3e50" stroke="#1e293b" stroke-width="2"/>
+                        
+                        <!-- Center Hub -->
+                        <circle cx="50" cy="50" r="14" fill="url(#woodBase)" stroke="#451a03" stroke-width="1.5"/>
+                        <circle cx="50" cy="50" r="14" fill="url(#woodHighlight)"/>
+                        <circle cx="50" cy="50" r="4" fill="#1e293b"/>
+                        
+                        <!-- Gold Rivets -->
+                        <circle cx="50" cy="18" r="2.5" fill="#fbbf24"/>
+                        <circle cx="50" cy="82" r="2.5" fill="#fbbf24"/>
+                        <circle cx="18" cy="50" r="2.5" fill="#fbbf24"/>
+                        <circle cx="82" cy="50" r="2.5" fill="#fbbf24"/>
                       </g>
                     </svg>
                 </span> 
@@ -1042,7 +981,7 @@
             <div style="flex-grow: 1;"></div>
             
             <div class="side-menu-item" onclick="toggleSideMenu(); window.parent.postMessage({ type: 'EXIT_GAME' }, '*');" style="background: rgba(255,69,58,0.1); border-color: rgba(255,69,58,0.2) !important; color: #ff453a; margin-bottom: 0;">
-                <span style="font-size: 34px; line-height: 1;">🚪</span> <span>خروج</span>
+                <span style="font-size: 16px; line-height: 1;">🚪</span> <span>خروج</span>
             </div>
         </div>
     </div>
@@ -1051,7 +990,7 @@
 
     <button id="online-toggle-btn" title="البحث العشوائي" style="position: fixed; bottom: 75px; left: 15px; z-index: 9998; height: 46px; width: 102px; padding: 0; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
         <span class="notification-badge"></span>
-        <svg viewBox="0 0 100 100" width="36" height="36" style="vertical-align: middle; display: inline-block; margin-left: 2px;">
+        <svg viewBox="0 0 100 100" width="28" height="28" style="vertical-align: middle; display: inline-block; transform: scale(1.4); transform-origin: center; margin-left: 5px;">
           <defs>
             <radialGradient id="oceanBlueBtn" cx="35%" cy="30%" r="70%">
               <stop offset="0%" stop-color="#38bdf8"/>
@@ -1102,7 +1041,7 @@
     </button>
 
     <button id="store-portal-corner-btn" onclick="openAppModal('store-modal')" style="position: fixed; bottom: 75px; right: 15px; z-index: 9998; width: 46px; height: 46px; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;" title="المتجر الملكي">
-        <svg viewBox="0 0 100 100" width="38" height="38" style="vertical-align: middle; display: inline-block;">
+        <svg viewBox="0 0 100 100" width="32" height="32" style="vertical-align: middle; display: inline-block; transform: scale(1.3); transform-origin: center;">
           <defs>
             <linearGradient id="chromeGradientBtn" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#ffffff"/>
@@ -1426,7 +1365,7 @@
         <button id="undo-btn" title="تراجع (أوفلاين)" style="font-size: 18px; display: none;">↩️</button>
         
         <button id="hint-btn" title="أفضل حركة" style="font-size: 18px; position: relative; overflow: visible;">
-            <svg viewBox="0 0 100 100" width="38" height="38" style="vertical-align: middle; display: inline-block;">
+            <svg viewBox="0 0 100 100" width="32" height="32" style="vertical-align: middle; display: inline-block; transform: scale(1.2);">
               <defs>
                 <filter id="bulbGlow" x="-30%" y="-30%" width="160%" height="160%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
