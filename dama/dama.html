@@ -35,9 +35,9 @@
         /* ========================================== */
         .scoreboard { 
             display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; 
-            background: transparent; padding: 0; border-radius: 0; 
+            background: transparent !important; padding: 0; border-radius: 0; 
             align-items: center; width: 95%; max-width: 380px; transition: all 0.4s ease; 
-            box-sizing: border-box; border: none;
+            box-sizing: border-box; border: none !important; box-shadow: none !important;
             backdrop-filter: none; -webkit-backdrop-filter: none;
         }
         
@@ -195,17 +195,19 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background-color: rgba(255, 255, 255, 0.1); /* باهت عند الإطفاء */
+            border: 2px solid #282a32;
+            background-color: transparent;
             box-shadow: none;
-            opacity: 0.5;
-            transition: background-color 0.3s, box-shadow 0.3s, opacity 0.3s, border-color 0.3s;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
             z-index: 10;
         }
         .radio-status-dot.active {
+            opacity: 1;
+            visibility: visible;
             background-color: #30d158; /* أخضر (يعمل) */
             border-color: #282a32;
-            opacity: 1;
             box-shadow: 0 0 8px rgba(48, 209, 88, 0.6);
             animation: radioPulse 1.5s infinite ease-in-out;
         }
@@ -449,14 +451,14 @@
         .match-vs-text { color: #a1a1aa; font-weight: 300; font-size: 16px; }
 
         button, select, .control-panel button, .control-panel select, 
-        .scoreboard, .settings-card, 
+        .settings-card, 
         .save-settings-btn, .store-buy-btn, .custom-tab-button, 
         .modal-close-btn, #hamburger-menu-btn, #online-toggle-btn, #store-portal-corner-btn {
             border: 1px solid rgba(135, 206, 235, 0.4) !important;
             box-shadow: 0 0 3px rgba(135, 206, 235, 0.3) !important;
             outline: none !important;
         }
-        button:hover, select:hover, .scoreboard:hover, .settings-card:hover {
+        button:hover, select:hover, .settings-card:hover {
             box-shadow: 0 0 8px rgba(135, 206, 235, 0.6) !important;
         }
 
