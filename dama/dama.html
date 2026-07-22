@@ -200,7 +200,7 @@
         
         .side-menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
         .side-menu-title { color: #fff; font-size: 18px; font-weight: 700; margin: 0; }
-        .side-menu-close { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .side-menu-close { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; padding: 0; }
         .side-menu-close:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
         
         .side-menu-item { display: flex; align-items: center; gap: 15px; padding: 10px 15px; min-height: 52px; box-sizing: border-box; margin-bottom: 12px; border-radius: 14px; background: rgba(255,255,255,0.04); color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); overflow: visible; }
@@ -936,6 +936,11 @@
                     </svg>
                 </span> <span>الحقيبة والأزياء</span>
             </div>
+
+            <div class="side-menu-item" onclick="toggleSideMenu(); window.parent.openRadioModal()">
+                <span style="font-size: 34px; display: flex; align-items: center; justify-content: center; transform: translateY(2px);">📻</span> 
+                <span>الراديو والموسيقى</span>
+            </div>
             
             <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('settings-overlay')">
                 <span>
@@ -981,7 +986,7 @@
             <div style="flex-grow: 1;"></div>
             
             <div class="side-menu-item" onclick="toggleSideMenu(); window.parent.postMessage({ type: 'EXIT_GAME' }, '*');" style="background: rgba(255,69,58,0.1); border-color: rgba(255,69,58,0.2) !important; color: #ff453a; margin-bottom: 0;">
-                <span style="font-size: 16px; line-height: 1;">🚪</span> <span>خروج</span>
+                <span style="font-size: 36px; display: flex; align-items: center; justify-content: center; width: 38px; transform: translateY(1px);">🚪</span> <span>خروج</span>
             </div>
         </div>
     </div>
@@ -1040,7 +1045,7 @@
         <span style="font-size: 13px; font-weight: 600;">اونلاين</span>
     </button>
 
-    <button id="store-portal-corner-btn" onclick="openAppModal('store-modal')" style="position: fixed; bottom: 75px; right: 15px; z-index: 9998; width: 46px; height: 46px; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;" title="المتجر الملكي">
+    <button id="store-portal-corner-btn" onclick="openAppModal('store-modal')" style="position: fixed; bottom: 75px; right: 15px; z-index: 9998; width: 46px; height: 46px; padding: 0; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;" title="المتجر الملكي">
         <svg viewBox="0 0 100 100" width="32" height="32" style="vertical-align: middle; display: inline-block; transform: scale(1.3); transform-origin: center;">
           <defs>
             <linearGradient id="chromeGradientBtn" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1257,8 +1262,8 @@
             <p id="choose-color-label" class="settings-label" style="text-align: center; margin-bottom: 20px;">اختر اللون للبدء</p>
             
             <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
-                <button id="start-white-btn" class="save-settings-btn" style="background: linear-gradient(135deg, #ffffff, #e0e0e0) !important; color: #000 !important; font-size: 24px; width: 64px; height: 64px; padding: 0; margin: 0; box-shadow: 0 4px 15px rgba(255,255,255,0.2) !important;">⚪</button>
-                <button id="start-black-btn" class="save-settings-btn" style="background: linear-gradient(135deg, #626270, #2c2c35) !important; color: #fff !important; font-size: 24px; width: 64px; height: 64px; padding: 0; margin: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.25) !important;">⚫</button>
+                <button id="start-white-btn" class="save-settings-btn" style="background: linear-gradient(135deg, #ffffff, #e0e0e0) !important; color: #000 !important; font-size: 24px; width: 64px; height: 64px; padding: 0; margin: 0; box-shadow: 0 4px 15px rgba(255,255,255,0.2) !important; display: flex; align-items: center; justify-content: center;">⚪</button>
+                <button id="start-black-btn" class="save-settings-btn" style="background: linear-gradient(135deg, #626270, #2c2c35) !important; color: #fff !important; font-size: 24px; width: 64px; height: 64px; padding: 0; margin: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.25) !important; display: flex; align-items: center; justify-content: center;">⚫</button>
             </div>
 
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);">
@@ -1362,9 +1367,11 @@
     <!-- الأزرار السفلية -->
     <div class="control-panel" id="bottom-control-panel">
         <button id="reset-btn" title="Reset">ابداء</button>
-        <button id="undo-btn" title="تراجع (أوفلاين)" style="font-size: 18px; display: none;">↩️</button>
+        <button id="undo-btn" title="تراجع (أوفلاين)" style="font-size: 18px; display: none; padding: 0; width: 44px; align-items: center; justify-content: center;">↩️</button>
         
-        <button id="hint-btn" title="أفضل حركة" style="font-size: 18px; position: relative; overflow: visible;">
+        <button id="dama-radio-toggle" title="تشغيل/إيقاف الراديو" style="font-size: 20px; padding: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;" onclick="window.parent.toggleRadioPlayState()">📻</button>
+        
+        <button id="hint-btn" title="أفضل حركة" style="font-size: 18px; position: relative; overflow: visible; padding: 0; width: 44px; display: flex; align-items: center; justify-content: center;">
             <svg viewBox="0 0 100 100" width="32" height="32" style="vertical-align: middle; display: inline-block; transform: scale(1.2);">
               <defs>
                 <filter id="bulbGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -2035,4 +2042,4 @@
         });
     </script>
 </body>
-                            </html>
+</html>
