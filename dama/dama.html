@@ -417,8 +417,8 @@
         .audio-controls label { display: block; margin-bottom: 8px; font-weight: 500; color: #a1a1aa; font-size: 13px; }
         .audio-controls input[type="range"] { width: 100%; margin-bottom: 5px; accent-color: #ffffff; }
         
-        .custom-nav-tabs { display: flex; gap: 4px; margin-bottom: 10px; background: rgba(255, 255, 255, 0.06); padding: 4px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05); }
-        .custom-tab-button { flex: 1; height: 36px; border-radius: 50px; background: transparent; color: #a1a1aa; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; padding: 0 5px; }
+        .custom-nav-tabs { display: flex; gap: 4px; margin-bottom: 10px; background: rgba(255, 255, 255, 0.06); padding: 4px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
+        .custom-tab-button { flex: 1; min-width: 60px; height: 36px; border-radius: 50px; background: transparent; color: #a1a1aa; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center; padding: 0 5px; }
         .custom-tab-button.active { background: rgba(255,255,255,0.1); color: white; }
 
         .lb-list-container {
@@ -777,6 +777,7 @@
                 <button id="store-btn-tab-frames" class="custom-tab-button" onclick="switchStoreTabCategory('frames')">إطارات</button>
                 <button id="store-btn-tab-pieces" class="custom-tab-button" onclick="switchStoreTabCategory('pieces')">أحجار</button>
                 <button id="store-btn-tab-special" class="custom-tab-button" onclick="switchStoreTabCategory('special')">باقات مميزة</button>
+                <button id="store-btn-tab-score" class="custom-tab-button" onclick="switchStoreTabCategory('score')">الأشرطة</button>
                 <button id="store-btn-tab-offers" class="custom-tab-button" onclick="switchStoreTabCategory('offers')">عروضات</button>
             </div>
 
@@ -785,6 +786,7 @@
                 <div id="store-section-frames" class="store-items-grid" style="display: none;"></div>
                 <div id="store-section-pieces" class="store-items-grid" style="display: none;"></div>
                 <div id="store-section-special" class="store-items-grid" style="display: none;"></div>
+                <div id="store-section-score" class="store-items-grid" style="display: none;"></div>
                 <div id="store-section-offers" class="store-items-grid" style="display: none;"></div>
             </div>
             
@@ -817,6 +819,7 @@
                 <button id="theme-btn-tab-frames" class="custom-tab-button" onclick="switchThemeGridTabCategory('frames')">إطارات</button>
                 <button id="theme-btn-tab-pieces" class="custom-tab-button" onclick="switchThemeGridTabCategory('pieces')">احجار</button>
                 <button id="theme-btn-tab-special" class="custom-tab-button" onclick="switchThemeGridTabCategory('special')">باقات مميزة</button>
+                <button id="theme-btn-tab-score" class="custom-tab-button" onclick="switchThemeGridTabCategory('score')">الأشرطة</button>
             </div>
 
             <div class="scrollable-content">
@@ -824,6 +827,7 @@
                 <div id="theme-grid-section-frames" class="themes-grid-container" style="display: none;"></div>
                 <div id="theme-grid-section-pieces" class="themes-grid-container" style="display: none;"></div>
                 <div id="theme-grid-section-special" class="themes-grid-container" style="display: none;"></div>
+                <div id="theme-grid-section-score" class="themes-grid-container" style="display: none;"></div>
             </div>
 
             <button id="theme-close-btn" onclick="closeAppModal('themes-grid-overlay')" class="save-settings-btn" style="margin: auto auto 5px auto; height: 38px; font-size: 13px; width: 60%; align-self: center;">الخروج</button>
@@ -1180,6 +1184,7 @@
             if (itemType === 'bg') msg = window.t ? window.t('toast_bg') : "تم تغيير الساحة بنجاح";
             else if (itemType === 'fr') msg = window.t ? window.t('toast_fr') : "تم تغيير الإطار بنجاح";
             else if (itemType === 'pc') msg = window.t ? window.t('toast_pc') : "تم تغيير الحجر بنجاح";
+            else if (itemType === 'score') msg = window.t ? window.t('toast_score') : "تم تغيير شكل الشريط بنجاح";
             
             toast.innerText = '✨ ' + msg;
             toast.classList.add('show');
@@ -1209,9 +1214,9 @@
             }
         }
 
-        // --- تحديث دوال التنقل لإضافة القسم الجديد ---
+        // تحديث دوال التنقل لإضافة قسمي الأشرطة والباقات المميزة
         function switchStoreTabCategory(category) {
-            const tabs = ['bg', 'frames', 'pieces', 'special', 'offers'];
+            const tabs = ['bg', 'frames', 'pieces', 'special', 'score', 'offers'];
             tabs.forEach(tab => {
                 const btn = document.getElementById('store-btn-tab-' + tab);
                 const sec = document.getElementById('store-section-' + tab);
@@ -1225,7 +1230,7 @@
         }
 
         function switchThemeGridTabCategory(category) {
-            const tabs = ['bg', 'frames', 'pieces', 'special'];
+            const tabs = ['bg', 'frames', 'pieces', 'special', 'score'];
             tabs.forEach(tab => {
                 const btn = document.getElementById('theme-btn-tab-' + tab);
                 const sec = document.getElementById('theme-grid-section-' + tab);
@@ -1500,6 +1505,9 @@
                     previewEl.style.backgroundPosition = 'center';
                 } else if(itemType === 'pc') {
                     previewEl.innerHTML = itemData.icon || '💎';
+                } else if(itemType === 'score') {
+                    // شكل مصغر لشريط الأحجار داخل نافذة الشراء
+                    previewEl.innerHTML = `<div style="width: 80%; height: 25px; border-radius: 8px; background: ${itemData.scoreBg}; border: ${itemData.scoreBorder};"></div>`;
                 } else if(itemType === 'bg' || itemType === 'fr') {
                     if (itemData.cssLight && itemData.cssDark) {
                         previewEl.innerHTML = `<div style="display:flex; flex:1;"><div style="flex:1; ${itemData.cssLight}"></div><div style="flex:1; ${itemData.cssDark}"></div></div><div style="display:flex; flex:1;"><div style="flex:1; ${itemData.cssDark}"></div><div style="flex:1; ${itemData.cssLight}"></div></div>`;
