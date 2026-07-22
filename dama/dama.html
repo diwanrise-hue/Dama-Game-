@@ -761,6 +761,7 @@
         </div>
     </div>
 
+    <!-- نافذة المتجر -->
     <div id="store-modal" class="modal-overlay">
         <div class="settings-card" dir="auto">
             <div style="position: absolute; top: 18px; right: 20px;" class="stat-item">
@@ -775,6 +776,7 @@
                 <button id="store-btn-tab-bg" class="custom-tab-button active" onclick="switchStoreTabCategory('bg')">خلفيات</button>
                 <button id="store-btn-tab-frames" class="custom-tab-button" onclick="switchStoreTabCategory('frames')">إطارات</button>
                 <button id="store-btn-tab-pieces" class="custom-tab-button" onclick="switchStoreTabCategory('pieces')">أحجار</button>
+                <button id="store-btn-tab-special" class="custom-tab-button" onclick="switchStoreTabCategory('special')">باقات مميزة</button>
                 <button id="store-btn-tab-offers" class="custom-tab-button" onclick="switchStoreTabCategory('offers')">عروضات</button>
             </div>
 
@@ -782,6 +784,7 @@
                 <div id="store-section-bg" class="store-items-grid"></div>
                 <div id="store-section-frames" class="store-items-grid" style="display: none;"></div>
                 <div id="store-section-pieces" class="store-items-grid" style="display: none;"></div>
+                <div id="store-section-special" class="store-items-grid" style="display: none;"></div>
                 <div id="store-section-offers" class="store-items-grid" style="display: none;"></div>
             </div>
             
@@ -804,6 +807,7 @@
         </div>
     </div>
 
+    <!-- نافذة الحقيبة -->
     <div id="themes-grid-overlay" class="modal-overlay">
         <div class="settings-card" dir="auto">
             <h3 id="themes-grid-title" style="margin-bottom: 15px; font-size: 20px;">المظهر والأزياء</h3>
@@ -812,17 +816,14 @@
                 <button id="theme-btn-tab-bg" class="custom-tab-button active" onclick="switchThemeGridTabCategory('bg')">خلفيات</button>
                 <button id="theme-btn-tab-frames" class="custom-tab-button" onclick="switchThemeGridTabCategory('frames')">إطارات</button>
                 <button id="theme-btn-tab-pieces" class="custom-tab-button" onclick="switchThemeGridTabCategory('pieces')">احجار</button>
+                <button id="theme-btn-tab-special" class="custom-tab-button" onclick="switchThemeGridTabCategory('special')">باقات مميزة</button>
             </div>
 
             <div class="scrollable-content">
-                <!-- سيتم حقن الثيمات (الخلفيات) هنا عبر المتجر -->
                 <div class="themes-grid-container" id="theme-grid-section-bg"></div>
-
-                <!-- سيتم حقن الإطارات هنا عبر المتجر -->
                 <div id="theme-grid-section-frames" class="themes-grid-container" style="display: none;"></div>
-
-                <!-- سيتم حقن الأحجار هنا عبر المتجر -->
                 <div id="theme-grid-section-pieces" class="themes-grid-container" style="display: none;"></div>
+                <div id="theme-grid-section-special" class="themes-grid-container" style="display: none;"></div>
             </div>
 
             <button id="theme-close-btn" onclick="closeAppModal('themes-grid-overlay')" class="save-settings-btn" style="margin: auto auto 5px auto; height: 38px; font-size: 13px; width: 60%; align-self: center;">الخروج</button>
@@ -1208,8 +1209,9 @@
             }
         }
 
+        // --- تحديث دوال التنقل لإضافة القسم الجديد ---
         function switchStoreTabCategory(category) {
-            const tabs = ['bg', 'frames', 'pieces', 'offers'];
+            const tabs = ['bg', 'frames', 'pieces', 'special', 'offers'];
             tabs.forEach(tab => {
                 const btn = document.getElementById('store-btn-tab-' + tab);
                 const sec = document.getElementById('store-section-' + tab);
@@ -1223,7 +1225,7 @@
         }
 
         function switchThemeGridTabCategory(category) {
-            const tabs = ['bg', 'frames', 'pieces'];
+            const tabs = ['bg', 'frames', 'pieces', 'special'];
             tabs.forEach(tab => {
                 const btn = document.getElementById('theme-btn-tab-' + tab);
                 const sec = document.getElementById('theme-grid-section-' + tab);
