@@ -9,100 +9,84 @@ export const STORE_ITEMS = {
     // أولاً: الخلفيات واللوحات (Backgrounds & Boards)
     // ===================================
     
-    'bg_wood': { type: 'bg', isDefault: true, nameAr: 'الخشب الفاخر', nameEn: 'Premium Wood', light: '#DEB887', dark: '#8B4513' },
+    'bg_wood': { 
+        type: 'bg', isDefault: true, nameAr: 'الخشب الفاخر', nameEn: 'Premium Wood', light: '#DEB887', dark: '#8B4513',
+        scoreBg: 'rgba(92, 58, 33, 0.75)', scoreBorder: '1px solid rgba(222, 184, 135, 0.4)' 
+    },
 
     'bg_malachite': { 
         type: 'bg', cost: 3000, isLegendary: true, nameAr: 'رخام الملاكيت الأخضر', nameEn: 'Malachite Green Marble',
-        isImage: true, 
-        imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134548.webp'
+        isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134548.webp',
+        scoreBg: 'rgba(20, 50, 30, 0.75)', scoreBorder: '1px solid rgba(74, 222, 128, 0.4)'
     },
 
     'bg_carved_wood': { 
         type: 'bg', cost: 1000, nameAr: 'الخشب المحفور', nameEn: 'Carved Wood',
         cssLight: 'background: repeating-linear-gradient(45deg, #DEB887, #DEB887 10px, #D2A679 10px, #D2A679 20px); box-shadow: inset 0 0 15px rgba(100,50,0,0.5);',
-        cssDark: 'background: repeating-linear-gradient(-45deg, #8B4513, #8B4513 15px, #65320D 15px, #65320D 30px); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);' 
+        cssDark: 'background: repeating-linear-gradient(-45deg, #8B4513, #8B4513 15px, #65320D 15px, #65320D 30px); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);',
+        scoreBg: 'rgba(101, 50, 13, 0.75)', scoreBorder: '1px solid rgba(210, 166, 121, 0.4)'
     },
 
     'bg_mosaic': { 
         type: 'bg', cost: 1500, nameAr: 'الموزاييك الملكي', nameEn: 'Royal Mosaic',
         cssLight: 'background-color: #E2D4B7; background-image: radial-gradient(circle at 50% 50%, #4A2E15 15%, transparent 18%), repeating-conic-gradient(from 0deg at 50% 50%, #C4AE8D 0deg, #C4AE8D 15deg, transparent 15deg, transparent 30deg); box-shadow: inset 0 0 10px rgba(74,46,21,0.4); border: 1px solid rgba(74,46,21,0.2);',
-        cssDark: 'background-color: #3B2314; background-image: radial-gradient(circle at 50% 50%, #E2D4B7 10%, transparent 13%), radial-gradient(circle at 50% 50%, transparent 40%, #1E110A 45%, #1E110A 50%, transparent 55%), repeating-conic-gradient(from 15deg at 50% 50%, #2A170D 0deg, #2A170D 22.5deg, transparent 22.5deg, transparent 45deg); box-shadow: inset 0 0 15px rgba(0,0,0,0.8); border: 1px solid #1E110A;' 
+        cssDark: 'background-color: #3B2314; background-image: radial-gradient(circle at 50% 50%, #E2D4B7 10%, transparent 13%), radial-gradient(circle at 50% 50%, transparent 40%, #1E110A 45%, #1E110A 50%, transparent 55%), repeating-conic-gradient(from 15deg at 50% 50%, #2A170D 0deg, #2A170D 22.5deg, transparent 22.5deg, transparent 45deg); box-shadow: inset 0 0 15px rgba(0,0,0,0.8); border: 1px solid #1E110A;',
+        scoreBg: 'rgba(42, 23, 13, 0.75)', scoreBorder: '1px solid rgba(226, 212, 183, 0.4)'
     },
 
-    'bg_image_royal': { type: 'bg', cost: 4000, isLegendary: true, nameAr: 'الساحة الملكية الفاخرة', nameEn: 'Premium Royal Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133232.webp' },
+    'bg_image_royal': { 
+        type: 'bg', cost: 4000, isLegendary: true, nameAr: 'الساحة الملكية الفاخرة', nameEn: 'Premium Royal Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133232.webp',
+        scoreBg: 'rgba(50, 40, 20, 0.75)', scoreBorder: '1px solid rgba(255, 215, 0, 0.4)'
+    },
 
-    'bg_image_lava': { type: 'bg', cost: 4500, isLegendary: true, nameAr: 'ساحة الحمم البركانية', nameEn: 'Volcanic Lava Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133390.webp' },
+    'bg_image_lava': { 
+        type: 'bg', cost: 4500, isLegendary: true, nameAr: 'ساحة الحمم البركانية', nameEn: 'Volcanic Lava Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133390.webp',
+        scoreBg: 'rgba(60, 10, 0, 0.75)', scoreBorder: '1px solid rgba(255, 69, 0, 0.4)'
+    },
 
-    'bg_custom_warrior': { type: 'bg', cost: 5000, isLegendary: true, nameAr: 'ساحة كتيبة الأبطال', nameEn: 'Hero Battalion Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134166.webp' },
+    'bg_custom_warrior': { 
+        type: 'bg', cost: 5000, isLegendary: true, nameAr: 'ساحة كتيبة الأبطال', nameEn: 'Hero Battalion Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134166.webp',
+        scoreBg: 'rgba(25, 30, 40, 0.8)', scoreBorder: '1px solid rgba(135, 206, 235, 0.4)'
+    },
 
     'bg_ruby_amber': { 
-        type: 'bg', cost: 50000, isLegendary: true, nameAr: 'الياقوت والكهرمان الملكي', nameEn: 'Royal Ruby & Amber', 
-        isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/10001320889.webp' 
+        type: 'bg', cost: 50000, isLegendary: true, nameAr: 'الياقوت والكهرمان الملكي', nameEn: 'Royal Ruby & Amber', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/10001320889.webp',
+        scoreBg: 'rgba(80, 10, 20, 0.75)', scoreBorder: '1px solid rgba(255, 100, 100, 0.4)'
     },
 
     'bg_mahogany': { 
-        type: 'bg', cost: 2000, nameAr: 'ساحة الماهوجني الكلاسيكية', nameEn: 'Classic Mahogany Arena', 
-        isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134903.webp' 
+        type: 'bg', cost: 2000, nameAr: 'ساحة الماهوجني الكلاسيكية', nameEn: 'Classic Mahogany Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134903.webp',
+        scoreBg: 'rgba(60, 30, 15, 0.75)', scoreBorder: '1px solid rgba(200, 150, 100, 0.4)'
     },
 
     'bg_turquoise_geometric': {
-        type: 'bg',
-        cost: 2200,
-        nameAr: 'ساحة الفيروز والزخارف الهندسية',
-        nameEn: 'Geometric Turquoise & Gold Arena',
-        isImage: true,
-        imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134417.webp',
-        hasPurpleBorder: true
+        type: 'bg', cost: 2200, nameAr: 'ساحة الفيروز والزخارف الهندسية', nameEn: 'Geometric Turquoise & Gold Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134417.webp', hasPurpleBorder: true,
+        scoreBg: 'rgba(10, 50, 60, 0.75)', scoreBorder: '1px solid rgba(64, 224, 208, 0.4)'
     },
 
     'bg_black_gold_marble': {
-        type: 'bg',
-        cost: 2500,
-        nameAr: 'ساحة الرخام الأسود والعروق الذهبية',
-        nameEn: 'Classic Black & Gold Marble Arena',
-        isImage: true,
-        imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134427.webp',
-        hasPurpleBorder: true
+        type: 'bg', cost: 2500, nameAr: 'ساحة الرخام الأسود والعروق الذهبية', nameEn: 'Classic Black & Gold Marble Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134427.webp', hasPurpleBorder: true,
+        scoreBg: 'rgba(15, 15, 15, 0.8)', scoreBorder: '1px solid rgba(255, 215, 0, 0.4)'
     },
 
     'bg_blue_navy_marble': {
-        type: 'bg',
-        cost: 2600,
-        nameAr: 'ساحة الرخام الأزرق الداكن والبيج',
-        nameEn: 'Navy Blue & Beige Marble Arena',
-        isImage: true,
-        imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136612.webp',
-        hasPurpleBorder: true
+        type: 'bg', cost: 2600, nameAr: 'ساحة الرخام الأزرق الداكن والبيج', nameEn: 'Navy Blue & Beige Marble Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136612.webp', hasPurpleBorder: true,
+        scoreBg: 'rgba(10, 20, 40, 0.8)', scoreBorder: '1px solid rgba(135, 206, 250, 0.4)'
     },
 
     'bg_brown_gold_leaves': {
-        type: 'bg',
-        cost: 2800,
-        nameAr: 'ساحة الرخام البني والزخارف الذهبية',
-        nameEn: 'Brown Marble & Golden Leaves Arena',
-        isImage: true,
-        imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136622.webp',
-        hasPurpleBorder: true
+        type: 'bg', cost: 2800, nameAr: 'ساحة الرخام البني والزخارف الذهبية', nameEn: 'Brown Marble & Golden Leaves Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136622.webp', hasPurpleBorder: true,
+        scoreBg: 'rgba(50, 30, 10, 0.8)', scoreBorder: '1px solid rgba(255, 215, 0, 0.4)'
     },
 
     'bg_samurai_warriors': {
-        type: 'bg',
-        cost: 100000,
-        isLegendary: true,
-        nameAr: 'ساحة محاربي الساموراي الأسطورية',
-        nameEn: 'Legendary Samurai Warriors Arena',
-        isImage: true,
-        imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136302.webp'
+        type: 'bg', cost: 100000, isLegendary: true, nameAr: 'ساحة محاربي الساموراي الأسطورية', nameEn: 'Legendary Samurai Warriors Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136302.webp',
+        scoreBg: 'rgba(30, 10, 10, 0.8)', scoreBorder: '1px solid rgba(220, 20, 60, 0.4)'
     },
 
     'bg_jester_theater': {
-        type: 'bg',
-        cost: 150000,
-        isLegendary: true,
-        nameAr: 'ساحة مسرح جيستر',
-        nameEn: 'Jester Theater Arena',
-        isImage: true,
-        imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136557.webp'
+        type: 'bg', cost: 150000, isLegendary: true, nameAr: 'ساحة مسرح جيستر', nameEn: 'Jester Theater Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136557.webp',
+        scoreBg: 'rgba(40, 10, 40, 0.8)', scoreBorder: '1px solid rgba(168, 85, 247, 0.4)'
     },
 
     // ===================================
@@ -566,6 +550,22 @@ export const storeManager = {
     applyBoardThemeCSS(bgKey) {
         const item = STORE_ITEMS[bgKey];
         if (!item || item.type !== 'bg') return;
+
+        // ==========================================
+        // تطبيق خلفية وإطار شريط الأحجار المتبقية (ديناميكياً)
+        // ==========================================
+        const root = document.documentElement;
+        if (item.scoreBg) {
+            root.style.setProperty('--score-bg', item.scoreBg);
+        } else {
+            root.style.setProperty('--score-bg', 'rgba(30, 32, 40, 0.6)'); // الافتراضي
+        }
+        
+        if (item.scoreBorder) {
+            root.style.setProperty('--score-border', item.scoreBorder);
+        } else {
+            root.style.setProperty('--score-border', '1px solid rgba(255,255,255,0.08)'); // الافتراضي
+        }
 
         let styleEl = document.getElementById('dynamic-board-css');
         if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'dynamic-board-css'; document.head.appendChild(styleEl); }
