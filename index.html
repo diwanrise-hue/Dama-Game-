@@ -109,50 +109,56 @@
             direction: ltr; transition: var(--transition); gap: 8px;
         }
 
-        /* زر 3 خطوط (القائمة الجانبية) */
+        /* زر اللغة الجديد والقائمة المنسدلة */
+        .lang-btn {
+            height: 46px; padding: 0 20px; background: var(--glass-bg); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); border-radius: 25px;
+            display: flex; align-items: center; justify-content: center; color: var(--text-primary);
+            font-weight: 600; font-size: 14px; cursor: pointer; transition: var(--transition);
+        }
+        .lang-btn:hover { background: rgba(255,255,255,0.08); }
+
+        /* زر الهامبرغر */
         .hamburger-btn {
             width: 46px; height: 46px; background: var(--glass-bg); backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); border-radius: 14px;
-            display: flex; align-items: center; justify-content: center; color: var(--text-primary);
+            border: 1px solid var(--glass-border); border-radius: 25px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
             cursor: pointer; transition: var(--transition); padding: 0;
         }
-        .hamburger-btn:hover { background: rgba(255,255,255,0.12); transform: scale(1.05); }
-
-        /* ========================================== */
-        /* النافذة الجانبية لزر 3 خطوط              */
-        /* ========================================== */
-        .side-panel-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            z-index: 100000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        .hamburger-btn:hover { background: rgba(255,255,255,0.08); }
+        .hamburger-btn span {
+            display: block; width: 22px; height: 2px; background: var(--text-primary); border-radius: 2px;
+            transition: var(--transition);
         }
-        .side-panel-overlay.open { opacity: 1; visibility: visible; }
-        
-        .side-panel {
-            position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
-            background: rgba(15, 15, 20, 0.98); backdrop-filter: blur(20px);
-            border-left: 1px solid rgba(255,255,255,0.1); box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-            z-index: 100001; transition: right 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            display: flex; flex-direction: column; padding: 25px 20px; box-sizing: border-box;
-            overflow-y: auto;
-        }
-        html[dir="ltr"] .side-panel { right: auto; left: -300px; border-left: none; border-right: 1px solid rgba(255,255,255,0.1); }
-        .side-panel-overlay.open .side-panel { right: 0; }
-        html[dir="ltr"] .side-panel-overlay.open .side-panel { left: 0; right: auto; }
 
-        .side-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
-        .side-panel-title { color: #fff; font-size: 18px; font-weight: 700; margin: 0; }
-        .side-panel-close { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; padding: 0; }
-        .side-panel-close:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
-
-        .side-section-title { color: var(--accent); font-size: 14px; font-weight: 600; margin: 15px 0 8px 0; text-align: start; }
-        .side-grid-bg { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-        .bg-preset-btn { 
-            height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); 
-            background: rgba(255,255,255,0.05); color: white; font-size: 13px; font-weight: 500; 
-            cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center;
+        .lang-dropdown-menu {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            background: #111115;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 100000;
+            box-shadow: 0 0 0 100vw rgba(0,0,0,0.7), 0 20px 40px rgba(0,0,0,0.8);
+            flex-direction: column;
         }
-        .bg-preset-btn:hover { background: rgba(255,255,255,0.15); border-color: var(--accent); }
+        .lang-dropdown-menu.show { display: flex; animation: fadeIn 0.2s ease; }
+        .lang-dropdown-item {
+            padding: 15px 20px;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .lang-dropdown-item:last-child { border-bottom: none; }
+        .lang-dropdown-item:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
 
 
         /* ========================================== */
@@ -349,41 +355,25 @@
                 </div>
             </div>
             
-            <!-- زر 3 خطوط بجانب مكان الأزرار العلوية -->
             <div style="display: flex; gap: 12px; align-items: center; position: relative;">
-                <div class="hamburger-btn" onclick="openSideMenu()" title="القائمة">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- النافذة الجانبية لزر 3 خطوط (تحتوي على زر تغيير اللغة + أزرار الخلفيات الجاهزة الخفيفة) -->
-        <div id="side-menu-overlay" class="side-panel-overlay" onclick="if(event.target === this) closeSideMenu()">
-            <div class="side-panel">
-                <div class="side-panel-header">
-                    <h3 class="side-panel-title" data-i18n="menu_title">القائمة</h3>
-                    <button class="side-panel-close" onclick="closeSideMenu()">✕</button>
+                <div class="lang-btn" onclick="toggleLangMenu()" id="lang-toggle-btn">
+                    <span id="lang-text">عربي</span>
                 </div>
                 
-                <!-- قسم تغيير الخلفيات الخفيفة -->
-                <div class="side-section-title" data-i18n="bg_section">الخلفيات</div>
-                <div class="side-grid-bg">
-                    <button class="bg-preset-btn" onclick="setPresetBackground('radial-gradient(circle at 50% 0%, #1a1a24 0%, #050507 80%)')">افتراضي</button>
-                    <button class="bg-preset-btn" onclick="setPresetBackground('radial-gradient(circle at 50% 0%, #0f2042 0%, #050507 80%)')">أزرق ملكي</button>
-                    <button class="bg-preset-btn" onclick="setPresetBackground('radial-gradient(circle at 50% 0%, #2e0f0f 0%, #050507 80%)')">داكن ناري</button>
-                    <button class="bg-preset-btn" onclick="setPresetBackground('radial-gradient(circle at 50% 0%, #0f2e1a 0%, #050507 80%)')">زمردي</button>
+                <div id="lang-dropdown" class="lang-dropdown-menu">
+                    <div class="lang-dropdown-item" onclick="selectLanguage('ar')">عربي</div>
+                    <div class="lang-dropdown-item" onclick="selectLanguage('ku')">کوردی</div>
+                    <div class="lang-dropdown-item" onclick="selectLanguage('en')">English</div>
                 </div>
 
-                <!-- قسم تغيير اللغة -->
-                <div class="side-section-title" data-i18n="lang_section">اللغة</div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button class="btn btn-secondary" style="height: 40px; margin: 0; font-size: 14px;" onclick="selectLanguage('ar')">عربي</button>
-                    <button class="btn btn-secondary" style="height: 40px; margin: 0; font-size: 14px;" onclick="selectLanguage('en')">English</button>
-                    <button class="btn btn-secondary" style="height: 40px; margin: 0; font-size: 14px;" onclick="selectLanguage('ku')">کوردی</button>
+                <!-- إضافة زر الهامبرغر هنا -->
+                <div style="position: relative;">
+                    <div class="hamburger-btn" id="hamburger-toggle-btn" onclick="toggleHamburgerMenu()">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div id="hamburger-dropdown" class="lang-dropdown-menu" style="width: auto; right: 0; left: auto; transform: none; top: 60px; white-space: nowrap;">
+                        <div class="lang-dropdown-item" onclick="document.getElementById('bg-upload-input').click()" data-i18n="change_bg">تغيير الخلفية</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -509,6 +499,9 @@
         </div>
     </div>
 
+    <!-- حقل مخفي لرفع الصورة لتعيينها كخلفية -->
+    <input type="file" id="bg-upload-input" accept="image/*" style="display: none;" onchange="changeAppBackground(event)">
+
     <script>
         // === تهيئة Facebook SDK ===
         window.fbAsyncInit = function() {
@@ -534,9 +527,7 @@
                 app_title: "DAMA CHALLENGE",
                 dama: "دامة",
                 soon: "قريباً",
-                menu_title: "القائمة",
-                bg_section: "الخلفيات",
-                lang_section: "اللغة",
+                change_bg: "تغيير الخلفية",
                 login_name_label: "الاسم",
                 login_name_placeholder: "اكتب اسمك هنا",
                 login_avatar_label: "الشخصية",
@@ -585,9 +576,7 @@
                 app_title: "DAMA CHALLENGE",
                 dama: "Dama",
                 soon: "Soon",
-                menu_title: "Menu",
-                bg_section: "Backgrounds",
-                lang_section: "Language",
+                change_bg: "Change Background",
                 login_name_label: "Name",
                 login_name_placeholder: "Type your name",
                 login_avatar_label: "Avatar",
@@ -636,9 +625,7 @@
                 app_title: "DAMA CHALLENGE",
                 dama: "دامە",
                 soon: "بەمنزیکانە",
-                menu_title: "پێڕست",
-                bg_section: "پاشبنەماکان",
-                lang_section: "زمان",
+                change_bg: "گۆڕینی پاشبنەما",
                 login_name_label: "ناو",
                 login_name_placeholder: "ناوت لێرە بنووسە",
                 login_avatar_label: "کەسایەتی",
@@ -686,45 +673,62 @@
         };
 
         const langs = ['ar', 'en', 'ku'];
+        const btnLabels = { 'ar': 'عربي', 'en': 'English', 'ku': 'کوردی' };
+        
         let currentLang = localStorage.getItem('app_lang') || 'ar';
         if (!langs.includes(currentLang)) currentLang = 'ar';
         let isLoginMode = false; 
 
-        // دوال فتح وإغلاق قائمة 3 خطوط الجانبية
-        function openSideMenu() {
-            document.getElementById('side-menu-overlay').classList.add('open');
-        }
-        function closeSideMenu() {
-            document.getElementById('side-menu-overlay').classList.remove('open');
+        // دالة لفتح وإغلاق القائمة المنسدلة للغة
+        function toggleLangMenu() {
+            document.getElementById('lang-dropdown').classList.toggle('show');
         }
 
-        // دالة تغيير الخلفية السريعة (خفيفة الوزن بدون تحميل صور ثقيلة)
-        function setPresetBackground(bgValue) {
-            document.body.style.backgroundImage = bgValue;
-            document.body.style.backgroundColor = '#050507';
-            localStorage.setItem('app_background', bgValue);
-            
-            const gameIframe = document.getElementById('game-frame');
-            if (gameIframe && gameIframe.contentWindow) {
-                gameIframe.contentWindow.postMessage({ type: 'BACKGROUND_CHANGED', bg: bgValue }, '*');
+        // دالة لفتح وإغلاق القائمة المنسدلة للهامبرغر
+        function toggleHamburgerMenu() {
+            document.getElementById('hamburger-dropdown').classList.toggle('show');
+        }
+
+        // إغلاق القوائم عند النقر في أي مكان آخر بالصفحة
+        window.addEventListener('click', function(e) {
+            // إغلاق قائمة اللغة
+            const langBtn = document.getElementById('lang-toggle-btn');
+            const langDropdown = document.getElementById('lang-dropdown');
+            if (langBtn && langDropdown && !langBtn.contains(e.target) && !langDropdown.contains(e.target)) {
+                langDropdown.classList.remove('show');
             }
-            closeSideMenu();
-        }
+            // إغلاق قائمة الهامبرغر
+            const hamBtn = document.getElementById('hamburger-toggle-btn');
+            const hamDropdown = document.getElementById('hamburger-dropdown');
+            if (hamBtn && hamDropdown && !hamBtn.contains(e.target) && !hamDropdown.contains(e.target)) {
+                hamDropdown.classList.remove('show');
+            }
+        });
 
-        function applyGlobalBackground() {
-            const bg = localStorage.getItem('app_background');
-            if (bg) {
-                document.body.style.backgroundImage = bg;
-            } else {
-                document.body.style.backgroundImage = 'radial-gradient(circle at 50% 0%, #1a1a24 0%, var(--bg-deep) 80%)';
+        // دالة تغيير الخلفية
+        function changeAppBackground(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    document.body.style.backgroundImage = `url('${imgUrl}')`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundRepeat = 'no-repeat';
+                    localStorage.setItem('custom_app_bg', imgUrl);
+                    document.getElementById('hamburger-dropdown').classList.remove('show');
+                };
+                reader.readAsDataURL(file);
             }
         }
 
-        // دالة لاختيار اللغة
+        // دالة لاختيار اللغة من القائمة
         function selectLanguage(lang) {
             if (!langs.includes(lang)) return;
             currentLang = lang;
             
+            // 💡 تحديث: حفظ اللغة بمفتاحين للتوافق التام مع لعبة الدامة
             localStorage.setItem('app_lang', currentLang);
             localStorage.setItem('appLang', currentLang);
 
@@ -742,12 +746,15 @@
                 window.setRadioLanguage(currentLang);
             }
 
-            closeSideMenu();
+            document.getElementById('lang-dropdown').classList.remove('show');
         }
 
         function updateTranslations() {
             const t = translations[currentLang];
             
+            const langTextEl = document.getElementById('lang-text');
+            if (langTextEl) langTextEl.innerText = btnLabels[currentLang];
+
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) el.innerHTML = t[key];
@@ -809,6 +816,7 @@
 
         const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { transports: ['websocket', 'polling'] });
 
+        // 💡 التحديث الهام: الاستماع لرسائل اللعبة لتحديث الرصيد فوراً عند الشراء
         window.addEventListener('message', (event) => {
             if (event.data) {
                 if (event.data.type === 'SYNC_PROFILE') {
@@ -824,9 +832,11 @@
             showCustomPopup(translations[currentLang].msg_disconnect, false, "", false);
         });
 
+        // 🟢 التحديث الأهم: تعريف السيرفر بهوية المنصة عند الاتصال، لكي تُقبل طلبات الشراء
         socket.on('connect', () => {
             console.log('تم الاتصال بالسيرفر بنجاح!');
             
+            // تعريف السيرفر بهوية المحفظة لكي تُقبل عمليات الشراء بدون رفض
             const profileRaw = localStorage.getItem('hub_user_profile');
             if (profileRaw) {
                 try {
@@ -877,14 +887,22 @@
             }
         });
 
+        // 💰 الاستماع الدائم لتحديثات الملف الشخصي والرصيد من السيرفر
         socket.on('profileUpdated', (updatedProfile) => {
+            // 1. حفظ الرصيد الجديد في الذاكرة المحلية
             localStorage.setItem('hub_user_profile', JSON.stringify(updatedProfile));
+            
+            // 2. تحديث واجهة المنصة (Hub)
             syncHubProfile();
             
+            // 3. تحديث واجهة اللعبة المفتوحة حالياً (مثل الدامة أو أي لعبة أخرى)
             const gameIframe = document.getElementById('game-frame');
             if (gameIframe && gameIframe.contentWindow) {
                 gameIframe.contentWindow.postMessage({ type: 'PROFILE_UPDATED', profile: updatedProfile }, '*');
             }
+            
+            // 4. إشعار منبثق (اختياري لمعرفة أن الرصيد زاد)
+            console.log("تم مزامنة الرصيد الموحد بنجاح:", updatedProfile.tokens);
         });
 
         socket.on('auth_failed', (data) => {
@@ -1028,16 +1046,24 @@
         window.addEventListener('load', () => {
             history.replaceState({ view: 'hub' }, '');
             
+            // تهيئة متغيرات التخزين
             if (!localStorage.getItem('appLang')) {
                 localStorage.setItem('appLang', currentLang);
             }
             
-            applyGlobalBackground();
-
             document.documentElement.lang = currentLang;
             document.documentElement.dir = (currentLang === 'ar' || currentLang === 'ku') ? 'rtl' : 'ltr';
             
             updateTranslations();
+
+            // تطبيق الخلفية المحفوظة إن وجدت
+            const savedBg = localStorage.getItem('custom_app_bg');
+            if (savedBg) {
+                document.body.style.backgroundImage = `url('${savedBg}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundRepeat = 'no-repeat';
+            }
 
             const splash = document.getElementById('splash-screen');
             setTimeout(() => {
@@ -1224,7 +1250,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (document.getElementById('profile-modal').style.display === 'flex') closeProfileModal();
-                if (document.getElementById('side-menu-overlay').classList.contains('open')) closeSideMenu();
+                
             }
         });
 
@@ -1237,6 +1263,7 @@
             
             gameFrame.onload = function() {
                 syncHubProfile();
+                // 💡 التعديل المضاف: مزامنة لغة اللعبة فور تحميل الـ iframe لضمان التطابق التام
                 gameFrame.contentWindow.postMessage({ type: 'LANGUAGE_CHANGED', lang: currentLang }, '*');
             };
         }
@@ -1252,7 +1279,6 @@
         window.addEventListener('popstate', function(e) {
             if (document.getElementById('custom-popup-modal').style.display === 'flex') document.getElementById('custom-popup-modal').style.display = 'none';
             if (document.getElementById('profile-modal').style.display === 'flex') document.getElementById('profile-modal').style.display = 'none';
-            if (document.getElementById('side-menu-overlay').classList.contains('open')) closeSideMenu();
             
             if (document.getElementById('game-interface').style.display === 'block') {
                 if (e.state && e.state.view === 'hub') {
