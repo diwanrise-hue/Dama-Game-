@@ -81,6 +81,9 @@ function renderRadioIcons() {
     const radioContainers = document.querySelectorAll('.auto-radio-icon');
     radioContainers.forEach(container => {
         container.innerHTML = RADIO_SVG_ICON;
+        // إزالة الكلاس الاحتياطي الذي كان يمنع تشوه المظهر قبل اكتمال التحميل
+        container.classList.remove('radio-hud-btn-fallback');
+        container.classList.add('radio-hud-btn');
     });
 }
 
@@ -321,14 +324,13 @@ function injectRadioUI() {
     `;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     
-    // حقن زر الراديو وتفريغ الـ SVG الديناميكي بداخله
-    const btnHTML = `<button id="music-toggle-btn" class="radio-hud-btn auto-radio-icon" onclick="openRadioModal()"></button>`;
+    // التحقق مما إذا كان زر الراديو موجوداً بالفعل ضمن هيكل index.html (بجوار الهامبرغر)
+    let existingToggleBtn = document.getElementById('music-toggle-btn');
     
-    const langBtn = document.getElementById('lang-toggle-btn');
-    if (langBtn && langBtn.parentElement) {
-        langBtn.parentElement.insertAdjacentHTML('afterbegin', btnHTML);
-    } else {
-        document.body.insertAdjacentHTML('beforeend', `<div style="position:fixed; top:30px; right:25px; z-index:20;">${btnHTML}</div>`);
+    if (!existingToggleBtn) {
+        // إذا لم يجده (في حالة نقله لصفحات أخرى)، سيقوم بإنشائه كعنصر احتياطي عائم
+        const btnHTML = `<button id="music-toggle-btn" class="radio-hud-btn auto-radio-icon" onclick="openRadioModal()"></button>`;
+        document.body.insertAdjacentHTML('beforeend', `<div style="position:fixed; top:30px; left:25px; z-index:20;">${btnHTML}</div>`);
     }
     
     const modalOverlay = document.getElementById('radio-modal');
