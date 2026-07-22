@@ -25,15 +25,16 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 45px;
-            margin-bottom: 5px; /* تم الرفع للأعلى */
+            min-height: 40px; /* تم التصغير لرفع الساحة */
+            margin-bottom: 2px; /* تقليل المسافة لأقصى حد */
         }
         
         /* ========================================== */
         /* رقعة اللعب ولوحات النقاط ذات الأشرطة الذكية */
         /* ========================================== */
         .scoreboard { 
-            display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; /* تم التعديل لتقليل المسافة مع الرقعة */
+            display: flex; flex-direction: column; gap: 6px; 
+            margin-bottom: 0px !important; /* إزالة الفراغ السفلي لتقريب الساحة */
             background: rgba(30, 32, 40, 0.6); padding: 8px 4px; border-radius: 12px; 
             align-items: center; width: 95%; max-width: 380px; transition: all 0.4s ease; 
             box-sizing: border-box; border: 1px solid rgba(255,255,255,0.08);
@@ -68,7 +69,10 @@
         }
         .piece.mini::before, .piece.mini::after { display: none !important; }
         
-        .game-container { display: flex; flex-direction: row; justify-content: center; align-items: center; width: 100%; box-sizing: border-box; }
+        .game-container { 
+            display: flex; flex-direction: row; justify-content: center; align-items: center; 
+            width: 100%; box-sizing: border-box; padding-top: 2px !important;
+        }
         
         #board { 
             display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); 
@@ -132,19 +136,19 @@
 
         /* ====== تصميم زر ابداء الجذاب والجديد ====== */
         @keyframes startBtnPulse {
-            0% { box-shadow: 0 0 8px rgba(48, 209, 88, 0.4); transform: scale(1); }
-            50% { box-shadow: 0 0 20px rgba(48, 209, 88, 0.8), inset 0 0 10px rgba(255,255,255,0.3); transform: scale(1.05); }
-            100% { box-shadow: 0 0 8px rgba(48, 209, 88, 0.4); transform: scale(1); }
+            0% { box-shadow: 0 0 10px rgba(48, 209, 88, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 25px rgba(48, 209, 88, 1), inset 0 0 15px rgba(255,255,255,0.4); transform: scale(1.08); border-color: #ffffff !important; }
+            100% { box-shadow: 0 0 10px rgba(48, 209, 88, 0.5); transform: scale(1); }
         }
         #reset-btn {
             background: linear-gradient(135deg, #30d158, #28a745) !important;
             color: #ffffff !important;
-            font-size: 16px !important;
-            font-weight: 800 !important;
+            font-size: 18px !important; /* خط أكبر وأوضح */
+            font-weight: 900 !important;
             border: 2px solid #a3f7b5 !important;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            animation: startBtnPulse 2s infinite ease-in-out;
-            padding: 0 22px !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            animation: startBtnPulse 1.5s infinite ease-in-out; /* نبض أسرع لجذب الانتباه */
+            padding: 0 25px !important;
             letter-spacing: 1px;
         }
         #reset-btn:hover {
@@ -187,12 +191,12 @@
         /* ستايل الراديو وتأثيرات الإخفاء/التشغيل     */
         /* ========================================== */
         #dama-radio-toggle {
-            transition: opacity 0.4s ease, filter 0.4s ease;
+            transition: all 0.4s ease;
         }
         /* كلاس البهتان عندما يكون الراديو مطفأ */
         #dama-radio-toggle.radio-off {
-            opacity: 0.45 !important;
-            filter: grayscale(80%);
+            opacity: 0.3 !important; /* شفافية قوية لتوضيح أنه مطفأ */
+            filter: grayscale(100%); /* سحب الألوان تماماً */
         }
 
         .radio-status-dot {
@@ -203,15 +207,15 @@
             height: 12px;
             border-radius: 50%;
             border: 2px solid #282a32;
-            background-color: #30d158; /* لون أخضر فقط للتشغيل */
+            background-color: #30d158; /* لون أخضر فقط للتشغيل، لا يوجد أحمر */
             box-shadow: 0 0 8px rgba(48, 209, 88, 0.6);
             transition: opacity 0.3s, transform 0.3s;
             z-index: 10;
-            opacity: 0; /* مخفية افتراضياً (بدون نقطة حمراء) */
+            opacity: 0; /* مخفية تماماً في وضع الإيقاف */
             transform: scale(0);
         }
         .radio-status-dot.active {
-            opacity: 1; /* تظهر فقط عند التشغيل */
+            opacity: 1; /* تظهر النقطة الخضراء فقط عند التشغيل */
             transform: scale(1);
             animation: radioPulse 1.5s infinite ease-in-out;
         }
