@@ -623,7 +623,7 @@
         </div>
     </div>
     
-    <!-- زر القائمة -->
+    <!-- القائمة الجانبية -->
     <button id="hamburger-menu-btn" onclick="toggleSideMenu()" title="القائمة الرئيسية" data-icon="hamburger"></button>
     
     <!-- 🎒 زر الحقيبة السريع -->
@@ -658,6 +658,7 @@
         <div id="board"></div> 
     </div>
 
+    <!-- محتوى القائمة الجانبية -->
     <div id="side-menu-overlay" class="side-menu-overlay" onclick="if(event.target === this) toggleSideMenu()">
         <div class="side-menu-panel">
             <div class="side-menu-header">
@@ -665,30 +666,29 @@
                 <button class="side-menu-close" onclick="toggleSideMenu()">✕</button>
             </div>
             
+            <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('themes-grid-overlay')">
+                <span data-icon="bagSide"></span>
+                <span>الحقيبة الممتلكات</span>
+            </div>
+
+            <div class="side-menu-item" onclick="toggleSideMenu(); window.parent.openRadioModal()">
+                <span style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;" data-icon="radioSide"></span> 
+                <span>الراديو</span>
+            </div>
+
             <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('online-modal')">
               <span data-icon="door"></span>
-              <span>الغرف الخاصة (روم)</span>
+              <span>الغرفة الخاصة</span>
             </div>
             
             <div class="side-menu-item" onclick="toggleSideMenu(); window.showLeaderboard()">
                 <span data-icon="medal"></span>
-                <span>كأس الشرف (الترتيب)</span>
-            </div>
-            
-            <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('themes-grid-overlay')">
-                <span data-icon="bagSide"></span>
-                <span>الحقيبة والأزياء</span>
-            </div>
-
-            <!-- زر الراديو في القائمة الجانبية -->
-            <div class="side-menu-item" onclick="toggleSideMenu(); window.parent.openRadioModal()">
-                <span style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;" data-icon="radioSide"></span> 
-                <span>الراديو والموسيقى</span>
+                <span>سجل الشرف</span>
             </div>
             
             <div class="side-menu-item" onclick="toggleSideMenu(); openAppModal('settings-overlay')">
                 <span data-icon="gear"></span> 
-                <span>الضبط وإعدادات الصوت</span>
+                <span>الضبط</span>
             </div>
             
             <div style="flex-grow: 1;"></div>
@@ -1511,7 +1511,7 @@
                 } else if(itemType === 'pc') {
                     previewEl.innerHTML = itemData.icon || '💎';
                 } else if(itemType === 'score') {
-                    // شكل مصغر لشريط الأحجار المزدوج الألوان داخل نافذة الشراء
+                    // عرض معاينة مزدوجة اللون للشريط في نافذة الشراء
                     previewEl.innerHTML = `<div style="width: 80%; height: 35px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.2);">
                         <div style="flex: 1; background: ${itemData.scoreBg2}; border-bottom: 1px solid rgba(255,255,255,0.1);"></div>
                         <div style="flex: 1; background: ${itemData.scoreBg1};"></div>
