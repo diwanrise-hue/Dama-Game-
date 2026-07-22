@@ -1,110 +1,222 @@
-export const translations = {
+// ========================================== //
+//  i18n.js - نظام الترجمة الخاص بلعبة الدامة  //
+// ========================================== //
+
+export const damaTranslations = {
     ar: {
-        // نصوص اللعبة والواجهة
-        app_title: "DAMA CHALLENGE", title: "الدامة", set_title: "الإعدادات", sfx_lbl: "مستوى صوت التحريك",
-        save_settings_btn: "حفظ", cancel: "إلغاء", btn_cancel: "إلغاء", close: "إغلاق", btn_close: "إغلاق",
-        ok: "حسناً", alert_ok: "حسناً", alert_title: "تنبيه", confirm: "تأكيد",
-
-        // الأدوار وحالة اللعب
-        turn: "دورك", aiTurn: "دور الجهاز", whiteTurn: "دور الأبيض", blackTurn: "دور الأسود",
-        turn_yours: "دورك", turn_opps: "دور الخصم", winBlack: "انتهت اللعبة! فاز الأسود 🏆",
-        winWhite: "انتهت اللعبة! فاز الأبيض 🏆", forced: "إجباري", resign: "الانسحاب",
-        btn_resign: "الانسحاب", reset: "ابدأ", btn_reset: "إعادة",
-
-        // أنماط اللعب
-        modeLabel: "نمط اللعب", mode_title: "اختر نمط اللعب", modeAi: "ضد الكمبيوتر (AI)",
-        mode_ai: "ضد الكمبيوتر (AI)", modePvp: "ضد صديق محلي (PvP)", mode_pvp: "ضد صديق محلي (PvP)",
-        friendTitle: "ضد صديق", friend_title: "ضد صديق", friendDesc: "تم تفعيل نمط اللعب المحلي",
-        friend_desc: "تم تفعيل نمط اللعب المحلي", friend_ok: "بدء اللعب", newGameTitle: "لعبة جديدة",
-        new_game_title: "لعبة جديدة", chooseColor: "اختر اللون للبدء", new_game_color: "اختر اللون للبدء",
-
-        // شاشة النهاية
-        go_title: "النتيجة", go_rematch: "إعادة اللعب", go_exit: "خروج",
-
-        // الأونلاين والغرف
-        online_btn: "اونلاين", online_title: "الغرف الخاصة", createRoomTitle: "الغرف الخاصة",
-        online_id: "رقم أو اسم الغرفة:", roomIdLabel: "رقم أو اسم الغرفة:", online_pass: "كلمة السر (اختياري):",
-        online_create: "إنشاء غرفة", createRoom: "إنشاء غرفة", online_join: "انضمام لغرفة",
-        joinRoom: "انضمام لغرفة", ph_room: "مثال: 12345", roomIdPlaceholder: "مثال: 12345",
-        ph_pass: "اتركها فارغة للعام", matchmakingTitle: "البحث", mm_title: "البحث", mm_opp: "جاري البحث...",
-        mm_status: "جاري البحث عن خصم...", cancelSearch: "إلغاء البحث", mm_cancel: "إلغاء البحث",
-
-        // الملف الشخصي
-        profile: "الملف الشخصي", igp_title: "الملف الشخصي", id: "المعرف", games: "لعب", igp_games: "لعب",
-        wins: "فوز", igp_wins: "فوز", losses: "خسارة", igp_losses: "خسارة", friendsList: "الأصدقاء",
-        igp_friends: "الأصدقاء", igp_no_friends: "لا يوجد أصدقاء حالياً", addFriendLabel: "إضافة صديق",
-        addFriend: "إضافة", add_friend_placeholder: "معرف الصديق (ID)", badge_you: "أنت", badge_opp: "الخصم",
-        tokens: "🪙 التوكنات:", tokenReward: "لقد ربحت 🪙",
-
-        // المتجر والتخصيص
-        store_title: "المتجر الملكي", store_desc: "استبدل رصيدك بملحقات حصرية عصرية!", theme_title: "المظهر والأزياء",
-        tab_bg: "خلفيات", theme_bg: "خلفيات", tab_frames: "إطارات", theme_frames: "إطارات", tab_pieces: "أحجار",
-        theme_pieces: "احجار", tab_offers: "عروضات", btn_buy: "شراء", return_btn: "العودة للعبة",
-        theme_bg_0: "الخشب الفاخر", theme_pc_0: "النمط الأصلي",
-
-        // نصوص مضافة من ملف HTML
-        toast_bg: "تم تغيير الساحة بنجاح", toast_fr: "تم تغيير الإطار بنجاح", toast_pc: "تم تغيير الحجر بنجاح",
-        toast_default: "تم تجهيز العنصر بنجاح", alert_store: "إشعار المتجر",
-        alert_no_store: "نظام الشراء غير متاح حالياً، يرجى تسجيل الدخول أولاً.",
-        confirm_exit_title: "تأكيد الخروج", confirm_exit_msg: "هل أنت متأكد من رغبتك بالعودة إلى قائمة الألعاب؟",
-        confirm_resign_title: "تأكيد الانسحاب", confirm_resign_msg: "هل أنت متأكد من الانسحاب من المباراة الحالية؟"
+        start: "ابداء",
+        undo: "تراجع",
+        hint: "أفضل حركة",
+        resign: "الانسحاب",
+        online: "اونلاين",
+        store: "المتجر الملكي",
+        leaderboard: "كأس الشرف (الترتيب)",
+        bag: "الحقيبة والأزياء",
+        radio: "الراديو والموسيقى",
+        settings: "الضبط وإعدادات الصوت",
+        exit: "خروج",
+        room: "الغرف الخاصة (روم)",
+        you: "أنت",
+        opponent: "الخصم",
+        turn_yours: "دورك",
+        turn_opps: "دور الخصم",
+        menu_title: "القائمة",
+        wins_tab: "الأكثر فوزاً",
+        tokens_tab: "الأغنى (المال)",
+        bg_tab: "خلفيات",
+        frames_tab: "إطارات",
+        pieces_tab: "أحجار",
+        offers_tab: "عروضات",
+        theme_title: "المظهر والأزياء",
+        settings_title: "الإعدادات",
+        sfx_volume: "مستوى صوت التحريك",
+        save_btn: "حفظ",
+        alert_title: "تنبيه",
+        ok_btn: "حسناً",
+        cancel_btn: "إلغاء",
+        new_game: "لعبة جديدة",
+        choose_color: "اختر اللون للبدء",
+        tutorial_mode: "لعبة تعليمية (مصباح مجاني / بدون جوائز)",
+        match_results: "نتائج المباراة",
+        rematch: "إعادة اللعب",
+        room_id_label: "رقم أو اسم الغرفة:",
+        room_pass_label: "كلمة السر (اختياري):",
+        create_room: "إنشاء غرفة",
+        join_room: "انضمام لغرفة",
+        searching: "جاري البحث...",
+        search_title: "البحث",
+        cancel_search: "إلغاء البحث",
+        confirm_exit_msg: "هل أنت متأكد من رغبتك بإلغاء المباراة والعودة؟",
+        confirm_exit_title: "تأكيد الخروج",
+        toast_changed: "✨ تم التغيير بنجاح",
+        toast_copied: "📋 تم نسخ الـ ID بنجاح",
+        toast_bg: "تم تغيير الساحة بنجاح",
+        toast_fr: "تم تغيير الإطار بنجاح",
+        toast_pc: "تم تغيير الحجر بنجاح",
+        alert_store: "إشعار المتجر",
+        alert_no_store: "نظام الشراء غير متاح حالياً، يرجى الاتصال بالإنترنت أولاً."
+    },
+    ku: {
+        start: "دەستپێکردن",
+        undo: "گەڕانەوە",
+        hint: "باشترین جووڵە",
+        resign: "پاشەکشە",
+        online: "ئۆنلاین",
+        store: "فرۆشگای شاهانە",
+        leaderboard: "خشتەی ڕێزلێنان",
+        bag: "جانتا و جلوبەرگ",
+        radio: "ڕادیۆ و مۆسیقا",
+        settings: "ڕێکخستنەکان و دەنگ",
+        exit: "دەرچوون",
+        room: "ژوورە تایبەتەکان",
+        you: "تۆ",
+        opponent: "بەرامبەر",
+        turn_yours: "نۆبەی تۆیە",
+        turn_opps: "نۆبەی بەرامبەرە",
+        menu_title: "پێڕست",
+        wins_tab: "زۆرترین بردنەوە",
+        tokens_tab: "دەوڵەمەندترین",
+        bg_tab: "پاشبنەما",
+        frames_tab: "چوارچێوە",
+        pieces_tab: "پارچەکان",
+        offers_tab: "پێشکەشکردن",
+        theme_title: "ڕوکار و جلوبەرگ",
+        settings_title: "ڕێکخستنەکان",
+        sfx_volume: "ئاستی دەنگی جووڵە",
+        save_btn: "پاشەکەوتکردن",
+        alert_title: "ئاگاداری",
+        ok_btn: "باشە",
+        cancel_btn: "هەڵوەشاندنەوە",
+        new_game: "یاری نوێ",
+        choose_color: "ڕەنگ هەڵبژێرە بۆ دەستپێکردن",
+        tutorial_mode: "یاری فێرکاری (گڵۆپی ڕووناكی / بێ خەڵات)",
+        match_results: "ئەنجامی یاری",
+        rematch: "یاری کردنەوە",
+        room_id_label: "ژمارە یان ناوی ژوور:",
+        room_pass_label: "وشەی تێپەڕ (ئارەزوومەندانە):",
+        create_room: "دروستکردنی ژوور",
+        join_room: "پەیوەندیکردن بە ژوورەوە",
+        searching: "گەڕان...",
+        search_title: "گەڕان",
+        cancel_search: "هەڵوەشاندنەوەی گەڕان",
+        confirm_exit_msg: "دڵنیایت دەتەوێت یاریەکە هەڵوەشێنیتەوە و بگڕێیتەوە؟",
+        confirm_exit_title: "دڵنیابوونەوە لە دەرچوون",
+        toast_changed: "✨ گۆڕانکاری بە سەرکەوتوویی ئەنجامدرا",
+        toast_copied: "📋 ئایدی بە سەرکەوتوویی کۆپی کرا",
+        toast_bg: "پاشبنەما گۆڕدرا",
+        toast_fr: "چوارچێوە گۆڕدرا",
+        toast_pc: "پارچە گۆڕدرا",
+        alert_store: "ئاگاداری فرۆشگە",
+        alert_no_store: "سیستەمی کڕین لە ئێستادا بەردەست نییە."
     },
     en: {
-        // General & UI
-        app_title: "DAMA CHALLENGE", title: "Dama", set_title: "Settings", sfx_lbl: "Move Sound Volume",
-        save_settings_btn: "Save", cancel: "Cancel", btn_cancel: "Cancel", close: "Close", btn_close: "Close",
-        ok: "OK", alert_ok: "OK", alert_title: "Alert", confirm: "Confirm",
-
-        // Game States & Turns
-        turn: "Your Turn", aiTurn: "AI Turn", whiteTurn: "White's Turn", blackTurn: "Black's Turn",
-        turn_yours: "Your Turn", turn_opps: "Opponent's Turn", winBlack: "Game Over! Black Wins 🏆",
-        winWhite: "Game Over! White Wins 🏆", forced: "Mandatory", resign: "Resign", btn_resign: "Resign",
-        reset: "Reset", btn_reset: "Reset",
-
-        // Game Modes
-        modeLabel: "Player Mode", mode_title: "Select Game Mode", modeAi: "Vs Computer (AI)", mode_ai: "Vs Computer (AI)",
-        modePvp: "Local Friend (PvP)", mode_pvp: "Local Friend (PvP)", friendTitle: "Vs Friend", friend_title: "Vs Friend",
-        friendDesc: "Local play mode activated", friend_desc: "Local play mode activated", friend_ok: "Start Game",
-        newGameTitle: "New Game", new_game_title: "New Game", chooseColor: "Choose color to start", new_game_color: "Choose color to start",
-
-        // Match Results
-        go_title: "Match Results", go_rematch: "Rematch", go_exit: "Exit",
-
-        // Online & Matchmaking
-        online_btn: "Online", online_title: "Private Rooms", createRoomTitle: "Private Rooms",
-        online_id: "Room ID or Name:", roomIdLabel: "Room ID or Name:", online_pass: "Password (Optional):",
-        online_create: "Create Room", createRoom: "Create Room", online_join: "Join Room", joinRoom: "Join Room",
-        ph_room: "e.g. 12345", roomIdPlaceholder: "e.g. 12345", ph_pass: "Leave blank for public",
-        matchmakingTitle: "Matchmaking", mm_title: "Matchmaking", mm_opp: "Searching...",
-        mm_status: "Looking for an opponent...", cancelSearch: "Cancel Search", mm_cancel: "Cancel Search",
-
-        // Profile
-        profile: "Profile", igp_title: "Profile", id: "ID", games: "Played", igp_games: "Played",
-        wins: "Wins", igp_wins: "Wins", losses: "Losses", igp_losses: "Losses", friendsList: "Friends",
-        igp_friends: "Friends", igp_no_friends: "No friends currently", addFriendLabel: "Add Friend",
-        addFriend: "Add", add_friend_placeholder: "Friend ID", badge_you: "You", badge_opp: "Opponent",
-        tokens: "🪙 Tokens:", tokenReward: "You won 🪙",
-
-        // Store & Themes
-        store_title: "Royal Store", store_desc: "Exchange your tokens for exclusive items!", theme_title: "Appearance & Items",
-        tab_bg: "Backgrounds", theme_bg: "Backgrounds", tab_frames: "Frames", theme_frames: "Frames", tab_pieces: "Pieces",
-        theme_pieces: "Pieces", tab_offers: "Offers", btn_buy: "Buy", return_btn: "Return",
-        theme_bg_0: "Premium Wood", theme_pc_0: "Original",
-
-        // Added from HTML scripts
-        toast_bg: "Board equipped successfully", toast_fr: "Frame equipped successfully", toast_pc: "Pieces equipped successfully",
-        toast_default: "Item equipped successfully", alert_store: "Store Alert",
-        alert_no_store: "Purchase system is currently unavailable, please login first.",
-        confirm_exit_title: "Confirm Exit", confirm_exit_msg: "Are you sure you want to return to the games menu?",
-        confirm_resign_title: "Confirm Resign", confirm_resign_msg: "Are you sure you want to resign from current match?"
+        start: "Start",
+        undo: "Undo",
+        hint: "Best Move",
+        resign: "Resign",
+        online: "Online",
+        store: "Royal Store",
+        leaderboard: "Leaderboard",
+        bag: "Inventory",
+        radio: "Radio & Music",
+        settings: "Settings & Audio",
+        exit: "Exit",
+        room: "Private Rooms",
+        you: "You",
+        opponent: "Opponent",
+        turn_yours: "Your Turn",
+        turn_opps: "Opponent's Turn",
+        menu_title: "Menu",
+        wins_tab: "Most Wins",
+        tokens_tab: "Richest",
+        bg_tab: "Backgrounds",
+        frames_tab: "Frames",
+        pieces_tab: "Pieces",
+        offers_tab: "Offers",
+        theme_title: "Theme & Outfits",
+        settings_title: "Settings",
+        sfx_volume: "Move Sound Volume",
+        save_btn: "Save",
+        alert_title: "Alert",
+        ok_btn: "OK",
+        cancel_btn: "Cancel",
+        new_game: "New Game",
+        choose_color: "Choose color to start",
+        tutorial_mode: "Tutorial mode (Free hint / No rewards)",
+        match_results: "Match Results",
+        rematch: "Rematch",
+        room_id_label: "Room Name or ID:",
+        room_pass_label: "Password (Optional):",
+        create_room: "Create Room",
+        join_room: "Join Room",
+        searching: "Searching...",
+        search_title: "Search",
+        cancel_search: "Cancel Search",
+        confirm_exit_msg: "Are you sure you want to cancel the match and return?",
+        confirm_exit_title: "Confirm Exit",
+        toast_changed: "✨ Changed successfully",
+        toast_copied: "📋 ID copied successfully",
+        toast_bg: "Background changed successfully",
+        toast_fr: "Frame changed successfully",
+        toast_pc: "Piece changed successfully",
+        alert_store: "Store Notice",
+        alert_no_store: "Store system unavailable currently, please connect to internet."
     }
 };
 
-// دالة مساعدة للحصول على النص مباشرة بناءً على اللغة الحالية
+export let currentDamaLang = localStorage.getItem('app_lang') || localStorage.getItem('appLang') || 'ar';
+if (!damaTranslations[currentDamaLang]) currentDamaLang = 'ar';
+
 export function t(key) {
-    const lang = window.currentLang || 'ar';
-    return translations[lang] ? translations[lang][key] || key : key;
+    return damaTranslations[currentDamaLang][key] || key;
 }
 
-// كشف الدالة للنافذة العامة لاستخدامها في ملف HTML مباشرة
-window.t = t;
+export function setDamaLanguage(langCode) {
+    if (damaTranslations[langCode]) {
+        currentDamaLang = langCode;
+        localStorage.setItem('app_lang', langCode);
+        localStorage.setItem('appLang', langCode);
+        
+        document.documentElement.lang = langCode;
+        document.documentElement.dir = (langCode === 'ar' || langCode === 'ku') ? 'rtl' : 'ltr';
+        
+        updateDamaUIElements();
+    }
+}
+
+export function updateDamaUIElements() {
+    // تحديث الأزرار والعناصر الثابتة داخل لعبة الدامة بناءً على المعرفات
+    const map = {
+        'reset-btn': 'start',
+        'resign-btn': 'resign',
+        'online-toggle-btn': 'online',
+        'store-portal-corner-btn': 'store'
+    };
+
+    for (let id in map) {
+        const el = document.getElementById(id);
+        if (el) {
+            if (id === 'online-toggle-btn') {
+                const span = el.querySelector('span:last-child');
+                if (span) span.innerText = t('online');
+            } else if (id === 'reset-btn') {
+                el.innerText = t('start');
+            } else if (id === 'resign-btn') {
+                el.innerText = t('resign');
+            }
+        }
+    }
+}
+
+// الاستماع لرسائل تغيير اللغة الواردة من الصفحة الرئيسية (index.html)
+window.addEventListener('message', (event) => {
+    if (!event.data) return;
+    if (event.data.type === 'LANGUAGE_CHANGED' && event.data.lang) {
+        setDamaLanguage(event.data.lang);
+    }
+});
+
+// تطبيق اللغة مباشرة عند تحميل ملف الدامة
+document.addEventListener('DOMContentLoaded', () => {
+    setDamaLanguage(currentDamaLang);
+});
