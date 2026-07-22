@@ -11,7 +11,13 @@
         /* ========================================== */
         /* المتغيرات الأساسية والهيكل العام الثابت    */
         /* ========================================== */
-        :root { --light-cell: #DEB887; --dark-cell: #8B4513; }
+        :root { 
+            --light-cell: #DEB887; 
+            --dark-cell: #8B4513;
+            /* متغيرات شريط الأحجار لتسهيل التحكم من المتجر */
+            --score-bg: rgba(30, 32, 40, 0.6);
+            --score-border: 1px solid rgba(255,255,255,0.08);
+        }
         
         body { 
             padding-bottom: 120px !important; padding-top: 85px !important; 
@@ -45,11 +51,13 @@
             display: flex; gap: 2px; flex-wrap: nowrap; 
             justify-content: center; width: 100%; align-items: center; 
             padding: 5px 8px; border-radius: 12px; 
-            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+            transition: all 0.5s ease;
             box-sizing: border-box;
-            background: rgba(30, 32, 40, 0.6);
+            background: var(--score-bg);
+            background-size: cover;
+            background-position: center;
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.08);
+            border: var(--score-border);
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
@@ -154,7 +162,7 @@
             50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(40, 167, 69, 0.8) !important; }
         }
 
-        /* حالة الزر أثناء اللعب (يصبح زراً عادياً متناسقاً مع البقية) */
+        /* حالة الزر أثناء اللعب */
         body.game-active #reset-btn {
             background: rgba(255, 255, 255, 0.08) !important;
             color: white !important;
@@ -807,21 +815,14 @@
             </div>
 
             <div class="scrollable-content">
-                <div class="themes-grid-container" id="theme-grid-section-bg">
-                    <div class="theme-grid-item active" onclick="triggerGridThemeChange(0, '#DEB887', '#8B4513'); window.storeManager.equipItem('bg_wood');">
-                        <div class="theme-grid-preview" style="background: linear-gradient(135deg, #DEB887 50%, #8B4513 50%);"></div>
-                        <span id="theme-bg-0" class="theme-grid-title">الخشب الفاخر</span>
-                    </div>
-                </div>
+                <!-- سيتم حقن الثيمات (الخلفيات) هنا عبر المتجر -->
+                <div class="themes-grid-container" id="theme-grid-section-bg"></div>
 
+                <!-- سيتم حقن الإطارات هنا عبر المتجر -->
                 <div id="theme-grid-section-frames" class="themes-grid-container" style="display: none;"></div>
 
-                <div id="theme-grid-section-pieces" class="themes-grid-container" style="display: none;">
-                    <div class="theme-grid-item active" id="grid-pc-original" onclick="window.storeManager.equipItem('pc_original')">
-                        <div style="font-size: 24px; transition: all 0.3s;">⚪</div>
-                        <span id="theme-pc-0" class="theme-grid-title">النمط الأصلي</span>
-                    </div>
-                </div>
+                <!-- سيتم حقن الأحجار هنا عبر المتجر -->
+                <div id="theme-grid-section-pieces" class="themes-grid-container" style="display: none;"></div>
             </div>
 
             <button id="theme-close-btn" onclick="closeAppModal('themes-grid-overlay')" class="save-settings-btn" style="margin: auto auto 5px auto; height: 38px; font-size: 13px; width: 60%; align-self: center;">الخروج</button>
