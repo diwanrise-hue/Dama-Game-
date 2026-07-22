@@ -10,101 +10,84 @@ export const STORE_ITEMS = {
     // ===================================
     
     'bg_wood': { 
-        type: 'bg', isDefault: true, nameAr: 'الخشب الفاخر', nameEn: 'Premium Wood', light: '#DEB887', dark: '#8B4513',
-        scoreBg: 'rgba(92, 58, 33, 0.75)', scoreBorder: '1px solid rgba(222, 184, 135, 0.4)' 
+        type: 'bg', isDefault: true, nameAr: 'الخشب الفاخر', nameEn: 'Premium Wood', light: '#DEB887', dark: '#8B4513'
     },
 
     // ===================================
-    // ★ قسم جديد: باقات وتصاميم خاصة ★
+    // ★ باقات وتصاميم خاصة ★
     // ===================================
     'bg_classic_pro': { 
         type: 'bg', 
-        storeSection: 'special', // <--- هذا السطر يوجهه للقسم الخاص
+        storeSection: 'special',
         cost: 1200, 
         nameAr: 'طقم الخشب الكلاسيكي', 
         nameEn: 'Classic Wood Set', 
         light: '#dfb78c', 
-        dark: '#401a11',
-        scoreBg: 'linear-gradient(to bottom, #6b371b, #351608)', 
-        scoreBorder: '1px solid #9e5b33' 
+        dark: '#401a11'
     },
 
     // ===================================
-    // عودة لباقي الخلفيات العادية
+    // باقي الخلفيات العادية
     // ===================================
     'bg_malachite': { 
         type: 'bg', cost: 3000, isLegendary: true, nameAr: 'رخام الملاكيت الأخضر', nameEn: 'Malachite Green Marble',
-        isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134548.webp',
-        scoreBg: 'rgba(20, 50, 30, 0.75)', scoreBorder: '1px solid rgba(74, 222, 128, 0.4)'
+        isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134548.webp'
     },
 
     'bg_carved_wood': { 
         type: 'bg', cost: 1000, nameAr: 'الخشب المحفور', nameEn: 'Carved Wood',
         cssLight: 'background: repeating-linear-gradient(45deg, #DEB887, #DEB887 10px, #D2A679 10px, #D2A679 20px); box-shadow: inset 0 0 15px rgba(100,50,0,0.5);',
-        cssDark: 'background: repeating-linear-gradient(-45deg, #8B4513, #8B4513 15px, #65320D 15px, #65320D 30px); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);',
-        scoreBg: 'rgba(101, 50, 13, 0.75)', scoreBorder: '1px solid rgba(210, 166, 121, 0.4)'
+        cssDark: 'background: repeating-linear-gradient(-45deg, #8B4513, #8B4513 15px, #65320D 15px, #65320D 30px); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);'
     },
 
     'bg_mosaic': { 
         type: 'bg', cost: 1500, nameAr: 'الموزاييك الملكي', nameEn: 'Royal Mosaic',
         cssLight: 'background-color: #E2D4B7; background-image: radial-gradient(circle at 50% 50%, #4A2E15 15%, transparent 18%), repeating-conic-gradient(from 0deg at 50% 50%, #C4AE8D 0deg, #C4AE8D 15deg, transparent 15deg, transparent 30deg); box-shadow: inset 0 0 10px rgba(74,46,21,0.4); border: 1px solid rgba(74,46,21,0.2);',
-        cssDark: 'background-color: #3B2314; background-image: radial-gradient(circle at 50% 50%, #E2D4B7 10%, transparent 13%), radial-gradient(circle at 50% 50%, transparent 40%, #1E110A 45%, #1E110A 50%, transparent 55%), repeating-conic-gradient(from 15deg at 50% 50%, #2A170D 0deg, #2A170D 22.5deg, transparent 22.5deg, transparent 45deg); box-shadow: inset 0 0 15px rgba(0,0,0,0.8); border: 1px solid #1E110A;',
-        scoreBg: 'rgba(42, 23, 13, 0.75)', scoreBorder: '1px solid rgba(226, 212, 183, 0.4)'
+        cssDark: 'background-color: #3B2314; background-image: radial-gradient(circle at 50% 50%, #E2D4B7 10%, transparent 13%), radial-gradient(circle at 50% 50%, transparent 40%, #1E110A 45%, #1E110A 50%, transparent 55%), repeating-conic-gradient(from 15deg at 50% 50%, #2A170D 0deg, #2A170D 22.5deg, transparent 22.5deg, transparent 45deg); box-shadow: inset 0 0 15px rgba(0,0,0,0.8); border: 1px solid #1E110A;'
     },
 
     'bg_image_royal': { 
-        type: 'bg', cost: 4000, isLegendary: true, nameAr: 'الساحة الملكية الفاخرة', nameEn: 'Premium Royal Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133232.webp',
-        scoreBg: 'rgba(50, 40, 20, 0.75)', scoreBorder: '1px solid rgba(255, 215, 0, 0.4)'
+        type: 'bg', cost: 4000, isLegendary: true, nameAr: 'الساحة الملكية الفاخرة', nameEn: 'Premium Royal Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133232.webp'
     },
 
     'bg_image_lava': { 
-        type: 'bg', cost: 4500, isLegendary: true, nameAr: 'ساحة الحمم البركانية', nameEn: 'Volcanic Lava Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133390.webp',
-        scoreBg: 'rgba(60, 10, 0, 0.75)', scoreBorder: '1px solid rgba(255, 69, 0, 0.4)'
+        type: 'bg', cost: 4500, isLegendary: true, nameAr: 'ساحة الحمم البركانية', nameEn: 'Volcanic Lava Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000133390.webp'
     },
 
     'bg_custom_warrior': { 
-        type: 'bg', cost: 5000, isLegendary: true, nameAr: 'ساحة كتيبة الأبطال', nameEn: 'Hero Battalion Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134166.webp',
-        scoreBg: 'rgba(25, 30, 40, 0.8)', scoreBorder: '1px solid rgba(135, 206, 235, 0.4)'
+        type: 'bg', cost: 5000, isLegendary: true, nameAr: 'ساحة كتيبة الأبطال', nameEn: 'Hero Battalion Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134166.webp'
     },
 
     'bg_ruby_amber': { 
-        type: 'bg', cost: 50000, isLegendary: true, nameAr: 'الياقوت والكهرمان الملكي', nameEn: 'Royal Ruby & Amber', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/10001320889.webp',
-        scoreBg: 'rgba(80, 10, 20, 0.75)', scoreBorder: '1px solid rgba(255, 100, 100, 0.4)'
+        type: 'bg', cost: 50000, isLegendary: true, nameAr: 'الياقوت والكهرمان الملكي', nameEn: 'Royal Ruby & Amber', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/10001320889.webp'
     },
 
     'bg_mahogany': { 
-        type: 'bg', cost: 2000, nameAr: 'ساحة الماهوجني الكلاسيكية', nameEn: 'Classic Mahogany Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134903.webp',
-        scoreBg: 'rgba(60, 30, 15, 0.75)', scoreBorder: '1px solid rgba(200, 150, 100, 0.4)'
+        type: 'bg', cost: 2000, nameAr: 'ساحة الماهوجني الكلاسيكية', nameEn: 'Classic Mahogany Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134903.webp'
     },
 
     'bg_turquoise_geometric': {
-        type: 'bg', cost: 2200, nameAr: 'ساحة الفيروز والزخارف الهندسية', nameEn: 'Geometric Turquoise & Gold Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134417.webp', hasPurpleBorder: true,
-        scoreBg: 'rgba(10, 50, 60, 0.75)', scoreBorder: '1px solid rgba(64, 224, 208, 0.4)'
+        type: 'bg', cost: 2200, nameAr: 'ساحة الفيروز والزخارف الهندسية', nameEn: 'Geometric Turquoise & Gold Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134417.webp', hasPurpleBorder: true
     },
 
     'bg_black_gold_marble': {
-        type: 'bg', cost: 2500, nameAr: 'ساحة الرخام الأسود والعروق الذهبية', nameEn: 'Classic Black & Gold Marble Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134427.webp', hasPurpleBorder: true,
-        scoreBg: 'rgba(15, 15, 15, 0.8)', scoreBorder: '1px solid rgba(255, 215, 0, 0.4)'
+        type: 'bg', cost: 2500, nameAr: 'ساحة الرخام الأسود والعروق الذهبية', nameEn: 'Classic Black & Gold Marble Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000134427.webp', hasPurpleBorder: true
     },
 
     'bg_blue_navy_marble': {
-        type: 'bg', cost: 2600, nameAr: 'ساحة الرخام الأزرق الداكن والبيج', nameEn: 'Navy Blue & Beige Marble Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136612.webp', hasPurpleBorder: true,
-        scoreBg: 'rgba(10, 20, 40, 0.8)', scoreBorder: '1px solid rgba(135, 206, 250, 0.4)'
+        type: 'bg', cost: 2600, nameAr: 'ساحة الرخام الأزرق الداكن والبيج', nameEn: 'Navy Blue & Beige Marble Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136612.webp', hasPurpleBorder: true
     },
 
     'bg_brown_gold_leaves': {
-        type: 'bg', cost: 2800, nameAr: 'ساحة الرخام البني والزخارف الذهبية', nameEn: 'Brown Marble & Golden Leaves Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136622.webp', hasPurpleBorder: true,
-        scoreBg: 'rgba(50, 30, 10, 0.8)', scoreBorder: '1px solid rgba(255, 215, 0, 0.4)'
+        type: 'bg', cost: 2800, nameAr: 'ساحة الرخام البني والزخارف الذهبية', nameEn: 'Brown Marble & Golden Leaves Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136622.webp', hasPurpleBorder: true
     },
 
     'bg_samurai_warriors': {
-        type: 'bg', cost: 100000, isLegendary: true, nameAr: 'ساحة محاربي الساموراي الأسطورية', nameEn: 'Legendary Samurai Warriors Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136302.webp',
-        scoreBg: 'rgba(30, 10, 10, 0.8)', scoreBorder: '1px solid rgba(220, 20, 60, 0.4)'
+        type: 'bg', cost: 100000, isLegendary: true, nameAr: 'ساحة محاربي الساموراي الأسطورية', nameEn: 'Legendary Samurai Warriors Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136302.webp'
     },
 
     'bg_jester_theater': {
-        type: 'bg', cost: 150000, isLegendary: true, nameAr: 'ساحة مسرح جيستر', nameEn: 'Jester Theater Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136557.webp',
-        scoreBg: 'rgba(40, 10, 40, 0.8)', scoreBorder: '1px solid rgba(168, 85, 247, 0.4)'
+        type: 'bg', cost: 150000, isLegendary: true, nameAr: 'ساحة مسرح جيستر', nameEn: 'Jester Theater Arena', isImage: true, imagePath: GITHUB_RAW_BASE + 'assets/bgs/1000136557.webp'
     },
 
     // ===================================
@@ -445,9 +428,25 @@ export const STORE_ITEMS = {
         damaImagePathWhite: GITHUB_RAW_BASE + 'assets/pieces/1000135689.webp',  
         damaImagePathBlack: GITHUB_RAW_BASE + 'assets/pieces/1000135690.webp'   
     },
-    
+
     // ===================================
-    // رابعاً: باقات المصباح والتلميحات (Offers & Hints)
+    // رابعاً: الأشرطة (Scoreboards)
+    // ===================================
+    'score_default': { 
+        type: 'score', isDefault: true, nameAr: 'الشريط الافتراضي', nameEn: 'Default Bar', 
+        scoreBg: 'rgba(30, 32, 40, 0.6)', scoreBorder: '1px solid rgba(255,255,255,0.08)' 
+    },
+    'score_classic_wood': { 
+        type: 'score', cost: 500, nameAr: 'شريط الخشب الكلاسيكي', nameEn: 'Classic Wood Bar', 
+        scoreBg: 'linear-gradient(to bottom, #6b371b, #351608)', scoreBorder: '1px solid #9e5b33' 
+    },
+    'score_gold': { 
+        type: 'score', cost: 1500, isLegendary: true, nameAr: 'الشريط الذهبي الملكي', nameEn: 'Royal Gold Bar', 
+        scoreBg: 'linear-gradient(135deg, #b8860b, #ffd700, #b8860b)', scoreBorder: '2px solid #fff' 
+    },
+
+    // ===================================
+    // خامساً: باقات المصباح والتلميحات (Offers & Hints)
     // ===================================
     'pack_hints_3':  { type: 'consumable', cost: 150, nameAr: 'باقة 3 تلميحات', nameEn: '3 Hints Pack', icon: '💡' },
     'pack_hints_10': { type: 'consumable', cost: 400, nameAr: 'باقة 10 تلميحات', nameEn: '10 Hints Pack', icon: '💡' }
@@ -569,22 +568,6 @@ export const storeManager = {
         const item = STORE_ITEMS[bgKey];
         if (!item || item.type !== 'bg') return;
 
-        // ==========================================
-        // تطبيق خلفية وإطار شريط الأحجار المتبقية (ديناميكياً)
-        // ==========================================
-        const root = document.documentElement;
-        if (item.scoreBg) {
-            root.style.setProperty('--score-bg', item.scoreBg);
-        } else {
-            root.style.setProperty('--score-bg', 'rgba(30, 32, 40, 0.6)'); // الافتراضي
-        }
-        
-        if (item.scoreBorder) {
-            root.style.setProperty('--score-border', item.scoreBorder);
-        } else {
-            root.style.setProperty('--score-border', '1px solid rgba(255,255,255,0.08)'); // الافتراضي
-        }
-
         let styleEl = document.getElementById('dynamic-board-css');
         if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'dynamic-board-css'; document.head.appendChild(styleEl); }
 
@@ -626,6 +609,15 @@ export const storeManager = {
         }
     },
 
+    applyScoreThemeCSS(scoreKey) {
+        const item = STORE_ITEMS[scoreKey];
+        const root = document.documentElement;
+        if (item && item.type === 'score') {
+            root.style.setProperty('--score-bg', item.scoreBg || 'rgba(30, 32, 40, 0.6)');
+            root.style.setProperty('--score-border', item.scoreBorder || '1px solid rgba(255,255,255,0.08)');
+        }
+    },
+
     getProfile() {
         let profile = null;
         if (window.gameState && window.gameState.userProfile) {
@@ -643,6 +635,7 @@ export const storeManager = {
             if (!profile.equippedBg || !STORE_ITEMS[profile.equippedBg]) profile.equippedBg = 'bg_wood';
             if (!profile.equippedFr || !STORE_ITEMS[profile.equippedFr]) profile.equippedFr = 'fr_classic';
             if (!profile.equippedPc || !STORE_ITEMS[profile.equippedPc]) profile.equippedPc = 'pc_original';
+            if (!profile.equippedScore || !STORE_ITEMS[profile.equippedScore]) profile.equippedScore = 'score_default';
 
             if (window.gameState) {
                 window.gameState.userProfile = profile;
@@ -650,7 +643,7 @@ export const storeManager = {
             return profile;
         }
         
-        return { purchasedItems: [], equippedPc: 'pc_original', equippedBg: 'bg_wood', equippedFr: 'fr_classic' };
+        return { purchasedItems: [], equippedPc: 'pc_original', equippedBg: 'bg_wood', equippedFr: 'fr_classic', equippedScore: 'score_default' };
     },
 
     buyItem(itemId) {
@@ -677,6 +670,7 @@ export const storeManager = {
             if (item.type === 'bg') { profile.equippedBg = itemId; } 
             else if (item.type === 'fr') { profile.equippedFr = itemId; } 
             else if (item.type === 'pc') { profile.equippedPc = itemId; }
+            else if (item.type === 'score') { profile.equippedScore = itemId; }
             
             if (window.gameState) {
                 window.gameState.userProfile = profile; 
@@ -696,13 +690,15 @@ export const storeManager = {
         const storeFr = document.getElementById('store-section-frames'); 
         const storePc = document.getElementById('store-section-pieces');
         const storeOffers = document.getElementById('store-section-offers');
-        const storeSpecial = document.getElementById('store-section-special'); // الحاوية الخاصة
+        const storeSpecial = document.getElementById('store-section-special'); 
+        const storeScore = document.getElementById('store-section-score'); // الحاوية الجديدة للأشرطة
 
         // تعريف حاويات الحقيبة
         const bagBg = document.getElementById('theme-grid-section-bg'); 
         const bagFr = document.getElementById('theme-grid-section-frames'); 
         const bagPc = document.getElementById('theme-grid-section-pieces');
-        const bagSpecial = document.getElementById('theme-grid-section-special'); // الحاوية الخاصة للحقيبة
+        const bagSpecial = document.getElementById('theme-grid-section-special'); 
+        const bagScore = document.getElementById('theme-grid-section-score'); // الحاوية الجديدة للأشرطة بالحقيبة
 
         // تنظيف الحاويات
         if(storeBg) storeBg.innerHTML = ''; 
@@ -710,15 +706,17 @@ export const storeManager = {
         if(storePc) storePc.innerHTML = '';
         if(storeOffers) storeOffers.innerHTML = '';
         if(storeSpecial) storeSpecial.innerHTML = '';
+        if(storeScore) storeScore.innerHTML = '';
 
         if(bagBg) bagBg.innerHTML = ''; 
         if(bagFr) bagFr.innerHTML = ''; 
         if(bagPc) bagPc.innerHTML = '';
         if(bagSpecial) bagSpecial.innerHTML = '';
+        if(bagScore) bagScore.innerHTML = '';
 
         const profile = this.getProfile(); 
         const isAr = window['currentLang'] !== 'en';
-        let storePcEmpty = true, storeBgEmpty = true, storeFrEmpty = true, storeSpecialEmpty = true;
+        let storePcEmpty = true, storeBgEmpty = true, storeFrEmpty = true, storeSpecialEmpty = true, storeScoreEmpty = true;
 
         const sortedKeys = Object.keys(STORE_ITEMS).sort((a, b) => {
             const itemA = STORE_ITEMS[a];
@@ -735,12 +733,12 @@ export const storeManager = {
 
         sortedKeys.forEach(key => {
             const item = STORE_ITEMS[key];
-            const targetSection = item.storeSection || item.type; // يوجه المنتج للقسم الصحيح
+            const targetSection = item.storeSection || item.type; 
             
             const safePurchased = Array.isArray(profile.purchasedItems) ? profile.purchasedItems : [];
             const isPurchased = item.isDefault || safePurchased.includes(key);
             
-            const isEquipped = (profile.equippedBg === key || profile.equippedPc === key || profile.equippedFr === key);
+            const isEquipped = (profile.equippedBg === key || profile.equippedPc === key || profile.equippedFr === key || profile.equippedScore === key);
             const name = isAr ? item.nameAr : item.nameEn;
 
             const legendaryClassCard = item.isLegendary ? 'legendary-card' : ''; const legendaryClassIcon = item.isLegendary ? 'legendary-icon' : ''; const legendaryClassText = item.isLegendary ? 'legendary-text' : ''; const legendaryClassBtn = item.isLegendary ? 'legendary-btn' : '';
@@ -771,6 +769,9 @@ export const storeManager = {
                 visualHtml = `<div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; position: relative; ${customPcStyle}" class="${legendaryClassIcon}">${item.icon || ''}</div>`;
             } else if (item.type === 'consumable') {
                 visualHtml = `<div style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 32px; background: rgba(255,255,255,0.05); border-radius: 8px; margin: 5px 0; border: 1px solid rgba(255,255,255,0.1);" class="${legendaryClassIcon}">${item.icon || '💡'}</div>`;
+            } else if (item.type === 'score') {
+                // شكل مصغر لشريط الأحجار في المتجر والحقيبة
+                visualHtml = `<div style="width: 80%; height: 25px; border-radius: 8px; margin: 15px auto; background: ${item.scoreBg}; border: ${item.scoreBorder};" class="${legendaryClassIcon}"></div>`;
             }
 
             bagVisualHtml = visualHtml;
@@ -796,14 +797,13 @@ export const storeManager = {
                 
                 gridItem.innerHTML = `${legendaryBagBadge}${bagVisualHtml} <span class="theme-grid-title ${legendaryClassText}" style="margin-top:8px;">${name}</span>`;
                 
-                // توجيه العناصر للحقيبة حسب القسم
                 if (targetSection === 'bg' && bagBg) bagBg.appendChild(gridItem); 
                 else if (targetSection === 'fr' && bagFr) bagFr.appendChild(gridItem); 
                 else if (targetSection === 'pc' && bagPc) bagPc.appendChild(gridItem);
                 else if (targetSection === 'special') {
                     if(bagSpecial) bagSpecial.appendChild(gridItem);
-                    else if(bagBg) bagBg.appendChild(gridItem); // بديل في حال لم تضف قسم الحقيبة
-                }
+                    else if(bagBg) bagBg.appendChild(gridItem); 
+                } else if (targetSection === 'score' && bagScore) bagScore.appendChild(gridItem);
             } else {
                 const storeCard = document.createElement('div');
                 storeCard.className = `store-item-card ${legendaryClassCard}`; storeCard.style.position = 'relative'; 
@@ -827,7 +827,6 @@ export const storeManager = {
                 
                 storeCard.appendChild(buyBtn);
 
-                // توجيه العناصر للمتجر حسب القسم
                 if (targetSection === 'bg') { 
                     if(storeBg) storeBg.appendChild(storeCard); storeBgEmpty = false; 
                 } else if (targetSection === 'fr') { 
@@ -836,17 +835,19 @@ export const storeManager = {
                     if(storeOffers) storeOffers.appendChild(storeCard); 
                 } else if (targetSection === 'special') {
                     if(storeSpecial) storeSpecial.appendChild(storeCard); storeSpecialEmpty = false;
+                } else if (targetSection === 'score') {
+                    if(storeScore) storeScore.appendChild(storeCard); storeScoreEmpty = false;
                 } else { 
                     if(storePc) storePc.appendChild(storeCard); storePcEmpty = false; 
                 }
             }
         });
 
-        // رسائل "لا توجد عناصر"
         if (storeBg && storeBgEmpty) storeBg.innerHTML = `<div style="color: rgba(255,255,255,0.4); text-align: center; grid-column: 1/-1; padding: 20px;">${isAr ? 'لا توجد عناصر متاحة' : 'No items available'}</div>`;
         if (storeFr && storeFrEmpty) storeFr.innerHTML = `<div style="color: rgba(255,255,255,0.4); text-align: center; grid-column: 1/-1; padding: 20px;">${isAr ? 'لا توجد عناصر متاحة' : 'No items available'}</div>`;
         if (storePc && storePcEmpty) storePc.innerHTML = `<div style="color: rgba(255,255,255,0.4); text-align: center; grid-column: 1/-1; padding: 20px;">${isAr ? 'لا توجد عناصر متاحة' : 'No items available'}</div>`;
         if (storeSpecial && storeSpecialEmpty) storeSpecial.innerHTML = `<div style="color: rgba(255,255,255,0.4); text-align: center; grid-column: 1/-1; padding: 20px;">${isAr ? 'لا توجد عناصر متاحة' : 'No items available'}</div>`;
+        if (storeScore && storeScoreEmpty) storeScore.innerHTML = `<div style="color: rgba(255,255,255,0.4); text-align: center; grid-column: 1/-1; padding: 20px;">${isAr ? 'لا توجد عناصر متاحة' : 'No items available'}</div>`;
     },
 
     init() {
@@ -957,5 +958,8 @@ window.applyTheme = function(profile) {
     }
     if (profile.equippedPc) {
         document.body.setAttribute('data-piece-style', profile.equippedPc);
+    }
+    if (profile.equippedScore) {
+        storeManager.applyScoreThemeCSS(profile.equippedScore);
     }
 };
