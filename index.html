@@ -1195,6 +1195,8 @@
             
             gameFrame.onload = function() {
                 syncHubProfile();
+                // 💡 التعديل المضاف: مزامنة لغة اللعبة فور تحميل الـ iframe لضمان التطابق التام
+                gameFrame.contentWindow.postMessage({ type: 'LANGUAGE_CHANGED', lang: currentLang }, '*');
             };
         }
         
