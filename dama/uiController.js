@@ -29,7 +29,7 @@ export const ui = {
     sfx: sfx,
     clickHandlers: new Map(), 
 
-    // تم تحديث الترجمة لتعتمد مباشرة على لغة المنصة المحفوظة
+    // دالة الترجمة الاحتياطية للنصوص الديناميكية غير الموجودة في القاموس
     translate(arTxt, enTxt) {
         const currentLang = localStorage.getItem('app_lang') || localStorage.getItem('appLang') || 'ar';
         return currentLang === 'ar' ? arTxt : enTxt;
@@ -140,7 +140,7 @@ export const ui = {
         
         Object.keys(idToKeyMap).forEach(id => setHtml(id, tObj[idToKeyMap[id]] || idToKeyMap[id]));
         
-        // ربط الأزرار السفلية بقاموس i18n مباشرة لمنع التضارب
+        // ربط الأزرار السفلية وشاشات التنبيه بقاموس i18n مباشرة لمنع التضارب والوميض
         setHtml('exit-game-btn', t('exit'));
         setHtml('store-return-btn', t('exit'));
         setHtml('theme-close-btn', t('exit'));
@@ -1078,7 +1078,7 @@ ui.onClick('reset-btn', () => {
                 },
                 true,
                 t('cancel_btn'),
-                ui.translate("نعم، انسحاب", "Yes, Resign")
+                t('resign')
             );
         } else {
             if (typeof window.openAppModal === 'function') window.openAppModal('new-game-modal');
