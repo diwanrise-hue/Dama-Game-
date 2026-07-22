@@ -64,7 +64,15 @@ export const translations = {
         toast_pc: "تم تغيير الحجر بنجاح",
         turn_yours: "دورك الآن",
         turn_opps: "دور منافسك",
-        tokenReward: "مكافأة الفوز 🪙"
+        tokenReward: "مكافأة الفوز 🪙",
+        
+        // --- الكلمات التي كانت مفقودة وتسبب الوميض ---
+        start: "ابداء",
+        resign: "الانسحاب",
+        undo: "تراجع",
+        exit: "خروج",
+        cancel_btn: "إلغاء",
+        ok_btn: "حسناً"
     },
     ku: {
         app_title: "DAMA CHALLENGE",
@@ -127,7 +135,15 @@ export const translations = {
         toast_pc: "پارچە گۆڕدرا",
         turn_yours: "نۆبەی تۆیە",
         turn_opps: "نۆبەی بەرامبەرە",
-        tokenReward: "پاداشتی بردنەوە 🪙"
+        tokenReward: "پاداشتی بردنەوە 🪙",
+        
+        // --- الكلمات المفقودة ---
+        start: "دەستپێکردن",
+        resign: "پاشەکشە",
+        undo: "گەڕانەوە",
+        exit: "دەرچوون",
+        cancel_btn: "هەڵوەشاندنەوە",
+        ok_btn: "باشە"
     },
     en: {
         app_title: "DAMA CHALLENGE",
@@ -190,7 +206,15 @@ export const translations = {
         toast_pc: "Piece changed successfully",
         turn_yours: "Your Turn",
         turn_opps: "Opponent's Turn",
-        tokenReward: "Win Reward 🪙"
+        tokenReward: "Win Reward 🪙",
+        
+        // --- الكلمات المفقودة ---
+        start: "Start",
+        resign: "Resign",
+        undo: "Undo",
+        exit: "Exit",
+        cancel_btn: "Cancel",
+        ok_btn: "OK"
     }
 };
 
@@ -218,8 +242,8 @@ export function updateDamaUIElements() {
     const map = {
         'reset-btn': 'start',
         'resign-btn': 'resign',
-        'online-toggle-btn': 'online',
-        'store-portal-corner-btn': 'store'
+        'online-toggle-btn': 'online_btn',
+        'store-portal-corner-btn': 'store_title'
     };
 
     for (let id in map) {
@@ -237,7 +261,6 @@ export function updateDamaUIElements() {
     }
 }
 
-// الاستماع لرسائل تغيير اللغة الواردة من المنصة الرئيسية (index.html)
 window.addEventListener('message', (event) => {
     if (!event.data) return;
     if (event.data.type === 'LANGUAGE_CHANGED' && event.data.lang) {
