@@ -26,7 +26,8 @@ export const gameState = {
     requiredJumps: 0,
     jumpsCount: 0,
     playerColor: 'white',
-    lang: 'en',
+    // 💡 تم التعديل: الاعتماد على لغة المنصة المحفوظة بدل إجبار اللغة الإنجليزية 'en'
+    lang: localStorage.getItem('app_lang') || localStorage.getItem('appLang') || 'ar',
     lastJumpDir: { dr: null, dc: null },
     opponentStartRow: null,
     opponentStartCol: null,
@@ -71,7 +72,10 @@ export function loadGameState() {
         gameState.virtualBoard = state.virtualBoard;
         gameState.currentTurn = state.currentTurn;
         gameState.playerColor = state.playerColor;
-        gameState.lang = state.lang;
+        
+        // 💡 تم التعليق على هذا السطر لمنع ملف الحفظ القديم من تجاوز لغة i18n.js
+        // gameState.lang = state.lang;
+        
         gameState.pieceDirection = state.pieceDirection || gameState.pieceDirection;
         
         const gm = document.getElementById('game-mode'); if(gm) gm.value = state.gameMode;
