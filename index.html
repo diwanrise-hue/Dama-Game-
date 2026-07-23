@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <meta name="theme-color" content="#050507">
-    <!-- تم تحديث مسار أيقونة الموقع -->
     <link class="apple-touch-icon" href="Photo/1000127272.webp">
     
     <title>Dama Challenge - Premium Hub</title>
@@ -386,7 +385,6 @@
 
         <div class="cards-container">
             <div class="dama-card" onclick="startGame()">
-                <!-- تم تحديث مسار صورة بطاقة الدامة -->
                 <img src="Photo/1000138342.webp" alt="Dama Game" class="card-bg">
                 <div class="dama-card-content">
                     <span id="dama-title-text" data-i18n="dama">دامة</span>
@@ -432,17 +430,23 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار الخلفية (تمت إضافة جميع الصور الجديدة إليها) -->
     <div id="bg-select-modal" class="modal-overlay" style="z-index: 100005;">
-        <div class="settings-card" dir="auto" style="max-width: 280px; padding: 25px 20px;">
+        <div class="settings-card" dir="auto" style="max-width: 320px; padding: 25px 20px;">
             <button class="modal-close-btn" onclick="closeBgModal()">✕</button>
             <h3 data-i18n="bg_title" style="margin-bottom: 25px;">تغيير الخلفية</h3>
             
-            <div class="action-grid" style="grid-template-columns: 1fr; gap: 12px; margin-bottom: 0;">
+            <div class="action-grid" style="grid-template-columns: 1fr; gap: 10px; margin-bottom: 0;">
                 <button class="btn btn-secondary" onclick="setPredefinedBackground('default')" data-i18n="bg_default">الخلفية الافتراضية</button>
-                <!-- تم تحديث مسار صورة القلعة -->
                 <button class="btn btn-secondary" onclick="setPredefinedBackground('Photo/1000139835.webp')" data-i18n="bg_snow_castle">قلعة الثلج</button>
+                <button class="btn btn-secondary" onclick="setPredefinedBackground('Photo/1000139952.webp')" data-i18n="bg_smoke_dice">نرد الدخان</button>
+                <button class="btn btn-secondary" onclick="setPredefinedBackground('Photo/1000139951.webp')" data-i18n="bg_blue_cards">أوراق زرقاء</button>
+                <button class="btn btn-secondary" onclick="setPredefinedBackground('Photo/1000139944.webp')" data-i18n="bg_water_card">شلال الورق</button>
+                <button class="btn btn-secondary" onclick="setPredefinedBackground('Photo/1000139943.webp')" data-i18n="bg_forest_river">الغابة والطبيعة</button>
+                <button class="btn btn-secondary" onclick="setPredefinedBackground('Photo/1000139898.webp')" data-i18n="bg_green_domino">دومينو ملكية</button>
+                <button class="btn btn-secondary" onclick="setPredefinedBackground('Photo/1000139896.webp')" data-i18n="bg_black_gold_cards">ورق أسود وذهبي</button>
                 
-                <button class="btn btn-primary" onclick="document.getElementById('bg-upload-input').click(); closeBgModal();" data-i18n="bg_upload">رفع من المعرض</button>
+                <button class="btn btn-primary full-width" onclick="document.getElementById('bg-upload-input').click(); closeBgModal();" data-i18n="bg_upload">رفع من المعرض</button>
             </div>
         </div>
     </div>
@@ -475,7 +479,6 @@
                 <input type="password" id="login-password-input" class="clean-input" placeholder="••••••••">
             </div>
 
-            <!-- تم تحديث مسارات الأفاتار لتقرأ من مجلد Photo -->
             <div class="input-group" id="avatar-select-group">
                 <label class="settings-label" data-i18n="login_avatar_label">الشخصية</label>
                 <select id="login-avatar-select" class="clean-input">
@@ -518,7 +521,6 @@
                 <span id="profile-display-id" onclick="copyPlayerID()" title="نسخ المعرف">#00000</span>
             </div>
 
-            <!-- تم تحديث مسارات الأفاتار لتقرأ من مجلد Photo -->
             <div class="action-grid">
                 <select id="edit-avatar-select" class="btn btn-secondary" onchange="changeAvatarFromDropdown(this.value)">
                     <option value="" disabled selected data-i18n="profile_change_avatar">الشخصية</option>
@@ -574,6 +576,7 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
+        // === ترجمات الخلفيات الجديدة مضافة هنا ===
         const translations = {
             ar: {
                 app_title: "DAMA CHALLENGE",
@@ -584,8 +587,14 @@
                 change_bg: "تغيير الخلفية",
                 bg_title: "تغيير الخلفية",
                 bg_upload: "رفع من المعرض",
-                bg_snow_castle: "قلعة الثلج",
                 bg_default: "الخلفية الافتراضية",
+                bg_snow_castle: "قلعة الثلج",
+                bg_smoke_dice: "نرد الدخان",
+                bg_blue_cards: "أوراق زرقاء",
+                bg_water_card: "شلال الورق",
+                bg_forest_river: "الغابة والطبيعة",
+                bg_green_domino: "دومينو ملكية",
+                bg_black_gold_cards: "ورق أسود وذهبي",
                 login_name_label: "الاسم",
                 login_name_placeholder: "اكتب اسمك هنا",
                 login_avatar_label: "الشخصية",
@@ -639,8 +648,14 @@
                 change_bg: "Change Background",
                 bg_title: "Change Background",
                 bg_upload: "Upload from Gallery",
-                bg_snow_castle: "Snow Castle",
                 bg_default: "Default Background",
+                bg_snow_castle: "Snow Castle",
+                bg_smoke_dice: "Smoke Dice",
+                bg_blue_cards: "Blue Cards",
+                bg_water_card: "Water Card",
+                bg_forest_river: "Forest & Stream",
+                bg_green_domino: "Green Domino",
+                bg_black_gold_cards: "Black & Gold Cards",
                 login_name_label: "Name",
                 login_name_placeholder: "Type your name",
                 login_avatar_label: "Avatar",
@@ -694,8 +709,14 @@
                 change_bg: "گۆڕینی پاشبنەما",
                 bg_title: "گۆڕینی پاشبنەما",
                 bg_upload: "بارکردن لە گەلەری",
-                bg_snow_castle: "قەڵای بەفر",
                 bg_default: "پاشبنەمای بنەڕەتی",
+                bg_snow_castle: "قەڵای بەفر",
+                bg_smoke_dice: "زار و دووکه ڵ",
+                bg_blue_cards: "پەڕەی شین",
+                bg_water_card: "پەڕە و ئاو",
+                bg_forest_river: "دارستان و سروشت",
+                bg_green_domino: "دۆمینۆی سەوز",
+                bg_black_gold_cards: "پەڕەی ڕەش و زێڕین",
                 login_name_label: "ناو",
                 login_name_placeholder: "ناوت لێرە بنووسە",
                 login_avatar_label: "کەسایەتی",
@@ -922,7 +943,7 @@
             const defaultProfile = {
                 id: "GUEST-DEFAULT",
                 name: translations[currentLang].guest_name + "0000",
-                avatar: 'Photo/1000132081.webp', /* تم تحديث المسار */
+                avatar: 'Photo/1000132081.webp',
                 isCustomAvatar: false,
                 tokens: 0,
                 gamesPlayed: 0,
@@ -1144,7 +1165,7 @@
             const randomName = translations[currentLang].guest_name + Math.floor(1000 + Math.random() * 9000);
             
             const guestProfile = {
-                id: randomId, name: randomName, avatar: 'Photo/1000132081.webp', /* تم التحديث */
+                id: randomId, name: randomName, avatar: 'Photo/1000132081.webp',
                 isCustomAvatar: false,
                 tokens: 1000, gamesPlayed: 0, wins: 0, losses: 0, friends: [],
                 purchasedItems: [], equippedBg: 'bg_wood', equippedFr: 'fr_classic', equippedPc: 'pc_original'
@@ -1169,7 +1190,6 @@
             if (document.getElementById('profile-display-name')) document.getElementById('profile-display-name').innerText = profile.name;
             if (document.getElementById('profile-display-id')) document.getElementById('profile-display-id').innerText = profile.id;
             
-            // تم تحديث الأفاتار الافتراضي ليقرأ من المجلد الجديد
             let finalAvatarSrc = profile.avatar || 'Photo/1000132081.webp';
             const isFullUrl = finalAvatarSrc.startsWith('http://') || finalAvatarSrc.startsWith('https://') || finalAvatarSrc.startsWith('data:image');
             if (!isFullUrl) {
