@@ -23,7 +23,6 @@
         
         body { 
             padding-bottom: 120px !important; padding-top: 85px !important; 
-            /* استعادة خلفية اللعبة الأساسية الكلاسيكية الزرقاء الداكنة */
             background-color: #2c3e50; 
             background-image: none;
             background-size: cover; background-position: center; background-attachment: fixed;
@@ -176,7 +175,6 @@
             50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(40, 167, 69, 0.8) !important; }
         }
 
-        /* حالة الزر أثناء اللعب */
         body.game-active #reset-btn {
             background: rgba(255, 255, 255, 0.08) !important;
             color: white !important;
@@ -613,6 +611,42 @@
     </style>
 </head>
 <body data-piece-style="pc_original">
+    
+    <!-- 
+    =============================================================
+    معترض البيانات (Data Interceptor) الذكي لحماية مسارات الصور
+    ============================================================= 
+    -->
+    <script>
+        const originalGetItem = localStorage.getItem;
+        localStorage.getItem = function(key) {
+            let value = originalGetItem.call(this, key);
+            if (key === 'hub_user_profile' && value) {
+                try {
+                    let profile = JSON.parse(value);
+                    if (profile && profile.avatar && !profile.avatar.startsWith('http') && !profile.avatar.startsWith('data:') && !profile.avatar.startsWith('../')) {
+                        profile.avatar = '../' + profile.avatar;
+                        return JSON.stringify(profile);
+                    }
+                } catch(e) {}
+            }
+            return value;
+        };
+
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            if (key === 'hub_user_profile' && value) {
+                try {
+                    let profile = JSON.parse(value);
+                    if (profile && profile.avatar && profile.avatar.startsWith('../')) {
+                        profile.avatar = profile.avatar.replace('../', '');
+                        value = JSON.stringify(profile);
+                    }
+                } catch(e) {}
+            }
+            originalSetItem.call(this, key, value);
+        };
+    </script>
     
     <input type="hidden" id="game-mode" value="ai">
 
@@ -1275,7 +1309,7 @@
 
         function forceLockedGlobalAvatar() {
             let globalProfile = localStorage.getItem('hub_user_profile');
-            let avatarSrc = "https://raw.githubusercontent.com/diwanrise-hue/Kings-Challenge/main/1000132081.webp"; 
+            let avatarSrc = "../Photo/1000132081.webp"; 
             let isImage = true;
 
             if (globalProfile) {
@@ -1283,19 +1317,7 @@
                     const parsedHub = JSON.parse(globalProfile);
                     if (parsedHub.avatar) {
                         avatarSrc = parsedHub.avatar;
-                        
-                        const isExternalOrFb = avatarSrc.startsWith('http') || avatarSrc.startsWith('data:image');
-                        const isFilePath = avatarSrc.includes('.');
-
-                        if (!isExternalOrFb && isFilePath) {
-                            let baseName = avatarSrc.split('.')[0];
-                            avatarSrc = "https://raw.githubusercontent.com/diwanrise-hue/Kings-Challenge/main/" + baseName + ".webp";
-                            isImage = true;
-                        } else if (!isExternalOrFb && !isFilePath) {
-                            isImage = false;
-                        } else {
-                            isImage = true;
-                        }
+                        isImage = avatarSrc.includes('.') || avatarSrc.startsWith('data:image') || avatarSrc.startsWith('http');
                     }
                 } catch(e) { console.error(e); }
             }
@@ -1578,14 +1600,12 @@
 
     </script>
     
-    <!-- السكريبت المسؤول عن مزامنة وتطبيق الخلفية -->
     <script>
         function syncGlobalBackground() {
-            const bg = localStorage.getItem('custom_app_bg'); // تم تصحيح المفتاح هنا
+            const bg = localStorage.getItem('custom_app_bg'); 
             if (bg) {
                 let bgUrl = bg;
                 
-                // السر هنا: لعبة الدامة داخل مجلد dama/ لذا تحتاج ../ للوصول للصورة في المجلد الرئيسي
                 if (!bg.startsWith('http') && !bg.startsWith('data:') && !bg.startsWith('../')) {
                     bgUrl = '../' + bg;
                 }
@@ -1597,7 +1617,6 @@
                 document.body.style.backgroundColor = 'transparent';
                 
             } else {
-                // استعادة الخلفية الزرقاء الداكنة الكلاسيكية للعبة الدامة
                 document.body.style.backgroundColor = '#2c3e50';
                 document.body.style.backgroundImage = 'none';
             }
@@ -1605,7 +1624,6 @@
         
         document.addEventListener('DOMContentLoaded', syncGlobalBackground);
         
-        // الاستماع لتغييرات الـ Storage التي يرسلها الـ Hub
         window.addEventListener('storage', (e) => {
             if (e.key === 'custom_app_bg') { 
                 syncGlobalBackground();
