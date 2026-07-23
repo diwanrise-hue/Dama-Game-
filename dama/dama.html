@@ -23,7 +23,11 @@
         
         body { 
             padding-bottom: 120px !important; padding-top: 85px !important; 
-            background-color: #2c3e50; font-family: 'Tajawal', 'Outfit', Arial, sans-serif; 
+            /* تم توحيد الخلفية الافتراضية مع المنصة الرئيسية */
+            background-color: #050507; 
+            background-image: radial-gradient(circle at 50% 0%, #1a1a24 0%, #050507 80%);
+            background-size: cover; background-position: center; background-attachment: fixed;
+            font-family: 'Tajawal', 'Outfit', Arial, sans-serif; 
             margin: 0; display: flex; flex-direction: column; align-items: center; 
             -webkit-tap-highlight-color: transparent; transition: background 0.3s ease, padding 0.4s ease; 
         }
@@ -1511,7 +1515,6 @@
                 } else if(itemType === 'pc') {
                     previewEl.innerHTML = itemData.icon || '💎';
                 } else if(itemType === 'score') {
-                    // عرض معاينة مزدوجة اللون للشريط في نافذة الشراء
                     previewEl.innerHTML = `<div style="width: 80%; height: 35px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.2);">
                         <div style="flex: 1; background: ${itemData.scoreBg2}; border-bottom: 1px solid rgba(255,255,255,0.1);"></div>
                         <div style="flex: 1; background: ${itemData.scoreBg1};"></div>
@@ -1575,9 +1578,10 @@
 
     </script>
     
+    <!-- السكريبت المسؤول عن مزامنة وتطبيق الخلفية -->
     <script>
         function syncGlobalBackground() {
-            const bg = localStorage.getItem('app_background') || localStorage.getItem('hub_background') || localStorage.getItem('site_bg');
+            const bg = localStorage.getItem('custom_app_bg'); // تم تصحيح المفتاح هنا
             if (bg) {
                 if (bg.startsWith('http') || bg.startsWith('data:') || bg.includes('.')) {
                     document.body.style.backgroundImage = `url('${bg}')`;
@@ -1590,22 +1594,17 @@
                     document.body.style.backgroundImage = 'none';
                 }
             } else {
-                document.body.style.backgroundColor = '#2c3e50';
-                document.body.style.backgroundImage = 'none';
+                // استعادة الخلفية الافتراضية للمنصة
+                document.body.style.backgroundColor = '#050507';
+                document.body.style.backgroundImage = 'radial-gradient(circle at 50% 0%, #1a1a24 0%, #050507 80%)';
             }
         }
         
         document.addEventListener('DOMContentLoaded', syncGlobalBackground);
         
+        // الاستماع لتغييرات الـ Storage التي يرسلها الـ Hub
         window.addEventListener('storage', (e) => {
-            if (e.key === 'app_background' || e.key === 'hub_background' || e.key === 'site_bg') {
-                syncGlobalBackground();
-            }
-        });
-        
-        window.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'BACKGROUND_CHANGED' && event.data.bg) {
-                localStorage.setItem('app_background', event.data.bg);
+            if (e.key === 'custom_app_bg') { // تم تصحيح المفتاح هنا أيضاً
                 syncGlobalBackground();
             }
         });
