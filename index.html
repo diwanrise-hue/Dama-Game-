@@ -13,9 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
-    <!-- تم إضافة v=3 لضمان مسح الذاكرة المؤقتة -->
+    <!-- تم تحديث الإصدار إلى v=4 لضمان سحب التعديلات الجديدة فوراً -->
     <script src="https://diwanrise-dama-game-diwan.hf.space/socket.io/socket.io.js"></script>
-    <script src="radio.js?v=3" defer></script>
+    <script src="radio.js?v=4" defer></script>
 
     <style>
         /* ========================================== */
@@ -366,23 +366,18 @@
     <div id="game-selector">
         <div class="top-hud">
             
-            <!-- (التعديل الجديد) مجموعة الأزرار الجانبية: القائمة والراديو (تظهر في نفس جهة النافذة المنزلقة) -->
             <div style="display: flex; gap: 12px; align-items: center;">
-                <!-- زر القائمة الجانبية (الهامبرغر) - وضعناه أولاً ليكون في الطرف تماماً -->
                 <div class="hamburger-btn" id="hamburger-toggle-btn" onclick="toggleHamburgerMenu()">
                     <span></span><span></span><span></span>
                 </div>
                 
-                <!-- زر الراديو -->
                 <button id="music-toggle-btn" class="radio-hud-btn-fallback auto-radio-icon" onclick="openRadioModal()"></button>
             </div>
 
-            <!-- (التعديل الجديد) مجموعة الملف الشخصي والتوكنز (تم نقلها للجهة المعاكسة) -->
             <div class="hud-group">
                 <div class="hub-token-badge">
                     🪙 <span id="hub-token-count">0</span>
                 </div>
-                <!-- صورة البروفايل وضعناها أخيراً لتكون في الطرف المعاكس تماماً -->
                 <div class="profile-avatar" id="hub-profile-avatar" onclick="openProfileModal()"></div>
             </div>
 
@@ -400,7 +395,6 @@
         </div>
     </div>
 
-    <!-- النافذة الجانبية (Drawer Menu) -->
     <div id="side-drawer-overlay" class="side-drawer-overlay" onclick="closeHamburgerMenu()"></div>
     <div id="side-drawer" class="side-drawer">
         <div class="drawer-header">
@@ -410,7 +404,7 @@
         
         <div class="drawer-item" onclick="openLangModal(); closeHamburgerMenu();">
             <span class="drawer-icon">🌐</span>
-            <span data-i18n="change_lang">تغيير اللغة</span>
+            <span data-i18n="change_lang">اللغة</span> <!-- تم التعديل هنا -->
         </div>
         
         <div class="drawer-item" onclick="document.getElementById('bg-upload-input').click(); closeHamburgerMenu();">
@@ -423,11 +417,10 @@
         <iframe id="game-frame" src="" allowfullscreen allow="fullscreen" style="width: 100%; height: 100%; border: none; border-radius: 0;"></iframe>
     </div>
 
-    <!-- النافذة الصغيرة لاختيار اللغة -->
     <div id="lang-select-modal" class="modal-overlay" style="z-index: 100005;">
         <div class="settings-card" dir="auto" style="max-width: 250px; padding: 25px 20px;">
             <button class="modal-close-btn" onclick="closeLangModal()">✕</button>
-            <h3 data-i18n="change_lang" style="margin-bottom: 25px;">تغيير اللغة</h3>
+            <h3 data-i18n="change_lang" style="margin-bottom: 25px;">اللغة</h3> <!-- تم التعديل هنا -->
             
             <div class="action-grid" style="grid-template-columns: 1fr; gap: 12px; margin-bottom: 0;">
                 <button class="btn btn-secondary" onclick="selectLanguage('ar')">عربي</button>
@@ -542,11 +535,9 @@
         </div>
     </div>
 
-    <!-- حقل مخفي لرفع الصورة لتعيينها كخلفية -->
     <input type="file" id="bg-upload-input" accept="image/*" style="display: none;" onchange="changeAppBackground(event)">
 
     <script>
-        // === تهيئة Facebook SDK ===
         window.fbAsyncInit = function() {
             FB.init({
                 appId      : '2054342995162540', 
@@ -564,14 +555,13 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
-        // === قاموس اللغات الشامل ===
         const translations = {
             ar: {
                 app_title: "DAMA CHALLENGE",
                 dama: "دامة",
                 soon: "قريباً",
                 menu_title: "القائمة",
-                change_lang: "تغيير اللغة",
+                change_lang: "اللغة", /* تم التعديل */
                 change_bg: "تغيير الخلفية",
                 login_name_label: "الاسم",
                 login_name_placeholder: "اكتب اسمك هنا",
@@ -622,7 +612,7 @@
                 dama: "Dama",
                 soon: "Soon",
                 menu_title: "Menu",
-                change_lang: "Change Language",
+                change_lang: "Language", /* تم التعديل */
                 change_bg: "Change Background",
                 login_name_label: "Name",
                 login_name_placeholder: "Type your name",
@@ -673,7 +663,7 @@
                 dama: "دامە",
                 soon: "بەمنزیکانە",
                 menu_title: "لیستە",
-                change_lang: "گۆڕینی زمان",
+                change_lang: "زمان", /* تم التعديل */
                 change_bg: "گۆڕینی پاشبنەما",
                 login_name_label: "ناو",
                 login_name_placeholder: "ناوت لێرە بنووسە",
@@ -726,7 +716,6 @@
         if (!langs.includes(currentLang)) currentLang = 'ar';
         let isLoginMode = false; 
 
-        // دوال النافذة الجانبية
         function toggleHamburgerMenu() {
             document.getElementById('side-drawer-overlay').classList.add('show');
             document.getElementById('side-drawer').classList.add('show');
@@ -737,17 +726,9 @@
             document.getElementById('side-drawer').classList.remove('show');
         }
 
-        // دالة لفتح نافذة اختيار اللغة الصغيرة (Modal)
-        function openLangModal() {
-            document.getElementById('lang-select-modal').style.display = 'flex';
-        }
+        function openLangModal() { document.getElementById('lang-select-modal').style.display = 'flex'; }
+        function closeLangModal() { document.getElementById('lang-select-modal').style.display = 'none'; }
 
-        // دالة إغلاق نافذة اختيار اللغة
-        function closeLangModal() {
-            document.getElementById('lang-select-modal').style.display = 'none';
-        }
-
-        // دالة لفتح الراديو
         function toggleRadio() {
             const radioModal = document.getElementById('radio-modal');
             if (radioModal) {
@@ -757,7 +738,6 @@
             }
         }
 
-        // دالة تغيير الخلفية
         function changeAppBackground(event) {
             const file = event.target.files[0];
             if (file) {
@@ -774,12 +754,10 @@
             }
         }
 
-        // دالة لاختيار اللغة 
         function selectLanguage(lang) {
             if (!langs.includes(lang)) return;
             currentLang = lang;
             
-            // تحديث: حفظ اللغة بمفتاحين للتوافق التام مع لعبة الدامة
             localStorage.setItem('app_lang', currentLang);
             localStorage.setItem('appLang', currentLang);
 
@@ -864,7 +842,6 @@
 
         const socket = io('https://diwanrise-dama-game-diwan.hf.space/dama', { transports: ['websocket', 'polling'] });
 
-        // الاستماع لرسائل اللعبة لتحديث الرصيد فوراً عند الشراء
         window.addEventListener('message', (event) => {
             if (event.data) {
                 if (event.data.type === 'SYNC_PROFILE') {
@@ -880,10 +857,8 @@
             showCustomPopup(translations[currentLang].msg_disconnect, false, "", false);
         });
 
-        // تعريف السيرفر بهوية المنصة عند الاتصال، لكي تُقبل طلبات الشراء
         socket.on('connect', () => {
             console.log('تم الاتصال بالسيرفر بنجاح!');
-            
             const profileRaw = localStorage.getItem('hub_user_profile');
             if (profileRaw) {
                 try {
@@ -917,9 +892,7 @@
                 if (!profileRaw) return defaultProfile;
                 const parsed = JSON.parse(profileRaw);
                 if (parsed && typeof parsed === 'object') return parsed;
-            } catch (e) {
-                console.error("🔒 خطأ في معالجة بيانات الملف الشخصي:", e);
-            }
+            } catch (e) { }
             return defaultProfile;
         }
 
@@ -934,7 +907,6 @@
             }
         });
 
-        // الاستماع الدائم لتحديثات الملف الشخصي والرصيد من السيرفر
         socket.on('profileUpdated', (updatedProfile) => {
             localStorage.setItem('hub_user_profile', JSON.stringify(updatedProfile));
             syncHubProfile();
@@ -943,7 +915,6 @@
             if (gameIframe && gameIframe.contentWindow) {
                 gameIframe.contentWindow.postMessage({ type: 'PROFILE_UPDATED', profile: updatedProfile }, '*');
             }
-            console.log("تم مزامنة الرصيد الموحد بنجاح:", updatedProfile.tokens);
         });
 
         socket.on('auth_failed', (data) => {
@@ -952,15 +923,8 @@
         });
 
         function loginWithFacebook() {
-            if (typeof FB === 'undefined') {
-                showCustomPopup(translations[currentLang].msg_fb_connect);
-                return;
-            }
-            if (!socket || !socket.connected) {
-                showCustomPopup(translations[currentLang].msg_server_fail);
-                socket.connect(); 
-                return;
-            }
+            if (typeof FB === 'undefined') { showCustomPopup(translations[currentLang].msg_fb_connect); return; }
+            if (!socket || !socket.connected) { showCustomPopup(translations[currentLang].msg_server_fail); socket.connect(); return; }
             FB.login(function(response) {
                 if (response.authResponse) {
                     const accessToken = response.authResponse.accessToken;
@@ -970,15 +934,8 @@
         }
 
         function linkGuestWithFacebook() {
-            if (typeof FB === 'undefined') {
-                showCustomPopup(translations[currentLang].msg_fb_connect);
-                return;
-            }
-            if (!socket || !socket.connected) {
-                showCustomPopup(translations[currentLang].msg_server_fail);
-                socket.connect(); 
-                return;
-            }
+            if (typeof FB === 'undefined') { showCustomPopup(translations[currentLang].msg_fb_connect); return; }
+            if (!socket || !socket.connected) { showCustomPopup(translations[currentLang].msg_server_fail); socket.connect(); return; }
             FB.login(function(response) {
                 if (response.authResponse) {
                     const accessToken = response.authResponse.accessToken;
