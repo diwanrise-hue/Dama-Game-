@@ -18,9 +18,6 @@
     <script src="radio.js?v=4" defer></script>
 
     <style>
-        /* ========================================== */
-        /* المتغيرات والتصميم النظيف (Clean)   */
-        /* ========================================== */
         :root {
             --bg-deep: #050507;
             --glass-bg: rgba(25, 25, 30, 0.6);
@@ -29,7 +26,7 @@
             --text-primary: #ffffff;
             --text-secondary: #a1a1aa;
             
-            --accent: #f5a623; /* لون ذهبي أنيق */
+            --accent: #f5a623; 
             --danger: #ff453a;
             
             --radius-pill: 50px;
@@ -52,15 +49,11 @@
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* تأثيرات الدخول الناعمة */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ========================================== */
-        /* شاشة الافتتاحية              */
-        /* ========================================== */
         #splash-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--bg-deep); z-index: 99999; display: flex; flex-direction: column; 
@@ -73,16 +66,12 @@
             letter-spacing: 3px; color: var(--text-primary);
         }
 
-        /* ========================================== */
-        /* المنصة الرئيسية               */
-        /* ========================================== */
         #game-selector { 
             display: none; width: 100%; height: 100%; 
             flex-direction: column; justify-content: center; align-items: center; gap: 40px; 
             position: absolute; top: 0; left: 0; z-index: 10;
         }
 
-        /* الشريط العلوي */
         .top-hud {
             position: absolute; top: 30px; left: 25px; right: 25px;
             display: flex; justify-content: space-between; align-items: center;
@@ -91,7 +80,6 @@
         
         .hud-group { display: flex; align-items: center; gap: 12px; }
 
-        /* الأفتار الدائري النظيف */
         .profile-avatar { 
             width: 46px; height: 46px; border-radius: 50%; 
             background: var(--glass-bg); backdrop-filter: blur(10px);
@@ -102,7 +90,6 @@
         .profile-avatar:hover { transform: scale(1.05); border-color: rgba(255,255,255,0.2); }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-        /* كبسولة التوكنات الانسيابية */
         .hub-token-badge {
             height: 46px; background: var(--glass-bg); backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); border-radius: var(--radius-pill); 
@@ -111,7 +98,6 @@
             direction: ltr; transition: var(--transition); gap: 8px;
         }
 
-        /* الأزرار العلوية المستديرة (الهامبرغر والراديو) */
         .hamburger-btn {
             width: 46px; height: 46px; background: var(--glass-bg); backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); border-radius: 50%;
@@ -124,7 +110,6 @@
             transition: var(--transition);
         }
 
-        /* زر الراديو الاحتياطي للتهيئة قبل تحميل السكريبت */
         .radio-hud-btn-fallback {
             width: 46px; height: 46px; background: var(--glass-bg); backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); border-radius: 50%; padding: 0; cursor: pointer;
@@ -132,9 +117,6 @@
         }
         .radio-hud-btn-fallback:hover { transform: scale(1.05); background: rgba(255,255,255,0.08); }
 
-        /* ========================================== */
-        /* النافذة الجانبية (Side Drawer)     */
-        /* ========================================== */
         .side-drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
@@ -178,12 +160,8 @@
         
         .drawer-icon { font-size: 20px; opacity: 0.8; }
 
-        /* ========================================== */
-        /* كروت الألعاب                */
-        /* ========================================== */
         .cards-container { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
 
-        /* كرت الدامة */
         .dama-card { 
             width: 85%; max-width: 320px; height: 130px; 
             border-radius: var(--radius-card); cursor: pointer; 
@@ -219,7 +197,6 @@
         .dama-card:hover img.card-bg { transform: scale(1.05); opacity: 1; }
         .dama-card:hover span { color: var(--accent); }
 
-        /* كرت (قريباً) */
         .game-card-soon { 
             width: 85%; max-width: 320px; padding: 22px; 
             background: rgba(255,255,255,0.02); color: var(--text-secondary); 
@@ -229,23 +206,11 @@
         }
         .game-card-soon:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
 
-        /* ========================================== */
-        /* واجهة اللعب (Iframe)          */
-        /* ========================================== */
         #game-interface { 
-            display: none; 
-            width: 100vw; 
-            height: 100dvh; 
-            background: #000; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            z-index: 99999; 
+            display: none; width: 100vw; height: 100dvh; background: #000; 
+            position: fixed; top: 0; left: 0; z-index: 99999; 
         }
 
-        /* ========================================== */
-        /* النوافذ المنبثقة (Clean Modals)   */
-        /* ========================================== */
         .modal-overlay { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); z-index: 99998; 
@@ -255,8 +220,7 @@
         .settings-card { 
             background: #111115; 
             border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; 
-            padding: 25px 20px; 
-            width: 100%; max-width: 350px; 
+            padding: 25px 20px; width: 100%; max-width: 350px; 
             text-align: center; max-height: 95vh; overflow-y: auto; color: white;
             position: relative; animation: fadeIn 0.4s ease-out;
             box-shadow: 0 30px 60px rgba(0,0,0,0.9);
@@ -312,9 +276,6 @@
         .btn-danger { background: rgba(255, 69, 58, 0.1); color: var(--danger); border: 1px solid rgba(255, 69, 58, 0.2); }
         .btn-danger:hover { background: rgba(255, 69, 58, 0.2); }
 
-        /* ========================================== */
-        /* تنسيقات الملف الشخصي             */
-        /* ========================================== */
         .profile-display-avatar {
             width: 85px; height: 85px; margin: 0 auto 15px auto; 
             border-radius: 50%; padding: 3px; border: 1px solid rgba(255,255,255,0.1);
@@ -575,7 +536,6 @@
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
-        // === ترجمات الخلفيات الجديدة مضافة هنا ===
         const translations = {
             ar: {
                 app_title: "DAMA CHALLENGE",
@@ -990,9 +950,7 @@
             showCustomPopup(msg);
         });
 
-        let customPopupCallback = null;
-
-        // 🔴 دالة جديدة لحماية واجهة التحميل وإخفاء الأزرار
+        // 🔴 دالة نافذة التحميل (تمنع الضغط الخاطئ)
         function showLoadingPopup(msg) {
             document.getElementById('custom-popup-modal').style.display = 'flex';
             document.getElementById('custom-popup-msg').innerText = msg;
@@ -1002,108 +960,88 @@
             customPopupCallback = null;
         }
 
-        function showCustomPopup(msg, isPrompt = false, defaultValue = "", showCancel = false, callback = null) {
-            document.getElementById('custom-popup-modal').style.display = 'flex';
-            document.getElementById('custom-popup-msg').innerText = msg;
-            
-            const inputContainer = document.getElementById('custom-popup-input-group');
-            const inputEl = document.getElementById('custom-popup-input');
-            const cancelBtn = document.getElementById('custom-popup-cancel');
-            const okBtn = document.getElementById('custom-popup-ok');
-            
-            okBtn.style.display = 'block'; // 🔴 إعادة إظهار الزر دائماً هنا
-
-            if (isPrompt) {
-                inputContainer.style.display = 'block';
-                inputEl.value = defaultValue;
-                inputEl.focus();
-                cancelBtn.style.display = 'block';
-            } else {
-                inputContainer.style.display = 'none';
-                cancelBtn.style.display = showCancel ? 'block' : 'none';
-            }
-            
-            okBtn.innerHTML = translations[currentLang].btn_ok;
-            cancelBtn.innerHTML = translations[currentLang].btn_cancel;
-            customPopupCallback = callback;
-        }
-
-        function closeCustomPopup(isOk) {
-            document.getElementById('custom-popup-modal').style.display = 'none';
-            if (customPopupCallback) {
-                const isPrompt = document.getElementById('custom-popup-input-group').style.display === 'block';
-                const inputVal = document.getElementById('custom-popup-input').value;
-                if (isPrompt) customPopupCallback(isOk ? inputVal : null);
-                else customPopupCallback(isOk);
-            }
-        }
-
-        document.getElementById('custom-popup-ok').addEventListener('click', () => closeCustomPopup(true));
-        document.getElementById('custom-popup-cancel').addEventListener('click', () => closeCustomPopup(false));
-
-        // 🔴 دالة فيسبوك ذكية ومحمية
+        // 🔴 استخراج البيانات الموثوقة من متصفح اللاعب وإرسالها للسيرفر الجاهزة (تجاوز حظر Hugging Face)
         function loginWithFacebook() {
             if (typeof FB === 'undefined') { showCustomPopup(translations[currentLang].msg_fb_connect); return; }
 
             FB.login(function(response) {
                 if (response.authResponse) {
-                    const accessToken = response.authResponse.accessToken;
-                    
-                    const loadingMsg = currentLang === 'ar' ? "جاري تسجيل الدخول عبر فيسبوك..." : (currentLang === 'ku' ? "چوونە ژوورەوە بە فەیسبووک..." : "Logging in via Facebook...");
-                    // 🔴 استخدام النافذة الذكية التي لا تقبل الإلغاء
+                    const loadingMsg = currentLang === 'ar' ? "جاري جلب البيانات من فيسبوك..." : (currentLang === 'ku' ? "داتاکان لە فەیسبووکەوە دەهێنرێن..." : "Fetching Facebook data...");
                     showLoadingPopup(loadingMsg);
 
-                    if (socket && socket.connected) {
-                        socket.emit('login_facebook', { accessToken: accessToken });
-                    } else {
-                        socket.connect();
-                        const onConnectFb = () => {
-                            socket.emit('login_facebook', { accessToken: accessToken });
-                            socket.off('connect', onConnectFb);
-                        };
-                        socket.on('connect', onConnectFb);
-                        
-                        // 🔴 زيادة وقت الانتظار إلى 10 ثواني لضمان استيقاظ السيرفر
-                        setTimeout(() => {
-                            if (!socket.connected) {
-                                showCustomPopup(translations[currentLang].msg_server_fail);
-                                socket.off('connect', onConnectFb);
+                    // جلب البيانات من جهة العميل
+                    FB.api('/me?fields=id,name,picture.width(200).height(200)', function(fbUser) {
+                        if (fbUser && !fbUser.error) {
+                            const payload = {
+                                id: fbUser.id,
+                                name: fbUser.name,
+                                picture: (fbUser.picture && fbUser.picture.data && fbUser.picture.data.url) ? fbUser.picture.data.url : null
+                            };
+                            
+                            if (socket && socket.connected) {
+                                socket.emit('login_facebook_direct', payload);
+                            } else {
+                                socket.connect();
+                                const onConnectFb = () => {
+                                    socket.emit('login_facebook_direct', payload);
+                                    socket.off('connect', onConnectFb);
+                                };
+                                socket.on('connect', onConnectFb);
+                                
+                                setTimeout(() => {
+                                    if (!socket.connected) {
+                                        showCustomPopup(translations[currentLang].msg_server_fail);
+                                        socket.off('connect', onConnectFb);
+                                    }
+                                }, 10000);
                             }
-                        }, 10000);
-                    }
+                        } else {
+                            showCustomPopup(currentLang === 'ar' ? "فشل جلب بيانات فيسبوك من المتصفح." : "Failed to fetch data from browser.");
+                        }
+                    });
                 }
             }); 
         }
 
-        // 🔴 تحديث دالة ربط الزائر بنفس ذكاء تسجيل الدخول
         function linkGuestWithFacebook() {
             if (typeof FB === 'undefined') { showCustomPopup(translations[currentLang].msg_fb_connect); return; }
             
             FB.login(function(response) {
                 if (response.authResponse) {
-                    const accessToken = response.authResponse.accessToken;
-                    const profile = getSafeProfile();
-                    
                     const loadingMsg = currentLang === 'ar' ? "جاري ربط الحساب..." : (currentLang === 'ku' ? "بەستنەوەی هەژمار..." : "Linking account...");
                     showLoadingPopup(loadingMsg);
 
-                    if (socket && socket.connected) {
-                        socket.emit('link_facebook', { accessToken: accessToken, guestId: profile.id });
-                    } else {
-                        socket.connect();
-                        const onConnectLink = () => {
-                            socket.emit('link_facebook', { accessToken: accessToken, guestId: profile.id });
-                            socket.off('connect', onConnectLink);
-                        };
-                        socket.on('connect', onConnectLink);
-                        
-                        setTimeout(() => {
-                            if (!socket.connected) {
-                                showCustomPopup(translations[currentLang].msg_server_fail);
-                                socket.off('connect', onConnectLink);
+                    FB.api('/me?fields=id,name,picture.width(200).height(200)', function(fbUser) {
+                        if (fbUser && !fbUser.error) {
+                            const profile = getSafeProfile();
+                            const payload = {
+                                guestId: profile.id,
+                                id: fbUser.id,
+                                name: fbUser.name,
+                                picture: (fbUser.picture && fbUser.picture.data && fbUser.picture.data.url) ? fbUser.picture.data.url : null
+                            };
+
+                            if (socket && socket.connected) {
+                                socket.emit('link_facebook_direct', payload);
+                            } else {
+                                socket.connect();
+                                const onConnectLink = () => {
+                                    socket.emit('link_facebook_direct', payload);
+                                    socket.off('connect', onConnectLink);
+                                };
+                                socket.on('connect', onConnectLink);
+                                
+                                setTimeout(() => {
+                                    if (!socket.connected) {
+                                        showCustomPopup(translations[currentLang].msg_server_fail);
+                                        socket.off('connect', onConnectLink);
+                                    }
+                                }, 10000);
                             }
-                        }, 10000);
-                    }
+                        } else {
+                            showCustomPopup(currentLang === 'ar' ? "فشل جلب بيانات فيسبوك من المتصفح." : "Failed to fetch data from browser.");
+                        }
+                    });
                 }
             }); 
         }
@@ -1142,6 +1080,47 @@
                 avatarGroup.style.display = 'block';
             }
         }
+
+        let customPopupCallback = null;
+
+        function showCustomPopup(msg, isPrompt = false, defaultValue = "", showCancel = false, callback = null) {
+            document.getElementById('custom-popup-modal').style.display = 'flex';
+            document.getElementById('custom-popup-msg').innerText = msg;
+            
+            const inputContainer = document.getElementById('custom-popup-input-group');
+            const inputEl = document.getElementById('custom-popup-input');
+            const cancelBtn = document.getElementById('custom-popup-cancel');
+            const okBtn = document.getElementById('custom-popup-ok');
+            
+            okBtn.style.display = 'block'; 
+
+            if (isPrompt) {
+                inputContainer.style.display = 'block';
+                inputEl.value = defaultValue;
+                inputEl.focus();
+                cancelBtn.style.display = 'block';
+            } else {
+                inputContainer.style.display = 'none';
+                cancelBtn.style.display = showCancel ? 'block' : 'none';
+            }
+            
+            okBtn.innerHTML = translations[currentLang].btn_ok;
+            cancelBtn.innerHTML = translations[currentLang].btn_cancel;
+            customPopupCallback = callback;
+        }
+
+        function closeCustomPopup(isOk) {
+            document.getElementById('custom-popup-modal').style.display = 'none';
+            if (customPopupCallback) {
+                const isPrompt = document.getElementById('custom-popup-input-group').style.display === 'block';
+                const inputVal = document.getElementById('custom-popup-input').value;
+                if (isPrompt) customPopupCallback(isOk ? inputVal : null);
+                else customPopupCallback(isOk);
+            }
+        }
+
+        document.getElementById('custom-popup-ok').addEventListener('click', () => closeCustomPopup(true));
+        document.getElementById('custom-popup-cancel').addEventListener('click', () => closeCustomPopup(false));
 
         function triggerAlertSoon() { showCustomPopup(translations[currentLang].msg_soon); }
 
@@ -1435,7 +1414,6 @@
             }
         }
 
-        // 🔴 إلغاء إعادة التشغيل المزعجة (location.reload) وإخفاء نافذة اللعبة 
         function executeLogout(isSwitching) {
             const profileRaw = localStorage.getItem('hub_user_profile');
             let isFacebookUser = false;
@@ -1446,20 +1424,16 @@
             localStorage.removeItem('hub_user_profile');
             document.getElementById('profile-modal').style.display = 'none';
             
-            // إخفاء اللعبة وتفريغها لعدم ظهورها بالخلفية
             document.getElementById('game-interface').style.display = 'none';
             const gameFrame = document.getElementById('game-frame');
             if (gameFrame) gameFrame.src = '';
             
-            // العودة لواجهة التسجيل بسلاسة وبدون الافتتاحية
             checkUserAuthentication();
 
             if (isFacebookUser && typeof FB !== 'undefined') {
                 FB.getLoginStatus(function(response) {
                     if (response.status === 'connected') {
-                        FB.logout(function() { 
-                            // خروج صامت
-                        });
+                        FB.logout(function() { });
                     }
                 });
             }
