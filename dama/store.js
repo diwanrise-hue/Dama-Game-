@@ -950,6 +950,11 @@ export const storeManager = {
                 
                 window['socket'].on('purchaseSuccess', (msg) => { 
                     if (window['triggerCustomAlertNotification']) window['triggerCustomAlertNotification'](msg); 
+                    
+                    // 🎆 إطلاق الألعاب النارية وتشغيل صوت النقود عند نجاح الشراء 🎆
+                    if (typeof window.triggerPurchaseCelebration === 'function') {
+                        window.triggerPurchaseCelebration();
+                    }
                 });
                 
             } else if (socketAttempts >= maxAttempts) { 
