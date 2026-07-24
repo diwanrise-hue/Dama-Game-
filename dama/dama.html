@@ -1110,12 +1110,21 @@
             div.querySelector('.lb-name-container').replaceWith(nameEl);
             
             const avatarContainer = div.querySelector('.lb-avatar');
-            if (avatarStr) {
+            
+            // 🔴 التعديل الجذري لمعالجة الصور وحماية الواجهة
+            if (avatarStr && avatarStr !== 'null' && avatarStr !== 'undefined') {
                 let imgSrc = avatarStr;
-                if (!imgSrc.startsWith('http') && !imgSrc.startsWith('data:') && !imgSrc.startsWith('../')) {
-                    imgSrc = '../' + imgSrc; 
+                
+                const isFullUrl = imgSrc.startsWith('http://') || imgSrc.startsWith('https://') || imgSrc.startsWith('data:image');
+                
+                // توحيد مسار الصور الداخلية لتعمل دائماً
+                if (!isFullUrl) {
+                    imgSrc = imgSrc.replace('../', ''); // تنظيف المسار
+                    imgSrc = "https://raw.githubusercontent.com/diwanrise-hue/Kings-Challenge/main/" + imgSrc;
                 }
-                avatarContainer.innerHTML = `<img src="${imgSrc}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+
+                // إضافة onerror: إذا كانت الصورة مكسورة، اخفِ الصورة واعرض إيموجي 👤
+                avatarContainer.innerHTML = `<img src="${imgSrc}" onerror="this.style.display='none'; this.parentNode.textContent='👤';" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
             } else {
                 avatarContainer.textContent = '👤';
             }
