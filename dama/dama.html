@@ -1088,7 +1088,7 @@
             document.getElementById('leaderboard-list-' + tab).style.display = 'flex';
         }
 
-        function createLbItemHTML(rank, name, score, type) {
+        function createLbItemHTML(rank, name, score, type, avatarStr) {
             let prefix = type === 'wins' ? '' : '🪙 ';
             let suffix = type === 'wins' ? ' فوز' : '';
             
@@ -1101,13 +1101,24 @@
             
             div.innerHTML = `
                 <div class="lb-rank">#${rank}</div>
-                <div class="lb-avatar">👤</div>
+                <div class="lb-avatar" style="padding:0; border:2px solid rgba(255,255,255,0.1);"></div>
                 <div class="lb-info">
                     <div class="lb-name-container"></div>
                     <div class="lb-score">${prefix}${score}${suffix}</div>
                 </div>
             `;
             div.querySelector('.lb-name-container').replaceWith(nameEl);
+            
+            const avatarContainer = div.querySelector('.lb-avatar');
+            if (avatarStr) {
+                let imgSrc = avatarStr;
+                if (!imgSrc.startsWith('http') && !imgSrc.startsWith('data:') && !imgSrc.startsWith('../')) {
+                    imgSrc = '../' + imgSrc; 
+                }
+                avatarContainer.innerHTML = `<img src="${imgSrc}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                avatarContainer.textContent = '👤';
+            }
             
             return div;
         }
@@ -1122,13 +1133,15 @@
             for(let i = 0; i < 20; i++) {
                 let wPlayer = winsData && winsData[i] ? winsData[i].name : `لاعب مجهول ${i+1}`;
                 let wScore = winsData && winsData[i] ? winsData[i].score : (100 - (i * 2));
-                winsList.appendChild(createLbItemHTML(i+1, wPlayer, wScore, 'wins'));
+                let wAvatar = winsData && winsData[i] ? winsData[i].avatar : null; 
+                winsList.appendChild(createLbItemHTML(i+1, wPlayer, wScore, 'wins', wAvatar));
             }
 
             for(let i = 0; i < 20; i++) {
                 let tPlayer = tokensData && tokensData[i] ? tokensData[i].name : `لاعب مجهول ${i+1}`;
                 let tScore = tokensData && tokensData[i] ? tokensData[i].score : (10000 - (i * 300));
-                tokensList.appendChild(createLbItemHTML(i+1, tPlayer, tScore, 'tokens'));
+                let tAvatar = tokensData && tokensData[i] ? tokensData[i].avatar : null; 
+                tokensList.appendChild(createLbItemHTML(i+1, tPlayer, tScore, 'tokens', tAvatar));
             }
         }
 
