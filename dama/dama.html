@@ -1156,10 +1156,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             window.showLeaderboard = function() {
                 openAppModal('leaderboard-modal');
+                
+                // عرض بيانات وهمية فوراً كواجهة تحميل
+                populateLeaderboards(null, null);
+
                 if(window.socket && window.socket.connected) {
                     window.socket.emit('getLeaderboard');
-                } else {
-                    populateLeaderboards(null, null);
                 }
             };
 
